@@ -40,19 +40,16 @@ export default function LoginScreen() {
         password: password.trim(),
       });
 
-      console.log('Sesión iniciada con éxito para:', result.user.email);
-      router.replace('/' as any);
+      console.log("Sesión iniciada con éxito. Token recibido:", !!result.accessToken);
+      router.replace("/(tabs)" as any);
     } catch (err: any) {
-      if (
-        err?.error === 'NETWORK_ERROR' ||
-        err?.statusCode === 0 ||
-        err?.name === 'TypeError'
-      ) {
-        setErrorMessage('No se pudo conectar con el servidor');
+      console.warn("Error en login:", err);
+      if (err?.error === "NETWORK_ERROR" || err?.statusCode === 0) {
+        setErrorMessage("No se pudo conectar con el servidor");
+      } else if (err?.statusCode === 401) {
+        setErrorMessage("Correo o contraseña incorrectos");
       } else {
-        setErrorMessage(
-          err?.message ?? 'No se pudo conectar con el servidor'
-        );
+        setErrorMessage(err?.message ?? "No se pudo conectar con el servidor");
       }
     } finally {
       setLoading(false);
@@ -71,8 +68,8 @@ export default function LoginScreen() {
           contentContainerStyle={[
             styles.scrollContent,
             {
-              paddingHorizontal: spacing[6], // px 24
-              paddingTop: 112, // py 32
+              paddingHorizontal: spacing[6],
+              paddingTop: 112,
               paddingBottom: spacing[8],
             },
           ]}
@@ -80,7 +77,7 @@ export default function LoginScreen() {
           showsVerticalScrollIndicator={false}
         >
           <View style={[styles.logoContainer]}>
-            <AppLogo variant="icon" size={56} />
+            <AppLogo variant="full" size={56} />
           </View>
 
           <Text

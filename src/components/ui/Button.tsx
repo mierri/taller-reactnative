@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -9,12 +9,15 @@ import {
   TextStyle,
   View,
   ViewStyle,
-} from 'react-native';
-import { useTheme } from '@/theme';
+} from "react-native";
+import { useTheme } from "@/theme";
 
-export type ButtonType = 'Primary' | 'Secondary' | 'FAB' | 'Icon';
+export type ButtonType = "Primary" | "Secondary" | "FAB" | "Icon";
 
-export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> {
+export interface ButtonProps extends Omit<
+  PressableProps,
+  "children" | "style"
+> {
   type?: ButtonType;
   label?: string;
   iconLeading?: React.ReactNode;
@@ -29,7 +32,7 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
 }
 
 export const Button: React.FC<ButtonProps> = ({
-  type = 'Primary',
+  type = "Primary",
   label,
   iconLeading,
   iconTrailing,
@@ -45,10 +48,10 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const { colors, radii, spacing, shadows } = useTheme();
 
-  const isPrimary = type === 'Primary';
-  const isSecondary = type === 'Secondary';
-  const isFAB = type === 'FAB';
-  const isIcon = type === 'Icon';
+  const isPrimary = type === "Primary";
+  const isSecondary = type === "Secondary";
+  const isFAB = type === "FAB";
+  const isIcon = type === "Icon";
 
   const containerStyles: ViewStyle[] = [styles.base];
 
@@ -57,15 +60,15 @@ export const Button: React.FC<ButtonProps> = ({
       width: 48,
       height: 48,
       borderRadius: radii.lg,
-      backgroundColor: 'transparent',
+      backgroundColor: "transparent",
       paddingHorizontal: 0,
     });
   } else {
     containerStyles.push({
       height: 52,
-      paddingHorizontal: spacing[5], // px 20
-      borderRadius: radii.lg,        // radio 16
-      gap: isFAB ? spacing[2] : 10,  // gap 10 (FAB: 8 = spacing[2])
+      paddingHorizontal: spacing[5],
+      borderRadius: radii.lg,
+      gap: isFAB ? spacing[2] : 10,
     });
   }
 
@@ -74,7 +77,7 @@ export const Button: React.FC<ButtonProps> = ({
       {
         backgroundColor: colors.brandPrimary,
       },
-      shadows.button
+      shadows.button,
     );
   } else if (isSecondary) {
     containerStyles.push({
@@ -87,14 +90,14 @@ export const Button: React.FC<ButtonProps> = ({
       {
         backgroundColor: colors.brandPrimary,
       },
-      shadows.fab
+      shadows.fab,
     );
 
     if (floating) {
       containerStyles.push({
-        position: 'absolute',
-        bottom: spacing[6], // 24px
-        right: spacing[5],  // 20px
+        position: "absolute",
+        bottom: spacing[6],
+        right: spacing[5],
         zIndex: 99,
       });
     }
@@ -111,7 +114,7 @@ export const Button: React.FC<ButtonProps> = ({
     spinnerColor = colors.textOnBrand;
     textStyles = {
       color: colors.textOnBrand,
-      fontWeight: '600',
+      fontWeight: "600",
       ...(isFAB
         ? { fontSize: 13, lineHeight: 19.5 }
         : { fontSize: 14, lineHeight: 20 }),
@@ -122,7 +125,7 @@ export const Button: React.FC<ButtonProps> = ({
       color: colors.brandPrimary,
       fontSize: 14,
       lineHeight: 20,
-      fontWeight: '600',
+      fontWeight: "600",
     };
   }
 
@@ -164,28 +167,28 @@ export const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   base: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxSizing: 'border-box',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    boxSizing: "border-box",
   },
   fullWidth: {
-    width: '100%',
-    alignSelf: 'stretch',
+    width: "100%",
+    alignSelf: "stretch",
   },
   textBase: {
-    textAlign: 'center',
+    textAlign: "center",
     includeFontPadding: false,
   },
   iconWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   iconContainer: {
     width: 20,
     height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   pressed: {
     opacity: 0.88,

@@ -1,4 +1,5 @@
-import { apiRequest } from './api';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { apiRequest } from "./api";
 
 export interface LoginDto {
   email: string;
@@ -11,23 +12,30 @@ export interface AuthUser {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'ADMIN' | 'DIRECTOR' | 'SERVICE_ADVISOR' | 'TECHNICIAN';
+  role: "ADMIN" | "DIRECTOR" | "SERVICE_ADVISOR" | "TECHNICIAN";
   effectivePermissions: string[];
 }
 
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
-  user: AuthUser;
 }
 
-/**
- * Endpoint real: POST /api/v1/auth/login
- */
-export async function loginRequest(credentials: LoginDto): Promise<AuthResponse> {
-  return apiRequest<AuthResponse>('/auth/login', {
-    method: 'POST',
+export const TOKEN_KEY = "@pitstop_access_token";
+export const REFRESH_TOKEN_KEY = "@pitstop_refresh_token";
+
+export async function loginRequest(
+  credentials: LoginDto,
+): Promise<AuthResponse> {
+  const data = await apiRequest<AuthResponse>("/auth/login", {
+    method: "POST",
     body: JSON.stringify(credentials),
   });
-}
 
+  if (data?.accessToken) {
+    await AsyncStorage.setItem(TOKEN_KEY, data.accessToken);
+    await AsyncStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
+  }
+
+  return data;
+}

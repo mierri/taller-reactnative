@@ -1,5 +1,5 @@
-export const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3000/api/v1";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CONFIG } from '@/config/env';
 
 export class ApiError extends Error {
   constructor(
@@ -8,7 +8,7 @@ export class ApiError extends Error {
     message: string,
   ) {
     super(message);
-    this.name = "ApiError";
+    this.name = 'ApiError';
   }
 }
 
@@ -16,10 +16,13 @@ export async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {},
 ): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+  const url = `${CONFIG.apiUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+
+  const token = await AsyncStorage.getItem('@pitstop_access_token');
 
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers as Record<string, string>),
   };
 
@@ -30,11 +33,7 @@ export async function apiRequest<T>(
       headers,
     });
   } catch {
-    throw new ApiError(
-      0,
-      "NETWORK_ERROR",
-      "No se pudo conectar con el servidor",
-    );
+    throw new ApiError(0, 'NETWORK_ERROR', 'No se pudo conectar con el servidor');
   }
 
   const data = await response.json().catch(() => null);
@@ -43,9 +42,9 @@ export async function apiRequest<T>(
     const message =
       data?.message ??
       (response.status === 401
-        ? "Correo o contraseña incorrectos"
-        : "No se pudo conectar con el servidor");
-    const errorType = data?.error ?? "SERVER_ERROR";
+        ? 'No autorizado o sesión expirada'
+        : 'Error en la petición al servidor');
+    const errorType = data?.error ?? 'SERVER_ERROR';
     throw new ApiError(response.status, errorType, message);
   }
 

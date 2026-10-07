@@ -8,6 +8,9 @@
       ],
       "@/assets/*": [
         "./assets/*"
+      ],
+      "expo-router/native-tabs": [
+        "./node_modules/expo-router/unstable-native-tabs"
       ]
     }
   },

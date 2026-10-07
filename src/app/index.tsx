@@ -28,7 +28,6 @@ export default function SplashScreen() {
       ]}
     >
       <View style={styles.centerContent}>
-        {/* Logo oficial de PitStop */}
         <AppLogo variant="icon" size={88} />
 
         <Text
