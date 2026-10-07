@@ -1,98 +1,97 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { AppLogo } from "@/components";
+import { useTheme } from "@/theme";
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+export default function SplashScreen() {
+  const { colors, spacing, radii } = useTheme();
+  const router = useRouter();
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.replace("/(auth)/login");
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, [router]);
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <SafeAreaView
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.surfaceApp,
+          paddingVertical: spacing[8] + spacing[4], // 48px
+        },
+      ]}
+    >
+      <View style={styles.centerContent}>
+        {/* Logo oficial de PitStop */}
+        <AppLogo variant="icon" size={88} />
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+        <Text
+          style={[
+            styles.brandName,
+            { color: colors.textStrong, marginTop: spacing[5] },
+          ]}
+        >
+          PITSTOP
+        </Text>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+        <Text
+          style={[
+            styles.tagline,
+            { color: colors.textSecondary, marginTop: spacing[2] },
+          ]}
+        >
+          Tu taller. Todo en orden.
+        </Text>
+      </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      <View style={[styles.footer, { height: spacing[8] }]}>
+        <View
+          style={[
+            styles.dot,
+            {
+              backgroundColor: colors.brandPrimary,
+              borderRadius: radii.xs,
+            },
+          ]}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  safeArea: {
+  centerContent: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+  brandName: {
+    fontSize: 26,
+    fontWeight: "800",
+    letterSpacing: 3,
   },
-  title: {
-    textAlign: 'center',
+  tagline: {
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: "500",
   },
-  code: {
-    textTransform: 'uppercase',
+  footer: {
+    justifyContent: "center",
+    alignItems: "center",
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  dot: {
+    width: 6,
+    height: 6,
   },
 });
