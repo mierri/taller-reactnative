@@ -19,7 +19,7 @@ export default function LoginScreen() {
   const { colors, spacing, radii } = useTheme();
   const router = useRouter();
 
-  const [email, setEmail] = useState("daniel@pitstop.mx");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,10 @@ export default function LoginScreen() {
         password: password.trim(),
       });
 
-      console.log("Sesión iniciada con éxito. Token recibido:", !!result.accessToken);
+      console.log(
+        "Sesión iniciada con éxito. Token recibido:",
+        !!result.accessToken,
+      );
       router.replace("/(tabs)" as any);
     } catch (err: any) {
       console.warn("Error en login:", err);
