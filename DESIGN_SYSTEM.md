@@ -262,3 +262,4 @@ Cada estado se compone de tres tokens sincronizados: `{ bg, fg, border }`. En mo
 2. **Archivos menores a 300 líneas:** Mantener los componentes desacoplados y modulares.
 3. **Cero comentarios en código:** Cumplir con las políticas estrictas de estilo del proyecto.
 4. **Mapeo directo de estados:** Conectar los enums provenientes del backend (`RECIBIDA`, `EN_REPARACION`, etc.) directamente con `OperationalStatus[status].family` para derivar automáticamente su tonalidad sin sentencias `switch` manuales.
+
