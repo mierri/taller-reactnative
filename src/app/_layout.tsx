@@ -25,6 +25,7 @@ function AppContent() {
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="orders/new" />
       </Stack>
       <StatusBar style={isDark ? 'light' : 'dark'} />
     </>

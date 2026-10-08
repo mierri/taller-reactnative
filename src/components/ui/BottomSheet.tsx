@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
+  Animated,
   KeyboardAvoidingView,
   Modal,
   Platform,
   Pressable,
+  ScrollView,
   StyleProp,
   StyleSheet,
   Text,
@@ -37,36 +39,82 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   contentStyle,
 }) => {
   const { colors, radius, shadows, typography } = useTheme();
+  const [translateY] = useState(() => new Animated.Value(260));
+  const [opacity] = useState(() => new Animated.Value(0));
+
+  useEffect(() => {
+    if (visible) {
+      translateY.setValue(260);
+      opacity.setValue(0);
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.spring(translateY, {
+          toValue: 0,
+          damping: 24,
+          stiffness: 240,
+          mass: 0.8,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [visible, opacity, translateY]);
+
+  const handleClose = () => {
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 160,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY, {
+        toValue: 260,
+        duration: 160,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      onClose();
+    });
+  };
 
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
-      onRequestClose={onClose}
+      animationType="none"
+      onRequestClose={handleClose}
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={styles.modalOverlay}
-      >
-        <Pressable
-          style={[styles.backdrop, { backgroundColor: colors.overlayScrim }]}
-          onPress={onClose}
-        />
-
-        <View
+      <View style={styles.modalRoot}>
+        <Animated.View
           style={[
-            styles.sheet,
-            shadows.sheet,
-            {
-              backgroundColor: colors.surfaceSheet,
-              borderTopLeftRadius: radius.sheet,
-              borderTopRightRadius: radius.sheet,
-            },
-            style,
+            styles.backdrop,
+            { backgroundColor: colors.overlayScrim, opacity },
           ]}
         >
-          <SafeAreaView edges={["bottom"]}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
+        </Animated.View>
+
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          pointerEvents="box-none"
+          style={styles.keyboardView}
+        >
+          <Animated.View
+            style={[
+              styles.sheet,
+              shadows.sheet,
+              {
+                backgroundColor: colors.surfaceSheet,
+                borderTopLeftRadius: radius.sheet,
+                borderTopRightRadius: radius.sheet,
+                transform: [{ translateY }],
+              },
+              style,
+            ]}
+          >
             <View style={styles.grabberContainer}>
               <View
                 style={[
@@ -93,7 +141,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                 </Text>
 
                 <Pressable
-                  onPress={onClose}
+                  onPress={handleClose}
                   hitSlop={8}
                   style={({ pressed }) => [
                     styles.closeButton,
@@ -108,18 +156,36 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
               </View>
             )}
 
-            <View style={[styles.content, contentStyle]}>{children}</View>
-          </SafeAreaView>
-        </View>
-      </KeyboardAvoidingView>
+            <ScrollView
+              style={styles.scroll}
+              contentContainerStyle={[styles.content, contentStyle]}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="interactive"
+              bounces={false}
+            >
+              {children}
+              <SafeAreaView edges={["bottom"]} />
+            </ScrollView>
+
+            <View
+              pointerEvents="none"
+              style={[
+                styles.sheetUnderlay,
+                { backgroundColor: colors.surfaceSheet },
+              ]}
+            />
+          </Animated.View>
+        </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  modalOverlay: {
+  modalRoot: {
     flex: 1,
-    justifyContent: "flex-end",
+    position: "relative",
   },
   backdrop: {
     position: "absolute",
@@ -128,9 +194,21 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
+  keyboardView: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
   sheet: {
     width: "100%",
-    overflow: "hidden",
+    maxHeight: "75%",
+    position: "relative",
+  },
+  sheetUnderlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: -600,
+    height: 600,
   },
   grabberContainer: {
     width: "100%",
@@ -143,20 +221,24 @@ const styles = StyleSheet.create({
     height: 4,
   },
   header: {
-    height: 72,
+    height: 64,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 24,
+    flexShrink: 0,
   },
   headerTitle: {
     flex: 1,
   },
   closeButton: {
-    width: 48,
-    height: 48,
+    width: 44,
+    height: 44,
     justifyContent: "center",
     alignItems: "center",
+  },
+  scroll: {
+    flexShrink: 1,
   },
   content: {
     paddingHorizontal: 24,

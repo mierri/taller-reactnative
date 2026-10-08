@@ -1,29 +1,31 @@
 import {
-    AppHeader,
-    Banner,
-    Button,
-    EmptyState,
-    OnboardingModal,
-    OrderCard,
-    SearchBar,
-    SectionTitle,
-    Segmented,
-    StatSummary,
+  AppHeader,
+  Banner,
+  Button,
+  EmptyState,
+  OnboardingModal,
+  OrderCard,
+  SearchBar,
+  SectionTitle,
+  Segmented,
+  StatSummary,
 } from "@/components";
 import { hasSeenOnboarding } from "@/services/onboardingStorage";
 import { useTheme } from "@/theme";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Plus, SlidersHorizontal } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AddClientSheet } from "../components/AddClientSheet";
+import { OrderCommandPaletteSheet } from "../components/OrderCommandPaletteSheet";
 import { OrderFilterSheet } from "../components/OrderFilterSheet";
 import { useWorkOrderFilters } from "../hooks/useWorkOrderFilters";
 import { useWorkOrders } from "../hooks/useWorkOrders";
@@ -35,12 +37,24 @@ export const WorkOrderListScreen: React.FC = () => {
   const { colors, typography, layout, space } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const params = useLocalSearchParams<{
+    orderCreated?: string;
+    folio?: string;
+  }>();
 
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSegment, setSelectedSegment] =
     useState<WorkOrderCategory>("taller");
-  const [showFloatingToast, setShowFloatingToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(() =>
+    params.orderCreated === "true"
+      ? params.folio
+        ? `Orden ${params.folio} registrada exitosamente.`
+        : "Orden de trabajo registrada exitosamente."
+      : null
+  );
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
+  const [showAddClientSheet, setShowAddClientSheet] = useState(false);
 
   const filters = useWorkOrderFilters();
 
@@ -69,7 +83,6 @@ export const WorkOrderListScreen: React.FC = () => {
     { value: stats.countCotizando, label: "Cotizando" },
     { value: stats.countListas, label: "Listas" },
   ];
-
   const segments = [
     { key: "taller", label: "En taller" },
     { key: "cotizando", label: "Cotizando", count: stats.countCotizando },
@@ -84,10 +97,7 @@ export const WorkOrderListScreen: React.FC = () => {
     hasActiveFilters,
     selectedCategory: selectedSegment,
     onResetFilters: () => filters.resetFilters(() => setSearchQuery("")),
-    onLoadSample: () => {
-      loadSampleOrder();
-      setShowFloatingToast(true);
-    },
+    onNewOrder: () => router.push("/orders/new" as any),
   });
 
   const sectionTitleText =
@@ -101,17 +111,20 @@ export const WorkOrderListScreen: React.FC = () => {
     <View style={[styles.container, { backgroundColor: colors.surfaceApp }]}>
       <AppHeader
         type="Home"
-        onNotificationPress={() => setShowFloatingToast(true)}
+        onNotificationPress={() =>
+          setToastMessage("Notificaciones actualizadas al momento.")
+        }
       />
 
-      {showFloatingToast && (
+      {toastMessage && (
         <Banner
           type="Success"
           layout="Floating"
           title="Listo"
-          message="OT-1049 registrada y lista para el diagnóstico."
+          message={toastMessage}
           dismissible
-          onDismiss={() => setShowFloatingToast(false)}
+          autoDismiss
+          onDismiss={() => setToastMessage(null)}
         />
       )}
 
@@ -157,6 +170,7 @@ export const WorkOrderListScreen: React.FC = () => {
         <SearchBar
           value={searchQuery}
           onChangeText={setSearchQuery}
+          onPress={() => setShowCommandPalette(true)}
           placeholder="Buscar orden, cliente o placas…"
         />
 
@@ -226,7 +240,7 @@ export const WorkOrderListScreen: React.FC = () => {
         <Button
           type="FAB"
           floating={false}
-          label="Recibir auto"
+          label="Nueva Orden"
           iconLeading={<Plus size={18} color="#ffffff" strokeWidth={2.4} />}
           onPress={() => router.push("/orders/new" as any)}
         />
@@ -256,6 +270,31 @@ export const WorkOrderListScreen: React.FC = () => {
         onApply={filters.applyFilters}
         onReset={() => filters.resetFilters(() => setSearchQuery(""))}
       />
+
+      <OrderCommandPaletteSheet
+        visible={showCommandPalette}
+        onClose={() => setShowCommandPalette(false)}
+        orders={filteredOrders}
+        onSelectOrder={(id) =>
+          router.push({ pathname: "/orders/[id]", params: { id } })
+        }
+        onReceiveVehicle={() => router.push("/orders/new" as any)}
+        onNewClient={() => setShowAddClientSheet(true)}
+        onRegisterPayment={() =>
+          setToastMessage("Módulo de caja disponible próximamente.")
+        }
+        onConsultParts={() =>
+          setToastMessage("Catálogo de refacciones disponible próximamente.")
+        }
+      />
+
+      <AddClientSheet
+        visible={showAddClientSheet}
+        onClose={() => setShowAddClientSheet(false)}
+        onClientCreated={(client) =>
+          setToastMessage(`Cliente ${client.name} registrado con éxito.`)
+        }
+      />
     </View>
   );
 };
@@ -267,12 +306,7 @@ const styles = StyleSheet.create({
   dateRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   dateDot: { width: 6, height: 6, borderRadius: 3 },
   statSummarySpacing: { marginTop: 20, marginBottom: 16 },
-  filterBtn: {
-    width: 48,
-    height: 48,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  filterBtn: { width: 48, height: 48, alignItems: "center", justifyContent: "center" },
   ordersList: { gap: 12 },
   fabPosition: { position: "absolute", right: 24, zIndex: 9999 },
 });

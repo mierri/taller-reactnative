@@ -1,19 +1,25 @@
 import { AppHeader, Button, Field, StepProgress } from "@/components";
 import { useTheme } from "@/theme";
 import { useRouter } from "expo-router";
-import { ArrowRight, Camera } from "lucide-react-native";
+import { ArrowRight, Plus } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { CapturePlateSheet } from "../components/CapturePlateSheet";
+import { AddClientSheet } from "../components/AddClientSheet";
+import { ClientSearchDropdown } from "../components/ClientSearchDropdown";
+import { SelectedClientCard } from "../components/SelectedClientCard";
+import {
+  getMockClients,
+  MockClient,
+  searchMockClients,
+} from "../mocks/clients.mock";
 
 export interface NewWorkOrderStepOneScreenProps {
   onSuccess?: () => void;
@@ -22,51 +28,85 @@ export interface NewWorkOrderStepOneScreenProps {
 export const NewWorkOrderStepOneScreen: React.FC<
   NewWorkOrderStepOneScreenProps
 > = () => {
-  const { colors, fonts, layout, radius, typography, space } = useTheme();
+  const { colors, layout, typography } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
-  const [clientName, setClientName] = useState("");
-  const [vehicle, setVehicle] = useState("");
-  const [plate, setPlate] = useState("");
-  const [reason, setReason] = useState("");
-  const [showPlateModal, setShowPlateModal] = useState(false);
+  const [clientQuery, setClientQuery] = useState("");
+  const [selectedClient, setSelectedClient] = useState<MockClient | null>(null);
+  const [phone, setPhone] = useState("");
+  const [searchResults, setSearchResults] = useState<MockClient[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showAddClientModal, setShowAddClientModal] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const [clientError, setClientError] = useState<string | null>(null);
-  const [vehicleError, setVehicleError] = useState<string | null>(null);
+  const handleQueryChange = (text: string) => {
+    setClientQuery(text);
+    if (selectedClient) setSelectedClient(null);
+    if (error) setError(null);
+
+    if (text.trim().length > 0) {
+      const results = searchMockClients(text);
+      setSearchResults(results);
+      setShowDropdown(results.length > 0);
+    } else {
+      const initial = getMockClients().slice(0, 5);
+      setSearchResults(initial);
+      setShowDropdown(true);
+    }
+  };
+
+  const handleFocus = () => {
+    if (!selectedClient) {
+      const results =
+        clientQuery.trim().length > 0
+          ? searchMockClients(clientQuery)
+          : getMockClients().slice(0, 5);
+      setSearchResults(results);
+      setShowDropdown(results.length > 0);
+    }
+  };
+
+  const handleSelectClient = (client: MockClient) => {
+    setSelectedClient(client);
+    setClientQuery(client.name);
+    setPhone(client.phone);
+    setShowDropdown(false);
+    setError(null);
+  };
+
+  const handleClientCreated = (client: MockClient) => {
+    setSelectedClient(client);
+    setClientQuery(client.name);
+    setPhone(client.phone);
+    setShowDropdown(false);
+    setError(null);
+  };
+
+  const handleClearSelected = () => {
+    setSelectedClient(null);
+    setClientQuery("");
+    setPhone("");
+  };
 
   const handleContinue = () => {
-    let hasError = false;
-
-    if (!clientName.trim()) {
-      setClientError("Ingresa el nombre del cliente");
-      hasError = true;
-    } else {
-      setClientError(null);
+    const finalName = selectedClient ? selectedClient.name : clientQuery.trim();
+    if (!finalName) {
+      setError("Selecciona o ingresa un cliente para continuar");
+      return;
     }
-
-    if (!vehicle.trim()) {
-      setVehicleError("Ingresa el vehículo (marca, modelo y año)");
-      hasError = true;
-    } else {
-      setVehicleError(null);
-    }
-
-    if (hasError) return;
 
     router.push({
       pathname: "/orders/new/step-two" as any,
       params: {
-        clientName: clientName.trim(),
-        vehicle: vehicle.trim(),
-        plate: plate.trim().toUpperCase(),
-        reason: reason.trim(),
+        clientId: selectedClient?.id ?? "",
+        clientName: finalName,
+        clientPhone: (selectedClient?.phone ?? phone).trim(),
+        clientType: selectedClient?.clientType ?? "Persona física",
+        presetVehicle: selectedClient?.primaryVehicle ?? "",
+        presetPlate: selectedClient?.plate ?? "",
       },
     });
-  };
-
-  const handlePlateConfirmed = (confirmedPlate: string) => {
-    setPlate(confirmedPlate);
   };
 
   return (
@@ -86,8 +126,8 @@ export const NewWorkOrderStepOneScreen: React.FC<
           contentContainerStyle={[
             styles.scrollContent,
             {
-              paddingHorizontal: 24,
-              paddingBottom: insets.bottom + 100,
+              paddingHorizontal: layout.margin,
+              paddingBottom: Math.max(insets.bottom, 24) + 16,
             },
           ]}
           showsVerticalScrollIndicator={false}
@@ -100,17 +140,17 @@ export const NewWorkOrderStepOneScreen: React.FC<
               NUEVA ORDEN
             </Text>
             <Text style={[typography.caption, { color: colors.textMuted }]}>
-              Paso 1 de 2
+              Paso 1 de 3
             </Text>
           </View>
 
           <View style={styles.progressSection}>
-            <StepProgress totalSteps={2} currentStep={1} />
+            <StepProgress totalSteps={3} currentStep={1} />
           </View>
 
           <View style={styles.headingSection}>
             <Text style={[typography.headingXl, { color: colors.textStrong }]}>
-              ¿Qué vehículo recibimos
+              ¿Quién es el cliente
               <Text style={{ color: colors.brandPrimaryText }}>?</Text>
             </Text>
 
@@ -121,117 +161,73 @@ export const NewWorkOrderStepOneScreen: React.FC<
                 { color: colors.textSecondary },
               ]}
             >
-              Primero, lo esencial. La cotización viene después.
+              Busca un cliente registrado o añade uno nuevo.
             </Text>
           </View>
 
           <View style={styles.formSection}>
-            <Field
-              label="Nombre del cliente"
-              placeholder="¿A nombre de quién?"
-              value={clientName}
-              onChangeText={(text) => {
-                setClientName(text);
-                if (clientError) setClientError(null);
-              }}
-              error={clientError ?? undefined}
-            />
+            {selectedClient ? (
+              <SelectedClientCard
+                client={selectedClient}
+                onClear={handleClearSelected}
+              />
+            ) : (
+              <>
+                <Field
+                  label="Nombre del cliente"
+                  placeholder="¿A nombre de quién?"
+                  value={clientQuery}
+                  onChangeText={handleQueryChange}
+                  onFocus={handleFocus}
+                  error={error ?? undefined}
+                />
 
-            <Field
-              label="Vehículo"
-              placeholder="Ej. Nissan Versa 2022"
-              value={vehicle}
-              onChangeText={(text) => {
-                setVehicle(text);
-                if (vehicleError) setVehicleError(null);
-              }}
-              helper="Marca, modelo y año"
-              error={vehicleError ?? undefined}
-            />
+                <ClientSearchDropdown
+                  results={searchResults}
+                  onSelect={handleSelectClient}
+                  visible={showDropdown}
+                />
 
-            <View style={styles.plateContainer}>
-              <Text
-                style={[
-                  typography.labelLg,
-                  styles.plateLabel,
-                  { color: colors.textLabel },
-                ]}
-              >
-                Placas
-              </Text>
-              <View style={styles.plateRow}>
-                <View style={styles.plateInputWrapper}>
-                  <Field
-                    placeholder="PXM-482-B"
-                    value={plate}
-                    onChangeText={(text) => setPlate(text.toUpperCase())}
-                    autoCapitalize="characters"
-                    inputStyle={{
-                      fontFamily: fonts.mono500,
-                      fontSize: 16,
-                      letterSpacing: 1,
-                    }}
-                  />
-                </View>
+                <Button
+                  type="Secondary"
+                  label="Agregar cliente nuevo"
+                  iconLeading={
+                    <Plus size={18} color={colors.brandPrimaryText} />
+                  }
+                  fullWidth
+                  onPress={() => setShowAddClientModal(true)}
+                />
 
-                <Pressable
-                  onPress={() => setShowPlateModal(true)}
-                  style={({ pressed }) => [
-                    styles.cameraButton,
-                    {
-                      backgroundColor: colors.surfaceTile,
-                      borderColor: colors.borderButton,
-                      borderRadius: radius.lg,
-                      opacity: pressed ? 0.75 : 1,
-                    },
-                  ]}
-                  accessibilityRole="button"
-                  accessibilityLabel="Capturar placa con cámara"
-                >
-                  <Camera
-                    size={22}
-                    color={colors.brandPrimaryText}
-                    strokeWidth={2}
-                  />
-                </Pressable>
-              </View>
+                <Field
+                  label="Teléfono"
+                  placeholder="Para contactar al cliente"
+                  value={phone}
+                  onChangeText={setPhone}
+                  keyboardType="phone-pad"
+                />
+              </>
+            )}
+
+            <View style={styles.actionContainer}>
+              <Button
+                type="Primary"
+                label="Continuar"
+                iconTrailing={
+                  <ArrowRight size={18} color={colors.textOnBrand} />
+                }
+                fullWidth
+                onPress={handleContinue}
+              />
             </View>
-
-            <Field
-              type="Textarea"
-              label="Motivo de ingreso"
-              placeholder="¿Qué necesita revisar el cliente?"
-              value={reason}
-              onChangeText={setReason}
-            />
           </View>
         </ScrollView>
-
-        <View
-          style={[
-            styles.bottomBar,
-            {
-              backgroundColor: colors.surfaceApp,
-              paddingHorizontal: layout.margin,
-              paddingBottom: Math.max(insets.bottom, 16),
-            },
-          ]}
-        >
-          <Button
-            type="Primary"
-            label="Continuar"
-            iconTrailing={<ArrowRight size={18} color={colors.textOnBrand} />}
-            fullWidth
-            onPress={handleContinue}
-          />
-        </View>
       </KeyboardAvoidingView>
 
-      <CapturePlateSheet
-        visible={showPlateModal}
-        onClose={() => setShowPlateModal(false)}
-        initialPlate={plate}
-        onConfirmPlate={handlePlateConfirmed}
+      <AddClientSheet
+        visible={showAddClientModal}
+        onClose={() => setShowAddClientModal(false)}
+        onClientCreated={handleClientCreated}
+        initialName={clientQuery}
       />
     </View>
   );
@@ -251,27 +247,7 @@ const styles = StyleSheet.create({
   headingSection: { gap: 8, marginBottom: 24 },
   subtitle: { lineHeight: 18, paddingVertical: 12 },
   formSection: { gap: 20 },
-  plateContainer: { width: "100%" },
-  plateLabel: { marginBottom: 8 },
-  plateRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 8,
-    width: "100%",
-  },
-  plateInputWrapper: { flex: 1 },
-  cameraButton: {
-    width: 52,
-    height: 52,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  bottomBar: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
+  actionContainer: {
     paddingTop: 12,
   },
 });

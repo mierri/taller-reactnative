@@ -2,18 +2,21 @@ import { useTheme } from "@/theme";
 import { Search, X } from "lucide-react-native";
 import React from "react";
 import {
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
-    ViewStyle,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ViewStyle,
 } from "react-native";
 
 export interface SearchBarProps {
   value: string;
-  onChangeText: (text: string) => void;
+  onChangeText?: (text: string) => void;
   placeholder?: string;
   onClear?: () => void;
+  onPress?: () => void;
+  editable?: boolean;
   style?: ViewStyle;
 }
 
@@ -22,18 +25,20 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   onChangeText,
   placeholder = "Buscar orden, cliente o placas…",
   onClear,
+  onPress,
+  editable = true,
   style,
 }) => {
   const { colors, typography, radius, isDark } = useTheme();
 
   const handleClear = () => {
-    onChangeText("");
+    onChangeText?.("");
     onClear?.();
   };
 
   const bg = isDark ? "rgba(27, 42, 33, 0.6)" : "rgba(255, 255, 255, 0.6)";
 
-  return (
+  const content = (
     <View
       style={[
         styles.container,
@@ -52,6 +57,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor={colors.textPlaceholder}
+        editable={onPress ? false : editable}
+        pointerEvents={onPress ? "none" : undefined}
         style={[
           styles.input,
           typography.bodyLg,
@@ -62,7 +69,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         autoCorrect={false}
       />
 
-      {value.length > 0 && (
+      {value.length > 0 && !onPress && (
         <TouchableOpacity
           onPress={handleClear}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -74,9 +81,22 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       )}
     </View>
   );
+
+  if (onPress) {
+    return (
+      <Pressable onPress={onPress} style={styles.pressableWrapper}>
+        {content}
+      </Pressable>
+    );
+  }
+
+  return content;
 };
 
 const styles = StyleSheet.create({
+  pressableWrapper: {
+    width: "100%",
+  },
   container: {
     height: 48,
     borderWidth: 1,

@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { usePathname } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/theme";
 import {
@@ -41,6 +42,17 @@ export const CustomBottomNav: React.FC<CustomBottomNavProps> = ({
 }) => {
   const { colors, typography, radius } = useTheme();
   const insets = useSafeAreaInsets();
+  const pathname = usePathname();
+
+  if (
+    pathname &&
+    (pathname.includes("/new") ||
+      pathname.includes("step-two") ||
+      pathname.includes("step-three"))
+  ) {
+    return null;
+  }
+
   const bottomPadding = Math.max(insets.bottom, 8);
 
   return (

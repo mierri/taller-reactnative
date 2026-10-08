@@ -111,11 +111,13 @@ export const MOCK_WORK_ORDERS: WorkOrderDto[] = [
   },
 ];
 
+let dynamicOrders = [...MOCK_WORK_ORDERS];
+
 export function getMockWorkOrders(query?: ListWorkOrdersQuery): {
   data: WorkOrderDto[];
   total: number;
 } {
-  let filtered = [...MOCK_WORK_ORDERS];
+  let filtered = [...dynamicOrders];
 
   if (query?.operationalStatus) {
     filtered = filtered.filter(
@@ -152,3 +154,32 @@ export function getMockWorkOrders(query?: ListWorkOrdersQuery): {
     total: filtered.length,
   };
 }
+
+export function addMockWorkOrder(order: Partial<WorkOrderDto>): WorkOrderDto {
+  const nextNumber = 1050 + dynamicOrders.length;
+  const newOrder: WorkOrderDto = {
+    id: `wo-${Date.now()}`,
+    workshopId: "ws-1",
+    code: `OT-${nextNumber}`,
+    clientId: order.clientId || `cli-${Date.now()}`,
+    clientName: order.clientName || "Cliente",
+    vehicleId: order.vehicleId || `veh-${Date.now()}`,
+    vehicleDescription:
+      order.vehicleDescription || "Vehículo sin descripción",
+    serviceAdvisorId: order.serviceAdvisorId || "adv-1",
+    serviceAdvisorName: order.serviceAdvisorName || "Daniel",
+    operationalStatus: OperationalStatus.RECIBIDA,
+    commercialStatus: CommercialStatus.SIN_COTIZAR,
+    billingStatus: BillingStatus.PENDIENTE,
+    estaRetrasada: false,
+    portalToken: `token-${Date.now()}`,
+    failureDescription: order.failureDescription || "Recepción general",
+    estimatedDelivery:
+      order.estimatedDelivery || new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  dynamicOrders = [newOrder, ...dynamicOrders];
+  return newOrder;
+}
+

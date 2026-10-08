@@ -95,6 +95,7 @@ export const Field: React.FC<FieldProps> = ({
         placeholder={placeholder}
         placeholderTextColor={colors.textPlaceholder}
         editable={isSelect ? false : editable}
+        pointerEvents={isSelect ? "none" : undefined}
         multiline={isTextarea}
         textAlignVertical={isTextarea ? "top" : "center"}
         onFocus={handleFocus}
