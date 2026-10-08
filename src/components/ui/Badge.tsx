@@ -1,136 +1,101 @@
-import React from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
-import { useTheme } from '@/theme';
+import React from "react";
+import { View, Text, StyleSheet, ViewStyle } from "react-native";
+import { Clock } from "lucide-react-native";
+import { useTheme } from "@/theme";
+import type { StatusFamily } from "@/theme/tokens";
 
-export type BadgeStatus =
-  | 'neutral'
-  | 'active'
-  | 'success'
-  | 'warning'
-  | 'danger'
-  | 'info'
-  | 'late'
-  | 'archived'
-  | 'recibida'
-  | 'cotizando'
-  | 'reparacion'
-  | 'lista'
-  | 'entregada';
+export type BadgeStatus = StatusFamily;
 
 export interface BadgeProps {
   label: string;
   status?: BadgeStatus;
+  family?: StatusFamily;
   showDot?: boolean;
   style?: ViewStyle;
 }
 
 export const Badge: React.FC<BadgeProps> = ({
   label,
-  status = 'neutral',
+  status,
+  family,
   showDot = true,
   style,
 }) => {
-  const { colors } = useTheme();
+  const { statusColors, typography, radius } = useTheme();
+  const activeFamily: StatusFamily = family ?? status ?? "neutral";
+  const tone = statusColors(activeFamily);
+  const isLate = activeFamily === "late";
 
-  const getColorScheme = () => {
-    switch (status) {
-      case 'active':
-      case 'recibida':
-        return {
-          bg: colors.statusActiveBg,
-          fg: colors.statusActiveFg,
-          border: colors.statusActiveBorder,
-        };
-      case 'success':
-      case 'lista':
-      case 'entregada':
-        return {
-          bg: colors.statusSuccessBg,
-          fg: colors.statusSuccessFg,
-          border: colors.statusSuccessBorder,
-        };
-      case 'warning':
-      case 'cotizando':
-        return {
-          bg: colors.statusWarningBg,
-          fg: colors.statusWarningFg,
-          border: colors.statusWarningBorder,
-        };
-      case 'danger':
-        return {
-          bg: colors.statusDangerBg,
-          fg: colors.statusDangerFg,
-          border: colors.statusDangerBorder,
-        };
-      case 'late':
-        return {
-          bg: colors.statusLateBg,
-          fg: colors.statusLateFg,
-          border: colors.statusLateBorder,
-        };
-      case 'info':
-      case 'reparacion':
-        return {
-          bg: colors.statusInfoBg,
-          fg: colors.statusInfoFg,
-          border: colors.statusInfoBorder,
-        };
-      case 'archived':
-        return {
-          bg: colors.statusArchivedBg,
-          fg: colors.statusArchivedFg,
-          border: colors.statusArchivedBorder,
-        };
-      case 'neutral':
-      default:
-        return {
-          bg: colors.statusNeutralBg,
-          fg: colors.statusNeutralFg,
-          border: colors.statusNeutralBorder,
-        };
-    }
-  };
-
-  const scheme = getColorScheme();
+  if (isLate) {
+    return (
+      <View
+        style={[
+          styles.lateBadge,
+          {
+            backgroundColor: tone.bg,
+            borderRadius: radius.sm,
+          },
+          style,
+        ]}
+      >
+        <Clock size={12} color={tone.fg} strokeWidth={2.2} />
+        <Text
+          style={[
+            typography.captionMedium,
+            styles.lateText,
+            { color: tone.fg },
+          ]}
+        >
+          {label.toUpperCase()}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View
       style={[
         styles.badge,
         {
-          backgroundColor: scheme.bg,
-          borderColor: scheme.border,
+          backgroundColor: tone.bg,
+          borderColor: tone.border,
+          borderRadius: radius.sm,
         },
         style,
       ]}
     >
-      {showDot && (
-        <View style={[styles.dot, { backgroundColor: scheme.fg }]} />
-      )}
-      <Text style={[styles.text, { color: scheme.fg }]}>{label}</Text>
+      {showDot && <View style={[styles.dot, { backgroundColor: tone.fg }]} />}
+      <Text style={[typography.captionMedium, { color: tone.fg }]}>
+        {label}
+      </Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
     borderWidth: 1,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
+  },
+  lateBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    alignSelf: "flex-start",
   },
   dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
-  text: {
-    fontSize: 11,
-    lineHeight: 16.5,
-    fontWeight: '500',
+  lateText: {
+    letterSpacing: 0.2,
   },
 });

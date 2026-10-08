@@ -27,12 +27,12 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
   rightAction,
   style,
 }) => {
-  const { colors } = useTheme();
+  const { colors, typography } = useTheme();
 
   return (
     <View style={[styles.container, style]}>
       <Text
-        style={[styles.eyebrow, { color: colors.textLabel }]}
+        style={[typography.eyebrow, { color: colors.textMuted }]}
         numberOfLines={1}
       >
         {title.toUpperCase()}
@@ -40,7 +40,7 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
 
       <View style={styles.rightContainer}>
         {count !== undefined && (
-          <Text style={[styles.countText, { color: colors.textSecondary }]}>
+          <Text style={[typography.caption, { color: colors.textMuted }]}>
             {formatCountText(count, countSingular, countPlural)}
           </Text>
         )}
@@ -56,22 +56,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
-    paddingVertical: 32,
-  },
-  eyebrow: {
-    fontSize: 10,
-    lineHeight: 15,
-    fontWeight: "600",
-    letterSpacing: 1.5,
+    minHeight: 48,
+    gap: 8,
   },
   rightContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-  },
-  countText: {
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: "500",
+    gap: 4,
   },
 });

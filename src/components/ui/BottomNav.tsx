@@ -39,25 +39,18 @@ export const CustomBottomNav: React.FC<CustomBottomNavProps> = ({
   descriptors,
   navigation,
 }) => {
-  const { colors, isDark } = useTheme();
+  const { colors, typography, radius } = useTheme();
   const insets = useSafeAreaInsets();
-  const bottomPadding = Math.max(insets.bottom, 16);
-
-  const bg = isDark ? "rgba(22, 33, 27, 0.95)" : "rgba(244, 246, 239, 0.95)";
-
-  const borderTopColor = isDark
-    ? "rgba(255, 255, 255, 0.1)"
-    : "rgba(255, 255, 255, 0.6)";
+  const bottomPadding = Math.max(insets.bottom, 8);
 
   return (
     <View
       style={[
         styles.navContainer,
         {
-          backgroundColor: bg,
-          borderTopColor,
+          backgroundColor: colors.surfaceNav,
+          borderTopColor: colors.borderInput,
           paddingBottom: bottomPadding,
-          minHeight: 73 + (insets.bottom > 0 ? insets.bottom - 4 : 8),
         },
       ]}
     >
@@ -99,8 +92,9 @@ export const CustomBottomNav: React.FC<CustomBottomNavProps> = ({
             });
           };
 
-          const iconColor = isFocused ? colors.brandPrimary : colors.textMuted;
-          const textColor = isFocused ? colors.brandPrimary : colors.textMuted;
+          const activeColor = colors.brandPrimaryText;
+          const inactiveColor = colors.textMuted;
+          const itemColor = isFocused ? activeColor : inactiveColor;
 
           return (
             <TouchableOpacity
@@ -110,36 +104,29 @@ export const CustomBottomNav: React.FC<CustomBottomNavProps> = ({
               accessibilityLabel={options.tabBarAccessibilityLabel}
               onPress={onPress}
               onLongPress={onLongPress}
-              style={styles.navItem}
+              style={[styles.navItem, { borderRadius: radius.md }]}
               activeOpacity={0.7}
             >
-              <View style={styles.iconWrapper}>
-                <IconComponent size={21} color={iconColor} />
-              </View>
+              <IconComponent size={24} color={itemColor} />
 
               <Text
-                style={[
-                  styles.label,
-                  {
-                    color: textColor,
-                    fontWeight: isFocused ? "600" : "500",
-                  },
-                ]}
+                style={[typography.captionMedium, { color: itemColor }]}
                 numberOfLines={1}
               >
                 {config.label}
               </Text>
 
-              <View style={styles.dotContainer}>
-                {isFocused && (
-                  <View
-                    style={[
-                      styles.activeDot,
-                      { backgroundColor: colors.brandPrimary },
-                    ]}
-                  />
-                )}
-              </View>
+              {isFocused && (
+                <View
+                  style={[
+                    styles.activeDot,
+                    {
+                      backgroundColor: activeColor,
+                      borderRadius: radius.full,
+                    },
+                  ]}
+                />
+              )}
             </TouchableOpacity>
           );
         })}
@@ -150,43 +137,28 @@ export const CustomBottomNav: React.FC<CustomBottomNavProps> = ({
 
 const styles = StyleSheet.create({
   navContainer: {
-    paddingTop: 10,
+    paddingTop: 8,
     paddingHorizontal: 12,
-    borderTopWidth: 1.2,
-    justifyContent: "center",
-    alignItems: "center",
+    borderTopWidth: 1,
   },
   itemsRow: {
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
     width: "100%",
+    height: 56,
   },
   navItem: {
-    width: 75,
+    flex: 1,
+    height: 56,
     alignItems: "center",
     justifyContent: "center",
-  },
-  iconWrapper: {
-    height: 22,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  label: {
-    fontSize: 10,
-    lineHeight: 15,
-    marginTop: 2,
-    textAlign: "center",
-  },
-  dotContainer: {
-    height: 5,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 1,
+    gap: 4,
+    position: "relative",
   },
   activeDot: {
+    position: "absolute",
+    bottom: 2,
     width: 4,
     height: 4,
-    borderRadius: 2,
   },
 });

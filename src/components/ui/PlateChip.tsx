@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet, Platform, ViewStyle } from 'react-native';
-import { useTheme } from '@/theme';
+import React from "react";
+import { View, Text, StyleSheet, ViewStyle } from "react-native";
+import { useTheme } from "@/theme";
 
 export interface PlateChipProps {
   plate: string;
@@ -8,29 +8,20 @@ export interface PlateChipProps {
 }
 
 export const PlateChip: React.FC<PlateChipProps> = ({ plate, style }) => {
-  const { colors } = useTheme();
+  const { colors, typography, radius } = useTheme();
 
   return (
     <View
       style={[
         styles.chip,
-        { backgroundColor: colors.surfaceChipNeutral },
+        {
+          backgroundColor: colors.surfaceChipNeutral,
+          borderRadius: radius.xs,
+        },
         style,
       ]}
     >
-      <Text
-        style={[
-          styles.text,
-          {
-            color: colors.textStrong,
-            fontFamily: Platform.select({
-              ios: 'Menlo',
-              android: 'monospace',
-              default: 'monospace',
-            }),
-          },
-        ]}
-      >
+      <Text style={[typography.monoPlate, { color: colors.textSecondary }]}>
         {plate}
       </Text>
     </View>
@@ -39,18 +30,10 @@ export const PlateChip: React.FC<PlateChipProps> = ({ plate, style }) => {
 
 const styles = StyleSheet.create({
   chip: {
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 6,
-    alignSelf: 'flex-start',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 9,
-    lineHeight: 13.5,
-    letterSpacing: 0.5,
-    fontWeight: '600',
+    alignSelf: "flex-start",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
-

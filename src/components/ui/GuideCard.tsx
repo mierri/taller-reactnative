@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Pressable,
   View,
@@ -6,8 +6,8 @@ import {
   StyleSheet,
   StyleProp,
   ViewStyle,
-} from 'react-native';
-import { useTheme } from '@/theme';
+} from "react-native";
+import { useTheme } from "@/theme";
 
 export interface GuideCardProps {
   icon?: React.ReactNode;
@@ -24,7 +24,7 @@ export const GuideCard: React.FC<GuideCardProps> = ({
   onPress,
   style,
 }) => {
-  const { colors, radii, spacing, shadows } = useTheme();
+  const { colors, radius, shadows, typography } = useTheme();
 
   return (
     <Pressable
@@ -36,22 +36,19 @@ export const GuideCard: React.FC<GuideCardProps> = ({
         {
           backgroundColor: colors.surfaceCard,
           borderColor: colors.borderCard,
-          borderRadius: radii.card, // radio 22
-          padding: spacing[5], // p 20 de la especificación
+          borderRadius: radius.xl,
           opacity: pressed ? 0.9 : 1,
         },
         style,
       ]}
     >
-      {/* Tile 40x40 */}
       {icon && (
         <View
           style={[
             styles.tile,
             {
               backgroundColor: colors.surfaceTile,
-              borderRadius: radii.md, // radio 12
-              marginBottom: spacing[3],
+              borderRadius: radius.md,
             },
           ]}
         >
@@ -59,18 +56,11 @@ export const GuideCard: React.FC<GuideCardProps> = ({
         </View>
       )}
 
-      {/* Título 14/20 600 */}
-      <Text style={[styles.title, { color: colors.textStrong }]}>
+      <Text style={[typography.buttonMd, { color: colors.textStrong }]}>
         {title}
       </Text>
 
-      {/* Texto 12/19.5 */}
-      <Text
-        style={[
-          styles.text,
-          { color: colors.textSecondary, marginTop: spacing[1] },
-        ]}
-      >
+      <Text style={[typography.bodyMd, { color: colors.textSecondary }]}>
         {text}
       </Text>
     </Pressable>
@@ -80,22 +70,14 @@ export const GuideCard: React.FC<GuideCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
-    width: '100%',
+    width: "100%",
+    padding: 20,
+    gap: 12,
   },
   tile: {
     width: 40,
     height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: '600', // 14/20 600
-  },
-  text: {
-    fontSize: 12,
-    lineHeight: 19.5, // 12/19.5
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
-

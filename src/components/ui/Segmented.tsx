@@ -1,12 +1,12 @@
+import { useTheme } from "@/theme";
 import React from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ViewStyle,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    ViewStyle,
 } from "react-native";
-import { useTheme } from "@/theme";
 
 export interface SegmentedItem {
   key: string;
@@ -27,13 +27,16 @@ export const Segmented: React.FC<SegmentedProps> = ({
   onChange,
   style,
 }) => {
-  const { colors, shadows } = useTheme();
+  const { colors, shadows, typography, radius } = useTheme();
 
   return (
     <View
       style={[
         styles.container,
-        { backgroundColor: colors.surfaceTrack },
+        {
+          backgroundColor: colors.surfaceTrack,
+          borderRadius: radius.lg,
+        },
         style,
       ]}
     >
@@ -47,8 +50,8 @@ export const Segmented: React.FC<SegmentedProps> = ({
             onPress={() => onChange(item.key)}
             style={[
               styles.item,
+              { borderRadius: radius.md },
               isActive && [
-                styles.activeItem,
                 { backgroundColor: colors.brandPrimary },
                 shadows.segmented,
               ],
@@ -57,10 +60,9 @@ export const Segmented: React.FC<SegmentedProps> = ({
           >
             <Text
               style={[
-                styles.itemText,
+                typography.labelMd,
                 {
-                  color: isActive ? "#ffffff" : colors.textLabel,
-                  fontWeight: isActive ? "600" : "500",
+                  color: isActive ? colors.textOnBrand : colors.textSecondary,
                 },
               ]}
               numberOfLines={1}
@@ -73,6 +75,7 @@ export const Segmented: React.FC<SegmentedProps> = ({
                 style={[
                   styles.countChip,
                   {
+                    borderRadius: radius.xs,
                     backgroundColor: isActive
                       ? "rgba(255, 255, 255, 0.25)"
                       : colors.surfaceChipCount,
@@ -81,9 +84,11 @@ export const Segmented: React.FC<SegmentedProps> = ({
               >
                 <Text
                   style={[
-                    styles.countText,
+                    typography.captionMedium,
                     {
-                      color: isActive ? "#ffffff" : colors.textStrong,
+                      color: isActive
+                        ? colors.textOnBrand
+                        : colors.textSecondary,
                     },
                   ]}
                 >
@@ -101,37 +106,25 @@ export const Segmented: React.FC<SegmentedProps> = ({
 const styles = StyleSheet.create({
   container: {
     padding: 6,
-    borderRadius: 16,
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
+    height: 56,
+    gap: 8,
   },
   item: {
     flex: 1,
-    height: 44,
-    borderRadius: 12,
+    height: 48,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 6,
-    paddingHorizontal: 8,
-  },
-  activeItem: {},
-  itemText: {
-    fontSize: 11,
-    lineHeight: 16.5,
+    gap: 8,
+    paddingHorizontal: 12,
   },
   countChip: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 10,
-    minWidth: 18,
+    height: 20,
+    paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
-  },
-  countText: {
-    fontSize: 8,
-    lineHeight: 12,
-    fontWeight: "600",
   },
 });

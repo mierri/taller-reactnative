@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
-import { ClipboardList } from 'lucide-react-native';
-import { useTheme } from '@/theme';
-import { Button, ButtonType } from './Button';
+import React from "react";
+import { View, Text, StyleSheet, ViewStyle } from "react-native";
+import { ClipboardList } from "lucide-react-native";
+import { useTheme } from "@/theme";
+import { Button, ButtonType } from "./Button";
 
 export interface EmptyStateProps {
   icon?: React.ReactNode;
@@ -16,14 +16,14 @@ export interface EmptyStateProps {
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
   icon,
-  title = 'Tu primer vehículo empieza aquí',
-  description = 'Toca Recibir auto para registrar al cliente y comenzar el diagnóstico.',
+  title = "Tu primer vehículo empieza aquí",
+  description = "Toca Recibir auto para registrar al cliente y comenzar el diagnóstico.",
   actionLabel,
-  actionButtonType = 'Secondary',
+  actionButtonType = "Secondary",
   onActionPress,
   style,
 }) => {
-  const { colors, radii } = useTheme();
+  const { colors, typography, radius } = useTheme();
 
   return (
     <View
@@ -31,25 +31,32 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         styles.container,
         {
           borderColor: colors.borderDashed,
-          borderRadius: radii.xl ?? 24,
+          borderRadius: radius.xl,
         },
         style,
       ]}
     >
-      <View
-        style={[
-          styles.iconTile,
-          { backgroundColor: colors.surfaceTile },
-        ]}
-      >
-        {icon ?? <ClipboardList size={28} color={colors.brandPrimary} />}
+      <View style={styles.iconContainer}>
+        {icon ?? <ClipboardList size={32} color={colors.textMuted} />}
       </View>
 
-      <Text style={[styles.title, { color: colors.textStrong }]}>
+      <Text
+        style={[
+          typography.buttonMd,
+          styles.title,
+          { color: colors.textStrong },
+        ]}
+      >
         {title}
       </Text>
 
-      <Text style={[styles.description, { color: colors.textSecondary }]}>
+      <Text
+        style={[
+          typography.bodyMd,
+          styles.description,
+          { color: colors.textSecondary },
+        ]}
+      >
         {description}
       </Text>
 
@@ -68,39 +75,31 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: 1.2,
-    borderStyle: 'dashed',
+    borderWidth: 1,
+    borderStyle: "dashed",
     paddingVertical: 40,
     paddingHorizontal: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    gap: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    gap: 8,
+    backgroundColor: "transparent",
   },
-  iconTile: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+  iconContainer: {
+    width: 32,
+    height: 32,
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 4,
   },
   title: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: '600',
-    textAlign: 'center',
+    textAlign: "center",
   },
   description: {
-    fontSize: 12,
-    lineHeight: 19.5,
-    textAlign: 'center',
+    textAlign: "center",
     maxWidth: 280,
   },
   actionContainer: {
-    marginTop: 8,
-    width: '100%',
-    maxWidth: 240,
+    marginTop: 12,
   },
 });
-

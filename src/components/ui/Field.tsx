@@ -15,25 +15,15 @@ import {
 export type FieldType = "Text" | "Select" | "Textarea";
 
 export interface FieldProps extends Omit<TextInputProps, "style"> {
-  /** Variante del campo */
   type?: FieldType;
-  /** Etiqueta sobre el campo */
   label?: string;
-  /** Texto o booleano de ayuda */
   helper?: string | boolean;
-  /** Mensaje de error (activa State=Error) */
   error?: string | boolean;
-  /** Icono al final de la caja */
   trailingIcon?: React.ReactNode;
-  /** Icono al inicio de la caja */
   leadingIcon?: React.ReactNode;
-  /** Callback al presionar (para Select o campos accionables) */
   onPress?: () => void;
-  /** Estilos adicionales para el contenedor exterior */
   containerStyle?: ViewStyle;
-  /** Estilos adicionales para la caja */
   boxStyle?: ViewStyle;
-  /** Estilos adicionales para el input */
   inputStyle?: TextStyle;
 }
 
@@ -55,7 +45,7 @@ export const Field: React.FC<FieldProps> = ({
   editable = true,
   ...inputProps
 }) => {
-  const { colors, radii, spacing } = useTheme();
+  const { colors, radius, typography } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
 
   const isTextarea = type === "Textarea";
@@ -63,10 +53,11 @@ export const Field: React.FC<FieldProps> = ({
   const hasError = Boolean(error);
   const isFilled = Boolean(value && String(value).length > 0);
 
+  const borderWidth = isFocused ? 2 : hasError ? 1.5 : 1;
   const borderColor = hasError
     ? colors.statusDangerFg
     : isFocused
-      ? colors.brandPrimary
+      ? colors.borderFocus
       : colors.borderInput;
 
   const handleFocus = (e: any) => {
@@ -79,28 +70,25 @@ export const Field: React.FC<FieldProps> = ({
     onBlur?.(e);
   };
 
-  const content = (
+  const controlContent = (
     <View
       style={[
         styles.box,
         {
           backgroundColor: colors.surfaceInput,
           borderColor,
-          borderRadius: radii.lg,
-          paddingHorizontal: spacing[4],
-          minHeight: isTextarea ? 110 : 52,
+          borderWidth,
+          borderRadius: radius.lg,
+          paddingHorizontal: 16,
+          minHeight: isTextarea ? 104 : 52,
           height: isTextarea ? undefined : 52,
-          paddingVertical: isTextarea ? 14 : 0,
+          paddingVertical: isTextarea ? 16 : 0,
         },
         isTextarea && styles.boxTextarea,
         boxStyle,
       ]}
     >
-      {leadingIcon && (
-        <View style={[styles.leading, { marginRight: spacing[2] }]}>
-          {leadingIcon}
-        </View>
-      )}
+      {leadingIcon && <View style={styles.leading}>{leadingIcon}</View>}
 
       <TextInput
         value={value}
@@ -113,48 +101,65 @@ export const Field: React.FC<FieldProps> = ({
         onBlur={handleBlur}
         style={[
           styles.input,
+          typography.input,
           {
             color: isFilled ? colors.textStrong : colors.textPlaceholder,
             height: isTextarea ? undefined : "100%",
           },
-          isTextarea && styles.inputTextarea,
           inputStyle,
+          !isTextarea && styles.singleLine,
         ]}
         {...inputProps}
       />
 
       {isSelect && !trailingIcon && (
-        <ChevronDown size={20} color={colors.textSecondary} />
+        <ChevronDown size={20} color={colors.textMuted} />
       )}
 
-      {trailingIcon && (
-        <View style={[styles.trailing, { marginLeft: spacing[2] }]}>
-          {trailingIcon}
-        </View>
-      )}
+      {trailingIcon && <View style={styles.trailing}>{trailingIcon}</View>}
     </View>
   );
 
   return (
     <View style={[styles.container, containerStyle]}>
       {label && (
-        <Text style={[styles.label, { color: colors.textLabel }]}>{label}</Text>
+        <Text
+          style={[
+            typography.labelLg,
+            styles.label,
+            { color: colors.textLabel },
+          ]}
+        >
+          {label}
+        </Text>
       )}
 
       {isSelect ? (
         <Pressable onPress={onPress} disabled={!editable}>
-          {content}
+          {controlContent}
         </Pressable>
       ) : (
-        content
+        controlContent
       )}
 
       {typeof error === "string" && error.length > 0 ? (
-        <Text style={[styles.helper, { color: colors.statusDangerFg }]}>
+        <Text
+          style={[
+            typography.bodyMd,
+            styles.helper,
+            { color: colors.statusDangerFg },
+          ]}
+        >
           {error}
         </Text>
       ) : typeof helper === "string" && helper.length > 0 ? (
-        <Text style={[styles.helper, { color: colors.textMuted }]}>
+        <Text
+          style={[
+            typography.bodyMd,
+            styles.helper,
+            { color: colors.textSecondary },
+          ]}
+        >
           {helper}
         </Text>
       ) : null}
@@ -165,50 +170,48 @@ export const Field: React.FC<FieldProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+    gap: 8,
   },
   label: {
-    fontSize: 13,
-    lineHeight: 19.5,
-    fontWeight: "500",
-    paddingBottom: 10,
+    marginBottom: 0,
   },
   box: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1.2,
+    gap: 12,
   },
   boxTextarea: {
     alignItems: "flex-start",
-    justifyContent: "flex-start",
   },
   input: {
     flex: 1,
-    fontSize: 16,
-    fontWeight: "400",
     paddingTop: 0,
     paddingBottom: 0,
     paddingLeft: 0,
     paddingRight: 0,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
     margin: 0,
     includeFontPadding: false,
-    textAlignVertical: "center",
   },
-  inputTextarea: {
-    minHeight: 80,
-    lineHeight: 24,
+  singleLine: {
+    height: "100%",
+    lineHeight: undefined,
+    textAlignVertical: "center",
     paddingTop: 0,
+    paddingBottom: 0,
+    paddingVertical: 0,
   },
   leading: {
     justifyContent: "center",
+    alignItems: "center",
   },
   trailing: {
     justifyContent: "center",
+    alignItems: "center",
   },
   helper: {
-    fontSize: 12,
-    lineHeight: 16,
-    marginTop: 6,
-    paddingLeft: 4,
+    marginTop: 2,
+    paddingLeft: 2,
   },
 });

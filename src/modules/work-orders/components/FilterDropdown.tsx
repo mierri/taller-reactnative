@@ -1,6 +1,4 @@
-import { useTheme } from '@/theme';
-import { Check, ChevronDown } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Animated,
   LayoutAnimation,
@@ -11,7 +9,9 @@ import {
   TouchableOpacity,
   UIManager,
   View,
-} from 'react-native';
+} from "react-native";
+import { Check, ChevronDown } from "lucide-react-native";
+import { useTheme } from "@/theme";
 
 export interface FilterDropdownOption {
   key: string;
@@ -37,12 +37,12 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   selectedKey,
   onSelect,
 }) => {
-  const { colors, radii } = useTheme();
+  const { colors, radius, typography } = useTheme();
   const [animValue] = useState(() => new Animated.Value(isOpen ? 1 : 0));
 
   useEffect(() => {
     if (
-      Platform.OS === 'android' &&
+      Platform.OS === "android" &&
       UIManager.setLayoutAnimationEnabledExperimental
     ) {
       UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -58,7 +58,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
 
   const chevronRotate = animValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
+    outputRange: ["0deg", "180deg"],
   });
 
   const maxHeightAnim = animValue.interpolate({
@@ -68,7 +68,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
 
   const borderWidthAnim = animValue.interpolate({
     inputRange: [0, 0.05, 1],
-    outputRange: [0, 1.2, 1.2],
+    outputRange: [0, 1, 1],
   });
 
   const marginTopAnim = animValue.interpolate({
@@ -78,7 +78,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
 
   return (
     <View style={styles.fieldGroup}>
-      <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
+      <Text style={[typography.labelLg, { color: colors.textLabel }]}>
         {label}
       </Text>
 
@@ -87,29 +87,30 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
           styles.selectBox,
           {
             backgroundColor: colors.surfaceInput,
-            borderColor: isOpen ? colors.brandPrimary : colors.borderInput,
-            borderRadius: radii.lg,
+            borderColor: isOpen ? colors.borderFocus : colors.borderInput,
+            borderWidth: isOpen ? 2 : 1,
+            borderRadius: radius.lg,
           },
         ]}
         onPress={onToggle}
         activeOpacity={0.7}
       >
-        <Text style={[styles.selectValue, { color: colors.textStrong }]}>
+        <Text style={[typography.input, { color: colors.textStrong }]}>
           {valueLabel}
         </Text>
         <Animated.View style={{ transform: [{ rotate: chevronRotate }] }}>
-          <ChevronDown size={18} color={colors.textStrong} />
+          <ChevronDown size={20} color={colors.textMuted} />
         </Animated.View>
       </TouchableOpacity>
 
       <Animated.View
-        pointerEvents={isOpen ? 'auto' : 'none'}
+        pointerEvents={isOpen ? "auto" : "none"}
         style={[
           styles.menuDropdown,
           {
             backgroundColor: colors.surfaceInput,
             borderColor: colors.borderInput,
-            borderRadius: radii.md,
+            borderRadius: radius.md,
             maxHeight: maxHeightAnim,
             opacity: animValue,
             borderWidth: borderWidthAnim,
@@ -137,19 +138,19 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               >
                 <Text
                   style={[
-                    styles.menuItemText,
+                    typography.bodyLg,
                     {
                       color: isSelected
-                        ? colors.brandPrimary
+                        ? colors.brandPrimaryText
                         : colors.textStrong,
-                      fontWeight: isSelected ? '600' : '400',
+                      fontWeight: isSelected ? "600" : "400",
                     },
                   ]}
                 >
                   {opt.label}
                 </Text>
                 {isSelected && (
-                  <Check size={16} color={colors.brandPrimary} />
+                  <Check size={16} color={colors.brandPrimaryText} />
                 )}
               </TouchableOpacity>
             );
@@ -163,39 +164,26 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
 const styles = StyleSheet.create({
   fieldGroup: {
     gap: 8,
-    width: '100%',
-  },
-  fieldLabel: {
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: '500',
+    width: "100%",
   },
   selectBox: {
     height: 52,
-    borderWidth: 1.2,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
   },
-  selectValue: {
-    fontSize: 15,
-    fontWeight: '500',
-  },
   menuDropdown: {
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   dropdownScroll: {
     maxHeight: 160,
   },
   menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-  },
-  menuItemText: {
-    fontSize: 14,
   },
 });

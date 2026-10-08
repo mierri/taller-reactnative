@@ -1,22 +1,22 @@
+import React, { useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { AlertCircle, ArrowRight, Eye, EyeOff } from "lucide-react-native";
 import { AppLogo, Button, Field } from "@/components";
 import { loginRequest } from "@/services/auth.service";
 import { useTheme } from "@/theme";
-import { useRouter } from "expo-router";
-import { AlertCircle, ArrowRight, Eye, EyeOff } from "lucide-react-native";
-import { useState } from "react";
-import {
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
-  const { colors, spacing, radii } = useTheme();
+  const { colors, layout, radius, typography } = useTheme();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -35,18 +35,12 @@ export default function LoginScreen() {
     setLoading(true);
 
     try {
-      const result = await loginRequest({
+      await loginRequest({
         email: email.trim(),
         password: password.trim(),
       });
-
-      console.log(
-        "Sesión iniciada con éxito. Token recibido:",
-        !!result.accessToken,
-      );
       router.replace("/(tabs)" as any);
     } catch (err: any) {
-      console.warn("Error en login:", err);
       if (err?.error === "NETWORK_ERROR" || err?.statusCode === 0) {
         setErrorMessage("No se pudo conectar con el servidor");
       } else if (err?.statusCode === 401) {
@@ -71,25 +65,23 @@ export default function LoginScreen() {
           contentContainerStyle={[
             styles.scrollContent,
             {
-              paddingHorizontal: spacing[6],
+              paddingHorizontal: layout.margin,
               paddingTop: 112,
-              paddingBottom: spacing[8],
+              paddingBottom: 32,
             },
           ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={[styles.logoContainer]}>
+          <View style={styles.logoContainer}>
             <AppLogo variant="full" size={56} />
           </View>
 
           <Text
             style={[
+              typography.eyebrow,
               styles.eyebrow,
-              {
-                color: colors.textLabel,
-                marginTop: spacing[8],
-              },
+              { color: colors.textLabel },
             ]}
           >
             BIENVENIDO A PITSTOP
@@ -97,22 +89,19 @@ export default function LoginScreen() {
 
           <Text
             style={[
+              typography.headingXl,
               styles.title,
-              { color: colors.textStrong, marginTop: spacing[4] },
+              { color: colors.textStrong },
             ]}
           >
-            Tu taller.{"\n"}
-            Todo en orden.
+            {"Tu taller.\nTodo en orden."}
           </Text>
 
           <Text
             style={[
+              typography.bodyMd,
               styles.subtitle,
-              {
-                color: colors.textSecondary,
-                marginTop: spacing[4],
-                marginBottom: spacing[8],
-              },
+              { color: colors.textSecondary },
             ]}
           >
             Inicia sesión para continuar donde te quedaste.
@@ -125,23 +114,24 @@ export default function LoginScreen() {
                 {
                   backgroundColor: colors.statusDangerBg,
                   borderColor: colors.statusDangerBorder,
-                  borderRadius: radii.md,
-                  padding: spacing[3],
-                  marginBottom: spacing[4],
-                  gap: spacing[2],
+                  borderRadius: radius.md,
                 },
               ]}
             >
               <AlertCircle size={18} color={colors.statusDangerFg} />
               <Text
-                style={[styles.errorText, { color: colors.statusDangerFg }]}
+                style={[
+                  typography.bodyMd,
+                  styles.errorText,
+                  { color: colors.statusDangerFg },
+                ]}
               >
                 {errorMessage}
               </Text>
             </View>
           )}
 
-          <View style={[styles.form, { gap: spacing[5] }]}>
+          <View style={styles.form}>
             <Field
               label="Correo electrónico"
               placeholder="tu@correo.com"
@@ -167,7 +157,7 @@ export default function LoginScreen() {
               trailingIcon={
                 <Pressable
                   onPress={() => setShowPassword((prev) => !prev)}
-                  hitSlop={spacing[2]}
+                  hitSlop={8}
                 >
                   {showPassword ? (
                     <EyeOff size={20} color={colors.textSecondary} />
@@ -178,7 +168,7 @@ export default function LoginScreen() {
               }
             />
 
-            <View style={{ marginTop: spacing[5] }}>
+            <View style={styles.submitBtn}>
               <Button
                 type="Primary"
                 label="Entrar al taller"
@@ -211,35 +201,31 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   eyebrow: {
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: "700",
-    letterSpacing: 1.2,
-    textTransform: "uppercase",
+    marginTop: 32,
   },
   title: {
-    fontSize: 34,
-    lineHeight: 41,
-    fontWeight: "700",
-    letterSpacing: -0.5,
+    marginTop: 16,
   },
   subtitle: {
-    fontSize: 15,
-    lineHeight: 22,
-    fontWeight: "400",
+    marginTop: 12,
+    marginBottom: 32,
   },
   errorBanner: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
+    padding: 12,
+    marginBottom: 16,
+    gap: 8,
   },
   errorText: {
     flex: 1,
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: "500",
   },
   form: {
     width: "100%",
+    gap: 16,
+  },
+  submitBtn: {
+    marginTop: 8,
   },
 });

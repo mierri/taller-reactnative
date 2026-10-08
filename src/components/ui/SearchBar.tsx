@@ -24,18 +24,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   onClear,
   style,
 }) => {
-  const { colors, isDark } = useTheme();
-
-  const bg = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.6)";
-
-  const borderColor = isDark
-    ? "rgba(255, 255, 255, 0.14)"
-    : "rgba(255, 255, 255, 0.7)";
+  const { colors, typography, radius, isDark } = useTheme();
 
   const handleClear = () => {
     onChangeText("");
     onClear?.();
   };
+
+  const bg = isDark ? "rgba(27, 42, 33, 0.6)" : "rgba(255, 255, 255, 0.6)";
 
   return (
     <View
@@ -43,19 +39,25 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         styles.container,
         {
           backgroundColor: bg,
-          borderColor,
+          borderColor: colors.borderCard,
+          borderRadius: radius.lg,
         },
         style,
       ]}
     >
-      <Search size={17} color={colors.textMuted} style={styles.searchIcon} />
+      <Search size={20} color={colors.textMuted} />
 
       <TextInput
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor={colors.textMuted}
-        style={[styles.input, { color: colors.textStrong }]}
+        placeholderTextColor={colors.textPlaceholder}
+        style={[
+          styles.input,
+          typography.bodyLg,
+          { color: colors.textStrong, lineHeight: undefined },
+        ]}
+        textAlignVertical="center"
         autoCapitalize="none"
         autoCorrect={false}
       />
@@ -67,7 +69,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           style={styles.clearBtn}
           activeOpacity={0.7}
         >
-          <X size={15} color={colors.textMuted} />
+          <X size={16} color={colors.textMuted} />
         </TouchableOpacity>
       )}
     </View>
@@ -77,23 +79,22 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 const styles = StyleSheet.create({
   container: {
     height: 48,
-    borderRadius: 16,
-    borderWidth: 1.2,
+    borderWidth: 1,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
     width: "100%",
-    marginVertical: 16,
-  },
-  searchIcon: {
-    marginRight: 10,
+    gap: 12,
+    marginBottom: 16,
   },
   input: {
     flex: 1,
     height: "100%",
-    fontSize: 12,
-    lineHeight: 18,
     paddingVertical: 0,
+    paddingTop: 0,
+    paddingBottom: 0,
+    includeFontPadding: false,
+    textAlignVertical: "center",
   },
   clearBtn: {
     padding: 4,

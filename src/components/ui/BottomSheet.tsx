@@ -1,18 +1,18 @@
-import { useTheme } from "@/theme";
-import { X } from "lucide-react-native";
 import React from "react";
 import {
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    Pressable,
-    StyleProp,
-    StyleSheet,
-    Text,
-    View,
-    ViewStyle,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { X } from "lucide-react-native";
+import { useTheme } from "@/theme";
 
 export type BottomSheetType = "Onboarding" | "Search" | "Capture";
 
@@ -36,7 +36,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   style,
   contentStyle,
 }) => {
-  const { colors, radii, spacing, shadows } = useTheme();
+  const { colors, radius, shadows, typography } = useTheme();
 
   return (
     <Modal
@@ -49,46 +49,44 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={styles.modalOverlay}
       >
-        {/* Scrim rgba(21,41,30,.35) */}
         <Pressable
           style={[styles.backdrop, { backgroundColor: colors.overlayScrim }]}
           onPress={onClose}
         />
 
-        {/* Sheet fill sheet · radio superior 30 · sombra sheet */}
         <View
           style={[
             styles.sheet,
             shadows.sheet,
             {
               backgroundColor: colors.surfaceSheet,
-              borderTopLeftRadius: radii.sheet, // radio superior 30
-              borderTopRightRadius: radii.sheet,
+              borderTopLeftRadius: radius.sheet,
+              borderTopRightRadius: radius.sheet,
             },
             style,
           ]}
         >
           <SafeAreaView edges={["bottom"]}>
-            {/* Grabber 36×4 (#ccd5c5 / borderGrabber) */}
             <View style={styles.grabberContainer}>
               <View
                 style={[
                   styles.grabber,
-                  { backgroundColor: colors.borderGrabber },
+                  {
+                    backgroundColor: colors.borderGrabber,
+                    borderRadius: radius.full,
+                  },
                 ]}
               />
             </View>
 
-            {/* Encabezado h 72 con título 18/28 600 y cierre 48×48 */}
             {!hideHeader && (
-              <View
-                style={[
-                  styles.header,
-                  { paddingHorizontal: spacing[6] }, // px 24
-                ]}
-              >
+              <View style={styles.header}>
                 <Text
-                  style={[styles.headerTitle, { color: colors.textStrong }]}
+                  style={[
+                    typography.headingMd,
+                    styles.headerTitle,
+                    { color: colors.textStrong },
+                  ]}
                   numberOfLines={1}
                 >
                   {title ?? ""}
@@ -96,11 +94,11 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
                 <Pressable
                   onPress={onClose}
-                  hitSlop={spacing[2]}
+                  hitSlop={8}
                   style={({ pressed }) => [
                     styles.closeButton,
                     {
-                      borderRadius: radii.lg,
+                      borderRadius: radius.lg,
                       opacity: pressed ? 0.7 : 1,
                     },
                   ]}
@@ -110,16 +108,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
               </View>
             )}
 
-            {/* Contenido px 24 */}
-            <View
-              style={[
-                styles.content,
-                { paddingHorizontal: spacing[6] }, // px 24
-                contentStyle,
-              ]}
-            >
-              {children}
-            </View>
+            <View style={[styles.content, contentStyle]}>{children}</View>
           </SafeAreaView>
         </View>
       </KeyboardAvoidingView>
@@ -146,33 +135,31 @@ const styles = StyleSheet.create({
   grabberContainer: {
     width: "100%",
     alignItems: "center",
-    paddingTop: 10,
+    paddingTop: 12,
     paddingBottom: 4,
   },
   grabber: {
-    width: 36, // 36x4
+    width: 36,
     height: 4,
-    borderRadius: 2,
   },
   header: {
-    height: 72, // h 72 de la especificación
+    height: 72,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    paddingHorizontal: 24,
   },
   headerTitle: {
-    fontSize: 18,
-    lineHeight: 28, // 18/28 600
-    fontWeight: "600",
     flex: 1,
   },
   closeButton: {
-    width: 48, // cierre 48x48
+    width: 48,
     height: 48,
     justifyContent: "center",
     alignItems: "center",
   },
   content: {
+    paddingHorizontal: 24,
     paddingBottom: 24,
   },
 });

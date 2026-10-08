@@ -7,8 +7,8 @@ import {
   StyleProp,
   ViewStyle,
 } from 'react-native';
-import { useTheme } from '@/theme';
 import { ChevronRight } from 'lucide-react-native';
+import { useTheme } from '@/theme';
 
 export interface ActionRowProps {
   icon?: React.ReactNode;
@@ -29,7 +29,7 @@ export const ActionRow: React.FC<ActionRowProps> = ({
   showDivider = true,
   style,
 }) => {
-  const { colors, radii, spacing } = useTheme();
+  const { colors, radius, typography } = useTheme();
 
   return (
     <Pressable
@@ -38,23 +38,20 @@ export const ActionRow: React.FC<ActionRowProps> = ({
       style={({ pressed }) => [
         styles.container,
         {
-          paddingHorizontal: spacing[4], // px 16
           borderBottomColor: colors.borderDivider,
-          borderBottomWidth: showDivider ? 1.2 : 0, // divisor 1.2
+          borderBottomWidth: showDivider ? 1 : 0,
           opacity: pressed ? 0.75 : 1,
         },
         style,
       ]}
     >
-      {/* Tile 40x40 radio 12 fill tile */}
       {icon && (
         <View
           style={[
             styles.tile,
             {
               backgroundColor: colors.surfaceTile,
-              borderRadius: radii.md, // radio 12
-              marginRight: spacing[3],
+              borderRadius: radius.md,
             },
           ]}
         >
@@ -62,21 +59,19 @@ export const ActionRow: React.FC<ActionRowProps> = ({
         </View>
       )}
 
-      {/* Textos */}
       <View style={styles.textContainer}>
-        <Text style={[styles.title, { color: colors.textStrong }]}>
+        <Text style={[typography.labelMd, { color: colors.textStrong }]}>
           {title}
         </Text>
         {subtitle && (
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+          <Text style={[typography.caption, { color: colors.textSecondary }]}>
             {subtitle}
           </Text>
         )}
       </View>
 
-      {/* Chevron 16 */}
       {showChevron && (
-        <ChevronRight size={16} color={colors.textSecondary} />
+        <ChevronRight size={20} color={colors.textMuted} />
       )}
     </Pressable>
   );
@@ -84,9 +79,11 @@ export const ActionRow: React.FC<ActionRowProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    height: 72, // h 72
+    minHeight: 72,
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 16,
+    gap: 12,
     width: '100%',
   },
   tile: {
@@ -97,17 +94,6 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: '500', // 12/16 500
-  },
-  subtitle: {
-    fontSize: 10,
-    lineHeight: 15, // 10/15
-    marginTop: 2,
+    gap: 4,
   },
 });
-

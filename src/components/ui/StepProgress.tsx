@@ -1,10 +1,10 @@
-import React from 'react';
-import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import { useTheme } from '@/theme';
+import React from "react";
+import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
+import { useTheme } from "@/theme";
 
 export interface StepProgressProps {
   totalSteps: number;
-  currentStep: number; // 1-based (ej: 1, 2, 3)
+  currentStep: number;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -13,10 +13,10 @@ export const StepProgress: React.FC<StepProgressProps> = ({
   currentStep,
   style,
 }) => {
-  const { colors, radii, spacing } = useTheme();
+  const { colors, radius } = useTheme();
 
   return (
-    <View style={[styles.container, { gap: spacing[2] }, style]}>
+    <View style={[styles.container, style]}>
       {Array.from({ length: totalSteps }).map((_, index) => {
         const stepNumber = index + 1;
         const isActive = stepNumber <= currentStep;
@@ -27,10 +27,10 @@ export const StepProgress: React.FC<StepProgressProps> = ({
             style={[
               styles.segment,
               {
-                borderRadius: radii.xs,
+                borderRadius: radius.full,
                 backgroundColor: isActive
                   ? colors.brandPrimary
-                  : colors.surfaceChipCount, // #dbe3ce / inactivo
+                  : colors.progressOff,
               },
             ]}
           />
@@ -42,13 +42,13 @@ export const StepProgress: React.FC<StepProgressProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    gap: 8,
   },
   segment: {
     flex: 1,
-    height: 4, // h 4 de la especificación
+    height: 4,
   },
 });
-

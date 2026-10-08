@@ -1,5 +1,6 @@
+import { OperationalStatus as OperationalStatusTokens } from '@/theme/tokens';
+import type { StatusFamily } from '@/theme/tokens';
 import {
-  OperationalBadgeType,
   OperationalStatus,
   WorkOrderCardModel,
   WorkOrderCategory,
@@ -93,55 +94,21 @@ export function parseVehicleDescription(desc?: string): {
 }
 
 export function getOperationalStatusLabel(status: OperationalStatus): string {
-  switch (status) {
-    case OperationalStatus.RECIBIDA:
-      return 'Recibida';
-    case OperationalStatus.EN_DIAGNOSTICO:
-      return 'En diagnóstico';
-    case OperationalStatus.EN_ESPERA_COTIZACION:
-      return 'Cotizando';
-    case OperationalStatus.EN_ESPERA_APROBACION:
-      return 'En espera de aprobación';
-    case OperationalStatus.EN_REPARACION:
-      return 'En reparación';
-    case OperationalStatus.CONTROL_CALIDAD:
-      return 'Control de calidad';
-    case OperationalStatus.LISTA_PARA_ENTREGA:
-      return 'Lista para entrega';
-    case OperationalStatus.ENTREGADA:
-      return 'Entregada';
-    case OperationalStatus.CERRADA:
-      return 'Cerrada';
-    case OperationalStatus.EN_GARANTIA:
-      return 'En garantía';
-    case OperationalStatus.CANCELADA:
-      return 'Cancelada';
-    default:
-      return status;
+  const tokenEntry = OperationalStatusTokens[status as keyof typeof OperationalStatusTokens];
+  if (tokenEntry) {
+    return tokenEntry.label;
   }
+  return status;
 }
 
 export function getOperationalBadgeType(
   status: OperationalStatus,
-): OperationalBadgeType {
-  switch (status) {
-    case OperationalStatus.RECIBIDA:
-    case OperationalStatus.EN_DIAGNOSTICO:
-      return 'recibida';
-    case OperationalStatus.EN_ESPERA_COTIZACION:
-    case OperationalStatus.EN_ESPERA_APROBACION:
-      return 'cotizando';
-    case OperationalStatus.EN_REPARACION:
-    case OperationalStatus.CONTROL_CALIDAD:
-    case OperationalStatus.EN_GARANTIA:
-      return 'reparacion';
-    case OperationalStatus.LISTA_PARA_ENTREGA:
-    case OperationalStatus.ENTREGADA:
-    case OperationalStatus.CERRADA:
-      return 'lista';
-    default:
-      return 'recibida';
+): StatusFamily {
+  const tokenEntry = OperationalStatusTokens[status as keyof typeof OperationalStatusTokens];
+  if (tokenEntry) {
+    return tokenEntry.family;
   }
+  return 'neutral';
 }
 
 export function getOperationalProgress(status: OperationalStatus): number {
@@ -186,6 +153,7 @@ export function mapWorkOrderToCard(order: WorkOrderDto): WorkOrderCardModel {
   const { vehicle, plate } = parseVehicleDescription(order.vehicleDescription);
   const advisor = order.serviceAdvisorName || 'Asesor';
   const advisorInitial = advisor.charAt(0).toUpperCase();
+  const statusFamily = getOperationalBadgeType(order.operationalStatus);
 
   return {
     id: order.id,
@@ -195,7 +163,8 @@ export function mapWorkOrderToCard(order: WorkOrderDto): WorkOrderCardModel {
     plate,
     client: order.clientName || 'Cliente',
     status: getOperationalStatusLabel(order.operationalStatus),
-    statusType: getOperationalBadgeType(order.operationalStatus),
+    statusFamily,
+    statusType: statusFamily,
     category: getWorkOrderCategory(order.operationalStatus),
     advisor,
     advisorInitial,

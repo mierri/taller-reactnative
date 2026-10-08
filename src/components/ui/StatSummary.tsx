@@ -20,7 +20,7 @@ export interface StatSummaryProps {
 }
 
 export const StatSummary: React.FC<StatSummaryProps> = ({ stats, style }) => {
-  const { colors, shadows, radii } = useTheme();
+  const { colors, shadows, typography, radius } = useTheme();
 
   const items = stats.slice(0, 3);
 
@@ -31,7 +31,7 @@ export const StatSummary: React.FC<StatSummaryProps> = ({ stats, style }) => {
         {
           backgroundColor: colors.surfaceCard,
           borderColor: colors.borderCard,
-          borderRadius: radii.card,
+          borderRadius: radius.xl,
         },
         shadows.card,
         style,
@@ -52,11 +52,13 @@ export const StatSummary: React.FC<StatSummaryProps> = ({ stats, style }) => {
               disabled={!stat.onPress}
               activeOpacity={0.7}
             >
-              <Text style={[styles.value, { color: colors.textStrong }]}>
+              <Text
+                style={[typography.statNumber, { color: colors.textLabel }]}
+              >
                 {formattedValue}
               </Text>
               <Text
-                style={[styles.label, { color: colors.textSecondary }]}
+                style={[typography.caption, { color: colors.textMuted }]}
                 numberOfLines={1}
               >
                 {stat.label}
@@ -83,9 +85,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 14,
-    paddingHorizontal: 12,
-    borderWidth: 1.2,
+    paddingVertical: 16,
+    paddingHorizontal: 0,
+    borderWidth: 1,
     width: "100%",
   },
   column: {
@@ -95,15 +97,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   divider: {
-    width: 1.2,
-    height: 36,
-  },
-  value: {
-    fontSize: 26,
-    fontWeight: "500",
-  },
-  label: {
-    fontSize: 10,
-    lineHeight: 15,
+    width: 1,
+    height: 40,
   },
 });

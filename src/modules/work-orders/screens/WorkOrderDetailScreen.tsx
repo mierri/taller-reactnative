@@ -1,7 +1,4 @@
-import { AppHeader } from '@/components';
-import { useTheme } from '@/theme';
-import { User, Wrench } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Platform,
@@ -9,11 +6,14 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import { WorkOrderDetailCard } from '../components/WorkOrderDetailCard';
-import { fetchWorkOrderById } from '../services/work-orders.service';
-import { WorkOrderCardModel, WorkOrderDto } from '../types/work-order.types';
-import { mapWorkOrderToCard } from '../utils/work-order-mapper';
+} from "react-native";
+import { User, Wrench } from "lucide-react-native";
+import { AppHeader } from "@/components";
+import { useTheme } from "@/theme";
+import { WorkOrderDetailCard } from "../components/WorkOrderDetailCard";
+import { fetchWorkOrderById } from "../services/work-orders.service";
+import { WorkOrderCardModel, WorkOrderDto } from "../types/work-order.types";
+import { mapWorkOrderToCard } from "../utils/work-order-mapper";
 
 export interface WorkOrderDetailScreenProps {
   id: string;
@@ -22,7 +22,7 @@ export interface WorkOrderDetailScreenProps {
 export const WorkOrderDetailScreen: React.FC<WorkOrderDetailScreenProps> = ({
   id,
 }) => {
-  const { colors, spacing, radii, shadows } = useTheme();
+  const { colors, layout, radius, shadows, typography } = useTheme();
   const [order, setOrder] = useState<WorkOrderCardModel | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +41,7 @@ export const WorkOrderDetailScreen: React.FC<WorkOrderDetailScreenProps> = ({
       } catch (err: unknown) {
         if (isMounted) {
           const msg =
-            err instanceof Error ? err.message : 'No se pudo cargar la orden';
+            err instanceof Error ? err.message : "No se pudo cargar la orden";
           setError(msg);
         }
       } finally {
@@ -62,7 +62,7 @@ export const WorkOrderDetailScreen: React.FC<WorkOrderDetailScreenProps> = ({
     <View style={[styles.container, { backgroundColor: colors.surfaceApp }]}>
       <AppHeader
         type="Detail"
-        title={order ? order.folio : 'Orden de trabajo'}
+        title={order ? order.folio : "Orden de trabajo"}
       />
 
       {loading ? (
@@ -71,8 +71,14 @@ export const WorkOrderDetailScreen: React.FC<WorkOrderDetailScreenProps> = ({
         </View>
       ) : error || !order ? (
         <View style={styles.centerContainer}>
-          <Text style={[styles.errorText, { color: colors.statusDangerFg }]}>
-            {error || 'Orden no encontrada'}
+          <Text
+            style={[
+              typography.bodyMd,
+              styles.errorText,
+              { color: colors.statusDangerFg },
+            ]}
+          >
+            {error || "Orden no encontrada"}
           </Text>
         </View>
       ) : (
@@ -80,10 +86,8 @@ export const WorkOrderDetailScreen: React.FC<WorkOrderDetailScreenProps> = ({
           contentContainerStyle={[
             styles.scrollContent,
             {
-              paddingHorizontal: spacing[5],
-              paddingTop: spacing[4],
-              paddingBottom: Platform.OS === 'ios' ? 140 : 90,
-              gap: spacing[4],
+              paddingHorizontal: layout.margin,
+              paddingBottom: Platform.OS === "ios" ? 140 : 90,
             },
           ]}
           showsVerticalScrollIndicator={false}
@@ -96,25 +100,20 @@ export const WorkOrderDetailScreen: React.FC<WorkOrderDetailScreenProps> = ({
               {
                 backgroundColor: colors.surfaceCard,
                 borderColor: colors.borderCard,
-                borderRadius: radii.card,
+                borderRadius: radius.xl,
               },
               shadows.card,
             ]}
           >
             <View style={styles.sectionHeader}>
               <Wrench size={18} color={colors.brandPrimary} />
-              <Text style={[styles.sectionTitle, { color: colors.textStrong }]}>
+              <Text style={[typography.buttonMd, { color: colors.textStrong }]}>
                 Motivo de ingreso
               </Text>
             </View>
 
-            <Text
-              style={[
-                styles.descriptionText,
-                { color: colors.textSecondary },
-              ]}
-            >
-              {order.original.failureDescription || 'Revisión preventiva'}
+            <Text style={[typography.bodyMd, { color: colors.textSecondary }]}>
+              {order.original.failureDescription || "Revisión preventiva"}
             </Text>
           </View>
 
@@ -124,14 +123,14 @@ export const WorkOrderDetailScreen: React.FC<WorkOrderDetailScreenProps> = ({
               {
                 backgroundColor: colors.surfaceCard,
                 borderColor: colors.borderCard,
-                borderRadius: radii.card,
+                borderRadius: radius.xl,
               },
               shadows.card,
             ]}
           >
             <View style={styles.sectionHeader}>
               <User size={18} color={colors.brandPrimary} />
-              <Text style={[styles.sectionTitle, { color: colors.textStrong }]}>
+              <Text style={[typography.buttonMd, { color: colors.textStrong }]}>
                 Asesor asignado
               </Text>
             </View>
@@ -140,12 +139,15 @@ export const WorkOrderDetailScreen: React.FC<WorkOrderDetailScreenProps> = ({
               <View
                 style={[
                   styles.advisorAvatar,
-                  { backgroundColor: colors.surfaceAvatar },
+                  {
+                    backgroundColor: colors.surfaceAvatar,
+                    borderRadius: radius.full,
+                  },
                 ]}
               >
                 <Text
                   style={[
-                    styles.advisorInitialText,
+                    typography.captionMedium,
                     { color: colors.accentAvatarText },
                   ]}
                 >
@@ -153,7 +155,7 @@ export const WorkOrderDetailScreen: React.FC<WorkOrderDetailScreenProps> = ({
                 </Text>
               </View>
 
-              <Text style={[styles.advisorName, { color: colors.textStrong }]}>
+              <Text style={[typography.labelLg, { color: colors.textStrong }]}>
                 {order.advisor}
               </Text>
             </View>
@@ -170,54 +172,37 @@ const styles = StyleSheet.create({
   },
   centerContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
   },
   errorText: {
-    fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
   },
   scrollContent: {
-    paddingTop: 8,
+    paddingTop: 16,
+    gap: 16,
   },
   card: {
-    padding: 18,
-    borderWidth: 1.2,
-    width: '100%',
-    gap: 14,
+    padding: 16,
+    borderWidth: 1,
+    width: "100%",
+    gap: 12,
   },
   sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  descriptionText: {
-    fontSize: 13,
-    lineHeight: 20,
-  },
   advisorRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
   advisorAvatar: {
     width: 28,
     height: 28,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  advisorInitialText: {
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  advisorName: {
-    fontSize: 13,
-    fontWeight: '600',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

@@ -1,17 +1,17 @@
-import { BottomSheet, Button, Switch } from '@/components';
-import { useTheme } from '@/theme';
-import { ArrowRight } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { OperationalStatus } from '../types/work-order.types';
-import { getOperationalStatusLabel } from '../utils/work-order-mapper';
-import { FilterDropdown } from './FilterDropdown';
+} from "react-native";
+import { ArrowRight } from "lucide-react-native";
+import { BottomSheet, Button, Switch } from "@/components";
+import { useTheme } from "@/theme";
+import { OperationalStatus } from "../types/work-order.types";
+import { getOperationalStatusLabel } from "../utils/work-order-mapper";
+import { FilterDropdown } from "./FilterDropdown";
 
 export interface OrderFilterSheetProps {
   visible: boolean;
@@ -19,8 +19,8 @@ export interface OrderFilterSheetProps {
   advisors: string[];
   selectedAdvisor: string;
   onSelectAdvisor: (advisor: string) => void;
-  selectedStatus: OperationalStatus | 'all';
-  onSelectStatus: (status: OperationalStatus | 'all') => void;
+  selectedStatus: OperationalStatus | "all";
+  onSelectStatus: (status: OperationalStatus | "all") => void;
   onlyDelayed: boolean;
   onToggleOnlyDelayed: (val: boolean) => void;
   includeClosed: boolean;
@@ -29,8 +29,8 @@ export interface OrderFilterSheetProps {
   onReset: () => void;
 }
 
-const STATUS_OPTIONS: (OperationalStatus | 'all')[] = [
-  'all',
+const STATUS_OPTIONS: (OperationalStatus | "all")[] = [
+  "all",
   OperationalStatus.RECIBIDA,
   OperationalStatus.EN_DIAGNOSTICO,
   OperationalStatus.EN_ESPERA_COTIZACION,
@@ -57,31 +57,31 @@ export const OrderFilterSheet: React.FC<OrderFilterSheetProps> = ({
   onApply,
   onReset,
 }) => {
-  const { colors, spacing } = useTheme();
+  const { colors, typography } = useTheme();
   const [showAdvisorMenu, setShowAdvisorMenu] = useState(false);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
 
   const advisorOptions = [
-    { key: 'all', label: 'Todos' },
+    { key: "all", label: "Todos" },
     ...advisors.map((adv) => ({ key: adv, label: adv })),
   ];
 
   const statusOptions = STATUS_OPTIONS.map((st) => ({
     key: st,
-    label: st === 'all' ? 'Todos' : getOperationalStatusLabel(st),
+    label: st === "all" ? "Todos" : getOperationalStatusLabel(st),
   }));
 
   const currentAdvisorLabel =
-    selectedAdvisor === 'all' ? 'Todos' : selectedAdvisor;
+    selectedAdvisor === "all" ? "Todos" : selectedAdvisor;
 
   const currentStatusLabel =
-    selectedStatus === 'all'
-      ? 'Todos'
+    selectedStatus === "all"
+      ? "Todos"
       : getOperationalStatusLabel(selectedStatus);
 
   return (
     <BottomSheet visible={visible} onClose={onClose} title="Ajusta tu vista">
-      <View style={[styles.container, { gap: spacing[4] }]}>
+      <View style={styles.container}>
         <FilterDropdown
           label="Asesor"
           valueLabel={currentAdvisorLabel}
@@ -109,7 +109,7 @@ export const OrderFilterSheet: React.FC<OrderFilterSheetProps> = ({
           options={statusOptions}
           selectedKey={selectedStatus}
           onSelect={(key) => {
-            onSelectStatus(key as OperationalStatus | 'all');
+            onSelectStatus(key as OperationalStatus | "all");
             setShowStatusMenu(false);
           }}
         />
@@ -128,7 +128,13 @@ export const OrderFilterSheet: React.FC<OrderFilterSheetProps> = ({
               }}
               thumbColor="#ffffff"
             />
-            <Text style={[styles.switchLabel, { color: colors.textStrong }]}>
+            <Text
+              style={[
+                typography.labelLg,
+                styles.switchLabel,
+                { color: colors.textStrong },
+              ]}
+            >
               Solo órdenes con retraso
             </Text>
           </Pressable>
@@ -146,7 +152,13 @@ export const OrderFilterSheet: React.FC<OrderFilterSheetProps> = ({
               }}
               thumbColor="#ffffff"
             />
-            <Text style={[styles.switchLabel, { color: colors.textStrong }]}>
+            <Text
+              style={[
+                typography.labelLg,
+                styles.switchLabel,
+                { color: colors.textStrong },
+              ]}
+            >
               Ver entregadas y cerradas
             </Text>
           </Pressable>
@@ -166,7 +178,13 @@ export const OrderFilterSheet: React.FC<OrderFilterSheetProps> = ({
             onPress={onReset}
             activeOpacity={0.7}
           >
-            <Text style={[styles.resetText, { color: colors.textSecondary }]}>
+            <Text
+              style={[
+                typography.labelMd,
+                styles.resetText,
+                { color: colors.textSecondary },
+              ]}
+            >
               Restablecer filtros
             </Text>
           </TouchableOpacity>
@@ -178,27 +196,25 @@ export const OrderFilterSheet: React.FC<OrderFilterSheetProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: "100%",
     paddingTop: 4,
+    gap: 16,
   },
   switchesContainer: {
     gap: 16,
     paddingVertical: 4,
   },
   switchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
   },
   switchLabel: {
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: '500',
     flex: 1,
   },
   actionsContainer: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
     gap: 12,
     marginTop: 8,
   },
@@ -207,8 +223,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   resetText: {
-    fontSize: 13,
-    fontWeight: '500',
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

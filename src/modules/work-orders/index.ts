@@ -4,5 +4,7 @@ export * from './mocks/work-orders.mock';
 export * from './utils/work-order-mapper';
 export * from './hooks/useWorkOrders';
 export * from './components/OrderFilterSheet';
+export * from './components/CapturePlateSheet';
 export * from './screens/WorkOrderListScreen';
 export * from './screens/WorkOrderDetailScreen';
+export * from './screens/NewWorkOrderStepOneScreen';

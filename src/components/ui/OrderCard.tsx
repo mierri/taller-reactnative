@@ -4,12 +4,12 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Platform,
   ViewStyle,
 } from "react-native";
-import { CarFront } from "lucide-react-native";
+import { CarFront, ChevronRight, Clock } from "lucide-react-native";
 import { useTheme } from "@/theme";
-import { Badge, BadgeStatus } from "./Badge";
+import type { StatusFamily } from "@/theme/tokens";
+import { Badge } from "./Badge";
 import { PlateChip } from "./PlateChip";
 
 export interface OrderCardProps {
@@ -19,7 +19,8 @@ export interface OrderCardProps {
   plate: string;
   client: string;
   status: string;
-  statusType?: BadgeStatus;
+  statusFamily?: StatusFamily;
+  statusType?: string;
   advisor?: string;
   advisorInitial?: string;
   progress?: number;
@@ -35,7 +36,8 @@ export const OrderCard: React.FC<OrderCardProps> = ({
   plate,
   client,
   status,
-  statusType = "active",
+  statusFamily,
+  statusType,
   advisor,
   advisorInitial,
   progress = 1,
@@ -43,12 +45,16 @@ export const OrderCard: React.FC<OrderCardProps> = ({
   onPress,
   style,
 }) => {
-  const { colors, shadows, radii } = useTheme();
+  const { colors, shadows, typography, radius } = useTheme();
 
   const totalSteps = 6;
   const currentStep = Math.min(Math.max(progress, 0), totalSteps);
   const initial =
     advisorInitial ?? (advisor ? advisor.trim().charAt(0).toUpperCase() : "");
+
+  const resolvedFamily = (statusFamily ??
+    statusType ??
+    "active") as StatusFamily;
 
   return (
     <TouchableOpacity
@@ -57,7 +63,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         {
           backgroundColor: colors.surfaceCard,
           borderColor: colors.borderCard,
-          borderRadius: radii.card,
+          borderRadius: radius.xl,
         },
         shadows.card,
         style,
@@ -66,60 +72,63 @@ export const OrderCard: React.FC<OrderCardProps> = ({
       disabled={!onPress}
       activeOpacity={0.8}
     >
-      <View style={styles.topRow}>
-        <Text
-          style={[
-            styles.folio,
-            {
-              color: colors.textMuted,
-              fontFamily: Platform.select({
-                ios: "Menlo",
-                android: "monospace",
-                default: "monospace",
-              }),
-            },
-          ]}
-        >
+      <View style={styles.metaRow}>
+        <Text style={[typography.monoId, { color: colors.textMuted }]}>
           {folio}
         </Text>
         {deadline && (
-          <Text style={[styles.deadline, { color: colors.textMuted }]}>
-            {deadline}
-          </Text>
+          <View style={styles.dueContainer}>
+            <Clock size={12} color={colors.textMuted} strokeWidth={2} />
+            <Text style={[typography.caption, { color: colors.textMuted }]}>
+              {deadline}
+            </Text>
+          </View>
         )}
       </View>
 
-      <View style={styles.vehicleRow}>
+      <View style={styles.mainRow}>
         <View
-          style={[styles.iconTile, { backgroundColor: colors.surfaceTile }]}
+          style={[
+            styles.iconTile,
+            {
+              backgroundColor: colors.surfaceTile,
+              borderRadius: radius.md,
+            },
+          ]}
         >
-          <CarFront size={23} color={colors.brandPrimary} />
+          <CarFront size={24} color={colors.brandPrimaryText} />
         </View>
 
-        <View style={styles.vehicleInfo}>
+        <View style={styles.info}>
           <Text
-            style={[styles.vehicleTitle, { color: colors.textStrong }]}
+            style={[typography.titleCard, { color: colors.textStrong }]}
             numberOfLines={1}
           >
             {vehicle}
           </Text>
 
-          <View style={styles.metaRow}>
+          <View style={styles.plateAndClient}>
             <PlateChip plate={plate} />
             <Text
-              style={[styles.clientText, { color: colors.textSecondary }]}
+              style={[
+                typography.caption,
+                styles.clientText,
+                { color: colors.textSecondary },
+              ]}
               numberOfLines={1}
             >
               {client}
             </Text>
           </View>
         </View>
+
+        <ChevronRight size={20} color={colors.textMuted} />
       </View>
 
-      <View style={styles.statusAndAdvisorRow}>
+      <View style={[styles.footer, { borderTopColor: colors.borderDivider }]}>
         <View style={styles.badgesWrapper}>
-          <Badge label={status} status={statusType} />
-          {isLate && <Badge label="RETRASADA" status="late" />}
+          <Badge label={status} family={resolvedFamily} />
+          {isLate && <Badge label="RETRASADA" family="late" />}
         </View>
 
         {advisor && (
@@ -133,7 +142,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
               >
                 <Text
                   style={[
-                    styles.advisorInitialText,
+                    typography.captionMedium,
                     { color: colors.accentAvatarText },
                   ]}
                 >
@@ -142,7 +151,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
               </View>
             ) : null}
             <Text
-              style={[styles.advisorName, { color: colors.textSecondary }]}
+              style={[typography.caption, { color: colors.textMuted }]}
               numberOfLines={1}
             >
               {advisor}
@@ -160,6 +169,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
               style={[
                 styles.progressSegment,
                 {
+                  borderRadius: radius.full,
                   backgroundColor: isDone
                     ? colors.progressDone
                     : colors.progressOff,
@@ -175,63 +185,53 @@ export const OrderCard: React.FC<OrderCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    padding: 18,
-    borderWidth: 1.2,
+    padding: 16,
+    borderWidth: 1,
     width: "100%",
     gap: 12,
   },
-  topRow: {
+  metaRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    gap: 8,
   },
-  folio: {
-    fontSize: 10,
-    lineHeight: 15,
-    fontWeight: "500",
+  dueContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
-  deadline: {
-    fontSize: 10,
-    lineHeight: 15,
-  },
-  vehicleRow: {
+  mainRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
   },
   iconTile: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
+    flexShrink: 0,
   },
-  vehicleInfo: {
+  info: {
     flex: 1,
     gap: 4,
   },
-  vehicleTitle: {
-    fontSize: 15,
-    lineHeight: 22.5,
-    fontWeight: "600",
-    letterSpacing: -0.2,
-  },
-  metaRow: {
+  plateAndClient: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
   clientText: {
-    fontSize: 12,
-    lineHeight: 18,
     flex: 1,
   },
-  statusAndAdvisorRow: {
+  footer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     gap: 8,
-    marginTop: 2,
+    borderTopWidth: 1,
+    paddingTop: 12,
   },
   badgesWrapper: {
     flexDirection: "row",
@@ -242,34 +242,22 @@ const styles = StyleSheet.create({
   advisorWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 8,
   },
   advisorAvatar: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
   },
-  advisorInitialText: {
-    fontSize: 10,
-    lineHeight: 12,
-    fontWeight: "600",
-  },
-  advisorName: {
-    fontSize: 11,
-    lineHeight: 16.5,
-    fontWeight: "500",
-  },
   progressRow: {
     flexDirection: "row",
-    gap: 6,
+    gap: 8,
     width: "100%",
-    marginTop: 4,
   },
   progressSegment: {
     flex: 1,
-    height: 3,
-    borderRadius: 2,
+    height: 4,
   },
 });

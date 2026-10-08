@@ -1,17 +1,17 @@
-import { AppLogo } from "@/components";
-import { useTheme } from "@/theme";
-import { useRouter } from "expo-router";
-import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useEffect } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { AppLogo } from '@/components';
+import { useTheme } from '@/theme';
 
 export default function SplashScreen() {
-  const { colors, spacing, radii } = useTheme();
+  const { colors, radius, typography } = useTheme();
   const router = useRouter();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.replace("/(auth)/login");
+      router.replace('/(auth)/login');
     }, 1200);
 
     return () => clearTimeout(timer);
@@ -23,7 +23,7 @@ export default function SplashScreen() {
         styles.container,
         {
           backgroundColor: colors.surfaceApp,
-          paddingVertical: spacing[8] + spacing[4], // 48px
+          paddingVertical: 48,
         },
       ]}
     >
@@ -32,8 +32,9 @@ export default function SplashScreen() {
 
         <Text
           style={[
+            typography.headingXl,
             styles.brandName,
-            { color: colors.textStrong, marginTop: spacing[5] },
+            { color: colors.textStrong },
           ]}
         >
           PITSTOP
@@ -41,21 +42,22 @@ export default function SplashScreen() {
 
         <Text
           style={[
+            typography.bodyLg,
             styles.tagline,
-            { color: colors.textSecondary, marginTop: spacing[2] },
+            { color: colors.textSecondary },
           ]}
         >
           Tu taller. Todo en orden.
         </Text>
       </View>
 
-      <View style={[styles.footer, { height: spacing[8] }]}>
+      <View style={styles.footer}>
         <View
           style={[
             styles.dot,
             {
               backgroundColor: colors.brandPrimary,
-              borderRadius: radii.xs,
+              borderRadius: radius.full,
             },
           ]}
         />
@@ -67,27 +69,25 @@ export default function SplashScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   centerContent: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   brandName: {
-    fontSize: 26,
-    fontWeight: "800",
-    letterSpacing: 3,
+    marginTop: 20,
+    letterSpacing: 2,
   },
   tagline: {
-    fontSize: 16,
-    lineHeight: 22,
-    fontWeight: "500",
+    marginTop: 8,
   },
   footer: {
-    justifyContent: "center",
-    alignItems: "center",
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   dot: {
     width: 6,

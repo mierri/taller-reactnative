@@ -1,3 +1,5 @@
+import type { StatusFamily } from '@/theme/tokens';
+
 export enum OperationalStatus {
   RECIBIDA = 'RECIBIDA',
   EN_DIAGNOSTICO = 'EN_DIAGNOSTICO',
@@ -70,11 +72,7 @@ export interface ListWorkOrdersQuery {
 
 export type WorkOrderCategory = 'taller' | 'cotizando' | 'listas';
 
-export type OperationalBadgeType =
-  | 'recibida'
-  | 'cotizando'
-  | 'reparacion'
-  | 'lista';
+export type OperationalBadgeType = StatusFamily;
 
 export interface WorkOrderCardModel {
   id: string;
@@ -84,7 +82,8 @@ export interface WorkOrderCardModel {
   plate: string;
   client: string;
   status: string;
-  statusType: OperationalBadgeType;
+  statusFamily: StatusFamily;
+  statusType?: StatusFamily;
   category: WorkOrderCategory;
   advisor: string;
   advisorInitial: string;
@@ -98,4 +97,3 @@ export interface WorkOrdersSummaryStats {
   countCotizando: number;
   countListas: number;
 }
-

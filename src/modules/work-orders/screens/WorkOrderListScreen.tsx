@@ -32,7 +32,7 @@ import { getWorkOrdersEmptyState } from "../utils/work-order-empty-state";
 import { getFormattedDate } from "../utils/work-order-mapper";
 
 export const WorkOrderListScreen: React.FC = () => {
-  const { colors, spacing } = useTheme();
+  const { colors, typography, layout, space } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -77,7 +77,7 @@ export const WorkOrderListScreen: React.FC = () => {
   ];
 
   const fabBottom =
-    Platform.OS === "ios" ? (insets.bottom > 0 ? insets.bottom + 36 : 36) : 20;
+    Platform.OS === "ios" ? (insets.bottom > 0 ? insets.bottom + 36 : 36) : 24;
 
   const emptyStateProps = getWorkOrdersEmptyState({
     totalCount,
@@ -119,8 +119,7 @@ export const WorkOrderListScreen: React.FC = () => {
         contentContainerStyle={[
           styles.scrollContent,
           {
-            paddingHorizontal: spacing[5],
-            paddingTop: spacing[5],
+            paddingHorizontal: layout.margin,
             paddingBottom: Platform.OS === "ios" ? 175 : 105,
           },
         ]}
@@ -131,21 +130,29 @@ export const WorkOrderListScreen: React.FC = () => {
             <View
               style={[styles.dateDot, { backgroundColor: colors.brandPrimary }]}
             />
-            <Text style={[styles.dateEyebrow, { color: colors.textSecondary }]}>
+            <Text style={[typography.eyebrow, { color: colors.textMuted }]}>
               {getFormattedDate()}
             </Text>
           </View>
-          <Text style={[styles.screenTitle, { color: colors.textStrong }]}>
+          <Text
+            style={[
+              typography.headingXl,
+              { color: colors.textStrong, paddingTop: space[3] },
+            ]}
+          >
             Órdenes de trabajo.
           </Text>
           <Text
-            style={[styles.screenSubtitle, { color: colors.textSecondary }]}
+            style={[
+              typography.bodyLg,
+              { color: colors.textSecondary, paddingTop: space[2] },
+            ]}
           >
             Tu taller, en movimiento.
           </Text>
         </View>
 
-        <StatSummary style={{ marginTop: 20 }} stats={statsList} />
+        <StatSummary style={styles.statSummarySpacing} stats={statsList} />
 
         <SearchBar
           value={searchQuery}
@@ -162,8 +169,6 @@ export const WorkOrderListScreen: React.FC = () => {
         <SectionTitle
           title={sectionTitleText}
           count={filteredOrders.length}
-          countSingular="orden"
-          countPlural="órdenes"
           rightAction={
             <TouchableOpacity
               accessibilityRole="button"
@@ -171,11 +176,12 @@ export const WorkOrderListScreen: React.FC = () => {
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               activeOpacity={0.7}
               onPress={filters.openFilters}
+              style={styles.filterBtn}
             >
               <SlidersHorizontal
-                size={16}
+                size={18}
                 color={
-                  hasActiveFilters ? colors.brandPrimary : colors.textSecondary
+                  hasActiveFilters ? colors.brandPrimaryText : colors.textMuted
                 }
                 strokeWidth={2}
               />
@@ -183,32 +189,34 @@ export const WorkOrderListScreen: React.FC = () => {
           }
         />
 
-        {filteredOrders.length > 0 ? (
-          filteredOrders.map((order) => (
-            <OrderCard
-              key={order.id}
-              folio={order.folio}
-              deadline={order.deadline}
-              vehicle={order.vehicle}
-              plate={order.plate}
-              client={order.client}
-              status={order.status}
-              statusType={order.statusType}
-              advisor={order.advisor}
-              advisorInitial={order.advisorInitial}
-              progress={order.progress}
-              isLate={order.isLate}
-              onPress={() =>
-                router.push({
-                  pathname: "/orders/[id]",
-                  params: { id: order.id },
-                })
-              }
-            />
-          ))
-        ) : (
-          <EmptyState {...emptyStateProps} />
-        )}
+        <View style={styles.ordersList}>
+          {filteredOrders.length > 0 ? (
+            filteredOrders.map((order) => (
+              <OrderCard
+                key={order.id}
+                folio={order.folio}
+                deadline={order.deadline}
+                vehicle={order.vehicle}
+                plate={order.plate}
+                client={order.client}
+                status={order.status}
+                statusFamily={order.statusFamily}
+                advisor={order.advisor}
+                advisorInitial={order.advisorInitial}
+                progress={order.progress}
+                isLate={order.isLate}
+                onPress={() =>
+                  router.push({
+                    pathname: "/orders/[id]",
+                    params: { id: order.id },
+                  })
+                }
+              />
+            ))
+          ) : (
+            <EmptyState {...emptyStateProps} />
+          )}
+        </View>
       </ScrollView>
 
       <View
@@ -220,14 +228,7 @@ export const WorkOrderListScreen: React.FC = () => {
           floating={false}
           label="Recibir auto"
           iconLeading={<Plus size={18} color="#ffffff" strokeWidth={2.4} />}
-          onPress={() => {
-            if (filteredOrders.length === 0 && totalCount === 0) {
-              loadSampleOrder();
-              setShowFloatingToast(true);
-            } else {
-              setShowOnboarding(true);
-            }
-          }}
+          onPress={() => router.push("/orders/new" as any)}
         />
       </View>
 
@@ -260,49 +261,18 @@ export const WorkOrderListScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingTop: 8,
-  },
-  headerTitleContainer: {
-    gap: 4,
-    paddingTop: 4,
-  },
-  dateRow: {
-    flexDirection: "row",
+  container: { flex: 1 },
+  scrollContent: { paddingTop: 20 },
+  headerTitleContainer: { gap: 4 },
+  dateRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  dateDot: { width: 6, height: 6, borderRadius: 3 },
+  statSummarySpacing: { marginTop: 20, marginBottom: 16 },
+  filterBtn: {
+    width: 48,
+    height: 48,
     alignItems: "center",
-    gap: 6,
+    justifyContent: "center",
   },
-  dateDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-  },
-  dateEyebrow: {
-    fontSize: 10,
-    lineHeight: 15,
-    fontWeight: "600",
-    letterSpacing: 1.5,
-  },
-  screenTitle: {
-    fontSize: 26,
-    lineHeight: 32,
-    fontWeight: "700",
-    letterSpacing: -0.3,
-    paddingTop: 12,
-  },
-  screenSubtitle: {
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: "400",
-    paddingTop: 8,
-  },
-  fabPosition: {
-    position: "absolute",
-    right: 20,
-    zIndex: 9999,
-    elevation: 8,
-  },
+  ordersList: { gap: 12 },
+  fabPosition: { position: "absolute", right: 24, zIndex: 9999 },
 });

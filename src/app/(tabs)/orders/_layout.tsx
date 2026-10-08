@@ -1,5 +1,5 @@
-import { Stack } from 'expo-router';
 import React from 'react';
+import { Stack } from 'expo-router';
 
 export default function OrdersLayout() {
   return (
@@ -9,8 +9,8 @@ export default function OrdersLayout() {
       }}
     >
       <Stack.Screen name="index" />
+      <Stack.Screen name="new" />
       <Stack.Screen name="[id]" />
     </Stack>
   );
 }
-

@@ -46,7 +46,7 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   ...pressableProps
 }) => {
-  const { colors, radii, spacing, shadows } = useTheme();
+  const { colors, radius, shadows, typography } = useTheme();
 
   const isPrimary = type === "Primary";
   const isSecondary = type === "Secondary";
@@ -59,45 +59,38 @@ export const Button: React.FC<ButtonProps> = ({
     containerStyles.push({
       width: 48,
       height: 48,
-      borderRadius: radii.lg,
+      borderRadius: radius.lg,
       backgroundColor: "transparent",
-      paddingHorizontal: 0,
     });
   } else {
     containerStyles.push({
       height: 52,
-      paddingHorizontal: spacing[5],
-      borderRadius: radii.lg,
-      gap: isFAB ? spacing[2] : 10,
+      minWidth: 96,
+      paddingHorizontal: 20,
+      borderRadius: radius.lg,
+      gap: 8,
     });
   }
 
   if (isPrimary) {
     containerStyles.push(
-      {
-        backgroundColor: colors.brandPrimary,
-      },
+      { backgroundColor: colors.brandPrimary },
       shadows.button,
     );
   } else if (isSecondary) {
     containerStyles.push({
       backgroundColor: colors.surfaceInput,
-      borderWidth: 1.2,
+      borderWidth: 1,
       borderColor: colors.borderButton,
     });
   } else if (isFAB) {
-    containerStyles.push(
-      {
-        backgroundColor: colors.brandPrimary,
-      },
-      shadows.fab,
-    );
+    containerStyles.push({ backgroundColor: colors.brandPrimary }, shadows.fab);
 
     if (floating) {
       containerStyles.push({
         position: "absolute",
-        bottom: spacing[6],
-        right: spacing[5],
+        bottom: 88,
+        right: 24,
         zIndex: 99,
       });
     }
@@ -114,18 +107,11 @@ export const Button: React.FC<ButtonProps> = ({
     spinnerColor = colors.textOnBrand;
     textStyles = {
       color: colors.textOnBrand,
-      fontWeight: "600",
-      ...(isFAB
-        ? { fontSize: 13, lineHeight: 19.5 }
-        : { fontSize: 14, lineHeight: 20 }),
     };
   } else if (isSecondary) {
-    spinnerColor = colors.brandPrimary;
+    spinnerColor = colors.brandPrimaryText;
     textStyles = {
-      color: colors.brandPrimary,
-      fontSize: 14,
-      lineHeight: 20,
-      fontWeight: "600",
+      color: colors.brandPrimaryText,
     };
   }
 
@@ -135,7 +121,11 @@ export const Button: React.FC<ButtonProps> = ({
       style={({ pressed }) => [
         containerStyles,
         disabled && styles.disabled,
-        pressed && styles.pressed,
+        pressed &&
+          !disabled &&
+          (isSecondary
+            ? { backgroundColor: colors.surfaceTrack }
+            : styles.pressed),
         style,
       ]}
       {...pressableProps}
@@ -149,7 +139,7 @@ export const Button: React.FC<ButtonProps> = ({
           {iconLeading && <View style={styles.iconWrapper}>{iconLeading}</View>}
 
           {label ? (
-            <Text style={[styles.textBase, textStyles, labelStyle]}>
+            <Text style={[typography.buttonMd, textStyles, labelStyle]}>
               {label}
             </Text>
           ) : (
@@ -170,15 +160,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    boxSizing: "border-box",
   },
   fullWidth: {
     width: "100%",
     alignSelf: "stretch",
-  },
-  textBase: {
-    textAlign: "center",
-    includeFontPadding: false,
   },
   iconWrapper: {
     justifyContent: "center",
@@ -191,10 +176,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   pressed: {
-    opacity: 0.88,
+    opacity: 0.9,
     transform: [{ scale: 0.985 }],
   },
   disabled: {
-    opacity: 0.45,
+    opacity: 0.4,
   },
 });

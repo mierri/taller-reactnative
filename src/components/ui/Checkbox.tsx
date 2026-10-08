@@ -1,7 +1,7 @@
-import { useTheme } from "@/theme";
-import { Check } from "lucide-react-native";
 import React from "react";
 import { Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
+import { Check } from "lucide-react-native";
+import { useTheme } from "@/theme";
 
 export interface CheckboxProps {
   checked: boolean;
@@ -18,20 +18,20 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   disabled = false,
   style,
 }) => {
-  const { colors, radii, spacing } = useTheme();
+  const { colors, radius, typography } = useTheme();
 
   return (
     <Pressable
       onPress={() => !disabled && onCheckedChange(!checked)}
       disabled={disabled}
-      style={[styles.container, { gap: spacing[2] }, style]}
+      style={[styles.container, style]}
     >
       <View
         style={[
           styles.box,
           {
-            borderRadius: radii.xs, // radio 6
-            borderColor: checked ? colors.brandPrimary : colors.borderInput,
+            borderRadius: radius.xs,
+            borderColor: checked ? colors.brandPrimary : colors.borderControl,
             backgroundColor: checked
               ? colors.brandPrimary
               : colors.surfaceInput,
@@ -40,12 +40,12 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         ]}
       >
         {checked && (
-          <Check size={14} color={colors.textOnBrand} strokeWidth={3} />
+          <Check size={16} color={colors.textOnBrand} strokeWidth={2.6} />
         )}
       </View>
 
       {label && (
-        <Text style={[styles.label, { color: colors.textStrong }]}>
+        <Text style={[typography.bodyLg, { color: colors.textLabel }]}>
           {label}
         </Text>
       )}
@@ -57,20 +57,19 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 12,
+    minHeight: 48,
+    paddingVertical: 12,
   },
   box: {
-    width: 20,
-    height: 20,
-    borderWidth: 1.2,
+    width: 24,
+    height: 24,
+    borderWidth: 1.5,
     justifyContent: "center",
     alignItems: "center",
-  },
-  label: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: "400",
+    flexShrink: 0,
   },
   disabled: {
-    opacity: 0.5,
+    opacity: 0.4,
   },
 });
