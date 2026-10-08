@@ -1,11 +1,11 @@
 import { useTheme } from "@/theme";
 import React from "react";
 import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    ViewStyle,
 } from "react-native";
 
 export interface StatItem {
@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 26,
-    lineHeight: 26,
     fontWeight: "500",
   },
   label: {

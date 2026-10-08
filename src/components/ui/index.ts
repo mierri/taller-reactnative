@@ -1,6 +1,7 @@
 export * from './Button';
 export * from './Field';
 export * from './Checkbox';
+export * from './Switch';
 export * from './AppLogo';
 export * from './BottomSheet';
 export * from './StepProgress';

@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
+    paddingVertical: 32,
   },
   eyebrow: {
     fontSize: 10,

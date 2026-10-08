@@ -21,6 +21,39 @@ const MONTHS_SHORT = [
   'dic',
 ];
 
+const DAYS_ES = [
+  'DOMINGO',
+  'LUNES',
+  'MARTES',
+  'MIÉRCOLES',
+  'JUEVES',
+  'VIERNES',
+  'SÁBADO',
+];
+
+const MONTHS_ES = [
+  'ENERO',
+  'FEBRERO',
+  'MARZO',
+  'ABRIL',
+  'MAYO',
+  'JUNIO',
+  'JULIO',
+  'AGOSTO',
+  'SEPTIEMBRE',
+  'OCTUBRE',
+  'NOVIEMBRE',
+  'DICIEMBRE',
+];
+
+export function getFormattedDate(): string {
+  const now = new Date();
+  const dayName = DAYS_ES[now.getDay()];
+  const dayNumber = now.getDate();
+  const monthName = MONTHS_ES[now.getMonth()];
+  return `${dayName}, ${dayNumber} DE ${monthName}`;
+}
+
 export function formatDeadline(dateString?: string | null): string {
   if (!dateString) return 'Sin fecha';
   try {
@@ -171,4 +204,3 @@ export function mapWorkOrderToCard(order: WorkOrderDto): WorkOrderCardModel {
     original: order,
   };
 }
-

@@ -1,0 +1,890 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pitstop Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Página de referencia: una columna con secciones ancladas. Los especímenes (.pit) se dibujan con los tokens reales y cambian de modo con el interruptor. */
+:root {
+  --bg: #f5f7f3; --surface: #ffffff; --fg: #17261e; --muted: #55665b; --line: #dce3d9;
+  --accent: #006045; --accent-ink: #ffffff; --chip: #e8efe5; --warn-bg: #f7efdf; --warn-fg: #6d4f17;
+  --good-bg: #e3f0e6; --good-fg: #1b5a3a;
+  --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, "SF Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1812; --surface: #15231b; --fg: #e5eee7; --muted: #9bb0a2; --line: #26392d;
+    --accent: #55c493; --accent-ink: #06150d; --chip: #1c2f24; --warn-bg: #2b2412; --warn-fg: #e3c27a;
+    --good-bg: #17301f; --good-fg: #9fdcb6; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1812; --surface: #15231b; --fg: #e5eee7; --muted: #9bb0a2; --line: #26392d;
+  --accent: #55c493; --accent-ink: #06150d; --chip: #1c2f24; --warn-bg: #2b2412; --warn-fg: #e3c27a;
+  --good-bg: #17301f; --good-fg: #9fdcb6; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 15px; line-height: 1.6; padding-bottom: 96px; }
+p, h1, h2, h3, h4, dl, dd { margin: 0; }
+h1, h2, h3, h4 { text-wrap: balance; letter-spacing: -0.02em; }
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+a { color: var(--accent); }
+.wrap { max-width: 1040px; margin-inline: auto; padding-inline: 20px; }
+
+/* Encabezado y navegación */
+.top { padding-block: 56px 28px; display: grid; gap: 14px; }
+.eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.top h1 { font-size: clamp(34px, 6vw, 52px); font-weight: 600; letter-spacing: -0.035em; line-height: 1.05; }
+.top h1 span { color: var(--accent); }
+.lede { max-width: 64ch; color: var(--muted); font-size: 16px; }
+nav.sections { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+nav.sections .row { max-width: 1040px; margin-inline: auto; padding-inline: 20px; display: flex; gap: 12px; align-items: center; }
+nav.sections .links { display: flex; gap: 4px; overflow-x: auto; padding-block: 8px; flex: 1; min-width: 0; scrollbar-width: none; }
+nav.sections a { white-space: nowrap; text-decoration: none; color: var(--muted); font-size: 13px; font-weight: 500; padding: 7px 12px; border-radius: 999px; }
+nav.sections a:hover, nav.sections a:focus-visible { background: var(--chip); color: var(--fg); outline: none; }
+.mode { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); flex: none; }
+.mode button { font: 500 12px var(--font-ui); border: 0; background: transparent; color: var(--muted); padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+.mode button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.mode button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+section { padding-block: 64px 8px; scroll-margin-top: 56px; }
+section > header { display: grid; gap: 8px; margin-bottom: 28px; max-width: 72ch; }
+section > header h2 { font-size: 28px; font-weight: 600; }
+section > header p { color: var(--muted); }
+h3 { font-size: 17px; font-weight: 600; }
+.group { margin-top: 40px; display: grid; gap: 14px; }
+.group > .note, .note { color: var(--muted); font-size: 14px; max-width: 72ch; }
+.tag { font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--warn-fg); background: var(--warn-bg); padding: 1px 6px; border-radius: 4px; margin-left: 4px; }
+.tag.ok { color: var(--good-fg); background: var(--good-bg); }
+.callout { background: var(--warn-bg); color: var(--warn-fg); border-radius: 10px; padding: 14px 16px; font-size: 14px; max-width: 76ch; }
+.callout.good { background: var(--good-bg); color: var(--good-fg); }
+
+/* Tablas */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 13px; }
+th { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--bg); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+tr.grp td { background: var(--bg); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding-block: 8px; }
+td.m { font-family: var(--font-mono); font-size: 12px; white-space: nowrap; }
+td.dim { color: var(--muted); }
+td.was { color: var(--muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--muted) 50%, transparent); }
+td.now { color: var(--fg); }
+.t-resumen { min-width: 720px; }
+.t-al { min-width: 860px; }
+.t-al td:first-child { font-weight: 600; white-space: nowrap; }
+
+/* Swatches */
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
+.sw { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 12px; align-items: start; }
+.chipbox { width: 84px; height: 56px; border-radius: 10px; border: 1px solid var(--line); overflow: hidden; display: flex; }
+.chipbox span { flex: 1; display: block; }
+.chipbox .l { background: #e2e8de; } .chipbox .d { background: #0e1612; }
+.chipbox i { display: block; width: 100%; height: 100%; background: var(--c); }
+.sw b { font-size: 13px; font-weight: 600; display: block; word-break: break-word; }
+.sw .hex { display: grid; gap: 1px; font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-top: 2px; }
+.sw .hex small { font-family: var(--font-ui); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; margin-right: 6px; }
+.sw .use { font-size: 12.5px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+.sw .ct { font-size: 12px; margin-top: 6px; color: var(--good-fg); background: var(--good-bg); border-radius: 6px; padding: 3px 8px; display: inline-block; font-family: var(--font-mono); }
+.absorbs { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.absorbs small { font-size: 11px; color: var(--muted); margin-right: 2px; }
+.dot { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); padding: 2px 6px 2px 4px; border: 1px solid var(--line); border-radius: 999px; }
+.dot i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); border: 1px solid rgba(0,0,0,.12); }
+
+/* Forma y espacio */
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: grid; gap: 16px; align-content: start; min-width: 0; }
+.radii { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 14px; }
+.radius { display: grid; gap: 6px; font-size: 12px; color: var(--muted); }
+.radius .box { height: 64px; background: #e2e8de; border: 1.5px solid #006045; }
+.radius b { color: var(--fg); font-family: var(--font-mono); font-size: 12px; font-weight: 500; }
+.sp { display: grid; grid-template-columns: 64px minmax(0, 1fr); align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.sp i { display: block; height: 14px; background: #006045; border-radius: 3px; opacity: .85; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.kv { display: inline-flex; gap: 8px; align-items: baseline; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: 12px; color: var(--muted); background: var(--surface); }
+.kv b { font-family: var(--font-mono); color: var(--fg); font-weight: 500; }
+.shadows { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; padding: 24px; border-radius: 14px; }
+.shadows.l { background: #e2e8de; color: #4b5d51; } .shadows.d { background: #0e1612; color: #9bb0a2; }
+.shadows .card { height: 64px; border-radius: 16px; }
+.shadows.l .card { background: #fff; } .shadows.d .card { background: #1c2a22; }
+.shadows b { font-family: var(--font-mono); font-weight: 500; font-size: 12px; display: block; margin-top: 10px; }
+.shadows.l b { color: #20372d; } .shadows.d b { color: #e8f1ea; }
+.shadows span { font-family: var(--font-mono); font-size: 10.5px; line-height: 1.4; display: block; word-break: break-word; }
+.type-sample { display: inline-block; color: #20372d; background: #e2e8de; padding: 8px 12px; border-radius: 8px; white-space: nowrap; }
+
+/* Layout grid */
+.grid-wrap { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 32px; align-items: start; }
+@media (max-width: 860px) { .grid-wrap { grid-template-columns: minmax(0, 1fr); } }
+.phone-holder { position: relative; width: 100%; }
+.phone { position: absolute; top: 0; left: 0; width: 393px; transform-origin: top left; border-radius: 28px; overflow: hidden; background: var(--surface-app); border: 1px solid var(--line); }
+.phone .screen { position: relative; background: var(--surface-shell); min-height: 760px; display: flex; flex-direction: column; }
+.grid-ov { position: absolute; inset: 0; display: none; grid-template-columns: repeat(4, 1fr); column-gap: 12px; padding-inline: 24px; pointer-events: none; z-index: 5; }
+.grid-ov.on { display: grid; }
+.grid-ov i { background: rgba(255, 45, 85, .13); }
+.grid-ov::before, .grid-ov::after { content: ""; position: absolute; top: 0; bottom: 0; width: 24px; background: rgba(0, 120, 255, .14); }
+.grid-ov::before { left: 0; } .grid-ov::after { right: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--muted); margin-bottom: 12px; align-items: center; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 5px; }
+.check { display: inline-flex; gap: 8px; align-items: center; font-size: 13px; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--accent); }
+
+/* Estados */
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 8px; background: var(--bg); color: var(--fg); border: 1px solid var(--bd); font: 500 11px/16px var(--font-ui); white-space: nowrap; }
+.chip i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex: none; }
+.chip.solid { border-color: transparent; font-weight: 600; letter-spacing: .02em; gap: 4px; padding-inline: 8px; }
+.chip.solid svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.fam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
+.fam { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 10px; min-width: 0; }
+.fam h4 { font-size: 13px; font-weight: 600; font-family: var(--font-mono); letter-spacing: 0; }
+.fam .use { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+.fam .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.fam .cell { border-radius: 10px; padding: 10px; display: grid; gap: 8px; justify-items: start; }
+.fam .cell.l { background: #ffffff; } .fam .cell.d { background: #0e1612; }
+.fam .vals { font-family: var(--font-mono); font-size: 10.5px; line-height: 1.5; }
+.fam .cell.l .vals { color: #55665b; } .fam .cell.d .vals { color: #9bb0a2; }
+td.cl { background: #ffffff; } td.cd { background: #0e1612; }
+.t-fsm { min-width: 820px; }
+
+/* Componentes */
+.comp { margin-top: 56px; display: grid; gap: 16px; }
+.comp-head { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; }
+.comp-head h3 { font-size: 20px; }
+.comp-head .mono { color: var(--muted); font-size: 12px; }
+.stage { border-radius: 14px; padding: 24px 20px; display: grid; gap: 16px; align-content: start; min-width: 0; overflow-x: auto; background: var(--surface-app); }
+.stage > .in { width: 100%; max-width: 393px; margin-inline: auto; display: grid; gap: 16px; }
+.stage.wide > .in { max-width: 560px; }
+.spec { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; align-items: start; }
+.box { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); min-width: 0; }
+.box .hd { padding: 10px 14px; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); background: var(--bg); border-radius: 12px 12px 0 0; }
+.box .r { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 12px; padding: 9px 14px; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.box .r:last-child { border-bottom: 0; }
+.box dt { color: var(--muted); } .box dd { font-family: var(--font-mono); font-size: 11.5px; line-height: 1.5; word-break: break-word; }
+.box .r.txt dd { font-family: var(--font-ui); font-size: 13px; }
+.box .p { padding: 12px 14px; font-size: 13px; color: var(--muted); border-bottom: 1px solid var(--line); }
+.box .p:last-child { border-bottom: 0; }
+.part-name { font-size: 13px; font-weight: 600; margin: 14px 0 8px; }
+
+/* Interruptor de propiedades (demo del botón) */
+.demo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 760px) { .demo { grid-template-columns: minmax(0, 1fr); } }
+.props { display: grid; }
+.props .row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 13px; }
+.props .row:last-child { border-bottom: 0; }
+.props .row small { display: block; color: var(--muted); font-size: 11px; }
+.props .val { font-family: var(--font-mono); font-size: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; }
+.sw-t { position: relative; width: 38px; height: 22px; border-radius: 999px; border: 0; background: var(--line); cursor: pointer; padding: 0; }
+.sw-t::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; }
+.sw-t[aria-checked="true"] { background: var(--accent); }
+.sw-t[aria-checked="true"]::after { transform: translateX(16px); }
+.sw-t:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .sw-t::after { transition: none; } }
+
+/* Pasos */
+.steps { counter-reset: step; display: grid; gap: 0; padding: 0; margin: 0; list-style: none; border-top: 1px solid var(--line); }
+.steps > li { counter-increment: step; display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 4px 14px; padding-block: 18px; border-bottom: 1px solid var(--line); }
+.steps > li::before { content: counter(step); font-family: var(--font-mono); font-size: 13px; color: var(--accent); font-weight: 500; padding-top: 2px; }
+.steps > li h3 { font-size: 15px; }
+.steps > li p, .steps > li .sub { color: var(--muted); font-size: 14px; grid-column: 2; max-width: 80ch; }
+.steps > li p b, .steps > li .sub b { color: var(--fg); font-weight: 600; }
+.steps > li .sub { display: grid; gap: 6px; }
+kbd { font-family: var(--font-mono); font-size: 11.5px; background: var(--chip); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; color: var(--fg); }
+
+/* Código */
+.tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+.tabs button { font: 500 13px var(--font-mono); border: 1px solid var(--line); background: var(--surface); color: var(--muted); padding: 8px 14px; border-radius: 8px; cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.codebox { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.codebox pre { margin: 0; padding: 18px; overflow: auto; max-height: 560px; font-family: var(--font-mono); font-size: 12px; line-height: 1.65; color: var(--fg); tab-size: 2; }
+.copy { position: absolute; top: 10px; right: 14px; font: 500 12px var(--font-ui); padding: 7px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+.copy:hover, .copy:focus-visible { border-color: var(--accent); outline: none; }
+.snippet { margin-top: 12px; }
+.snippet pre { margin: 0; padding: 14px 16px; overflow: auto; font-family: var(--font-mono); font-size: 12px; line-height: 1.6; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; color: var(--fg); }
+footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+
+/* ===== Especímenes (.pit): usan los tokens del design system ===== */
+.pit { font-family: var(--font-ui); color: var(--text-strong); }
+.pit *, .pit *::before, .pit *::after { box-sizing: border-box; }
+.pit p, .pit h1, .pit h2, .pit h3, .pit div { margin: 0; }
+.pit svg.ic { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.pit svg.s12 { width: 12px; height: 12px; } .pit svg.s16 { width: 16px; height: 16px; } .pit svg.s24 { width: 24px; height: 24px; } .pit svg.s32 { width: 32px; height: 32px; }
+.p-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 52px; min-width: 96px; padding: 0 20px; border-radius: 16px; border: 1px solid transparent; background: var(--brand-primary); color: var(--text-on-brand); box-shadow: var(--shadow-button); cursor: pointer; font-family: var(--font-ui); }
+.p-btn.secondary { background: var(--surface-input); color: var(--brand-primary-text); border-color: var(--border-button); box-shadow: none; }
+.p-btn.fab { box-shadow: var(--shadow-fab); }
+.p-btn.icon { width: 48px; min-width: 0; height: 48px; padding: 0; background: transparent; color: var(--text-label); box-shadow: none; }
+.p-btn.sq { width: 52px; min-width: 0; padding: 0; }
+.p-btn.dis { opacity: .4; box-shadow: none; }
+.p-btn.full { width: 100%; }
+.p-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.p-field { display: grid; gap: 8px; width: 100%; }
+.p-field .lab { color: var(--text-label); }
+.p-field .lab em { font-style: normal; color: var(--text-muted); }
+.p-ctl { display: flex; align-items: center; gap: 12px; height: 52px; padding: 0 16px; border-radius: 16px; background: var(--surface-input); border: 1px solid var(--border-input); color: var(--text-placeholder); }
+.p-ctl.filled { color: var(--text-strong); }
+.p-ctl.focus { border: 2px solid var(--border-focus); padding: 0 15px; color: var(--text-strong); }
+.p-ctl.err { border: 1.5px solid var(--status-danger-fg); padding: 0 15.5px; color: var(--text-strong); }
+.p-ctl.area { height: auto; min-height: 104px; align-items: flex-start; padding: 16px; }
+.p-ctl .grow { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.p-ctl .tr { color: var(--text-muted); }
+.p-help { color: var(--text-secondary); } .p-help.err { color: var(--status-danger-fg); }
+.p-two { display: flex; gap: 12px; width: 100%; } .p-two > * { flex: 1; min-width: 0; }
+.p-chk { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 12px 0; color: var(--text-label); }
+.p-box { width: 24px; height: 24px; border-radius: 6px; border: 1.5px solid var(--border-control); background: var(--surface-input); display: grid; place-items: center; color: #fff; flex: none; }
+.p-box.on { background: var(--brand-primary); border-color: var(--brand-primary); }
+.p-card { background: var(--surface-card); border: 1px solid var(--border-card); border-radius: 24px; box-shadow: var(--shadow-card); }
+.p-slider-card { display: grid; gap: 12px; padding: 16px; }
+.p-sl-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.p-sl-head .l { display: flex; gap: 8px; align-items: center; color: var(--text-label); }
+.p-sl-head .v { color: var(--brand-primary-text); }
+.p-sl { position: relative; height: 24px; display: flex; align-items: center; }
+.p-sl .tk { position: relative; width: 100%; height: 8px; border-radius: 999px; background: var(--progress-off); }
+.p-sl .tk b { position: absolute; left: 0; top: 0; bottom: 0; width: 50%; border-radius: 999px; background: var(--brand-primary); }
+.p-sl .th { position: absolute; left: calc(50% - 12px); top: 0; width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 2px solid var(--brand-primary); box-shadow: var(--shadow-segmented); }
+.p-sl-scale { display: flex; justify-content: space-between; color: var(--text-muted); }
+.p-stats { display: grid; grid-template-columns: repeat(3, 1fr); padding: 16px 0; }
+.p-stats > div { display: grid; justify-items: center; gap: 8px; border-left: 1px solid var(--border-divider); }
+.p-stats > div:first-child { border-left: 0; }
+.p-stats .n { color: var(--text-label); } .p-stats .c { color: var(--text-muted); }
+.p-search { display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 16px; border-radius: 16px; background: color-mix(in srgb, var(--surface-input) 60%, transparent); border: 1px solid var(--border-card); color: var(--text-placeholder); }
+.p-search svg { color: var(--text-muted); }
+.p-seg { display: flex; gap: 4px; padding: 4px; border-radius: 16px; background: var(--surface-track); }
+.p-seg > div { flex: 1; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--text-secondary); }
+.p-seg > div.on { background: var(--brand-primary); color: var(--text-on-brand); box-shadow: var(--shadow-segmented); }
+.p-count { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 6px; background: var(--surface-chip-count); color: var(--text-secondary); }
+.p-sect { display: flex; justify-content: space-between; align-items: center; min-height: 48px; color: var(--text-muted); }
+.p-sect .r { display: flex; align-items: center; gap: 8px; }
+.p-order { padding: 16px; display: grid; gap: 12px; }
+.p-order .meta { display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); }
+.p-order .meta .due { display: inline-flex; gap: 4px; align-items: center; }
+.p-order .main { display: flex; gap: 12px; align-items: center; }
+.p-tile { width: 48px; height: 48px; border-radius: 12px; background: var(--surface-tile); color: var(--brand-primary-text); display: grid; place-items: center; flex: none; }
+.p-tile.sm { width: 40px; height: 40px; }
+.p-order .info { flex: 1; min-width: 0; display: grid; gap: 4px; }
+.p-order .sub { display: flex; gap: 8px; align-items: center; color: var(--text-secondary); }
+.p-plate { background: var(--surface-chip-neutral); color: var(--text-secondary); border-radius: 6px; padding: 4px 8px; }
+.p-order .foot { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border-divider); }
+.p-adv { display: flex; gap: 8px; align-items: center; color: var(--text-muted); }
+.p-av { width: 24px; height: 24px; border-radius: 50%; background: var(--surface-avatar); color: var(--text-avatar); display: grid; place-items: center; }
+.p-av.md { width: 32px; height: 32px; border: 1px solid var(--border-card); }
+.p-bars { display: flex; gap: 8px; }
+.p-bars i { flex: 1; height: 4px; border-radius: 999px; background: var(--progress-off); }
+.p-bars i.on { background: var(--progress-done); }
+.p-empty { border: 1px dashed var(--border-dashed); border-radius: 24px; padding: 40px 24px; display: grid; justify-items: center; text-align: center; gap: 8px; }
+.p-empty .ic { color: var(--text-muted); }
+.p-empty .d { color: var(--text-secondary); max-width: 280px; }
+.p-banner { display: flex; gap: 12px; align-items: flex-start; padding: 16px; border-radius: 16px; background: var(--b-bg); color: var(--b-fg); border: 1px solid var(--b-bd); }
+.p-banner.x { padding-right: 8px; }
+.p-banner .tx { flex: 1; min-width: 0; display: grid; gap: 4px; }
+.p-banner .act { display: inline-flex; align-items: center; height: 40px; }
+.p-banner .cl { width: 40px; height: 40px; margin-block: -10px; display: grid; place-items: center; flex: none; }
+.p-banner.float { box-shadow: var(--shadow-floating); }
+.p-hdr { background: var(--surface-glass); border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; }
+.p-hdr .sb { height: 56px; display: flex; align-items: center; padding: 0 24px; justify-content: space-between; color: var(--text-muted); font-size: 12px; }
+.p-hdr .row { height: 56px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.p-logo { display: flex; align-items: center; gap: 8px; }
+.p-logo .lt { width: 40px; height: 40px; border-radius: 12px; background: var(--brand-primary); color: var(--text-on-brand); display: grid; place-items: center; }
+.p-logo em { font-style: normal; color: var(--brand-primary-text); }
+.p-actions { display: flex; gap: 4px; align-items: center; }
+.p-actions .ib { width: 48px; height: 48px; display: grid; place-items: center; color: var(--text-label); position: relative; }
+.p-actions .ib .nd { position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: var(--brand-accent-amber); box-shadow: 0 0 0 2px var(--surface-shell); }
+.p-nav { display: flex; padding: 8px 12px; background: var(--surface-nav); border-top: 1px solid var(--border-input); }
+.p-nav > div { flex: 1; min-width: 0; height: 56px; display: grid; justify-items: center; align-content: center; gap: 4px; color: var(--text-muted); position: relative; border-radius: 12px; }
+.p-nav > div.on { color: var(--brand-primary-text); }
+.p-nav > div.on::after { content: ""; position: absolute; bottom: 2px; width: 4px; height: 4px; border-radius: 50%; background: var(--brand-primary-text); }
+.p-sheet-scrim { background: var(--overlay-scrim); display: flex; flex-direction: column; justify-content: flex-end; border-radius: 12px; padding-top: 48px; }
+.p-sheet { background: var(--surface-sheet); border-radius: 32px 32px 0 0; box-shadow: var(--shadow-sheet); padding-bottom: 24px; }
+.p-sheet .grab { width: 36px; height: 4px; border-radius: 999px; background: var(--border-grabber); margin: 12px auto 0; }
+.p-sheet .hd { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; min-height: 72px; }
+.p-steps { display: flex; gap: 8px; padding-inline: 24px; margin-bottom: 16px; }
+.p-steps i { flex: 1; height: 4px; border-radius: 999px; background: var(--progress-off); }
+.p-steps i.on { background: var(--brand-primary); }
+.p-list { margin-inline: 24px; overflow: hidden; }
+.p-arow { display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 0 16px; border-bottom: 1px solid var(--border-divider); }
+.p-arow:last-child { border-bottom: 0; }
+.p-arow .tx { flex: 1; display: grid; gap: 4px; min-width: 0; }
+.p-arow .tx .s { color: var(--text-secondary); }
+.p-arow .go { color: var(--text-muted); }
+.p-guide { padding: 20px; display: grid; gap: 12px; }
+.p-guide .d { color: var(--text-secondary); }
+.p-hero { display: grid; justify-items: center; text-align: center; gap: 12px; padding: 24px 24px 0; }
+.p-hero .big { width: 80px; height: 80px; border-radius: 24px; background: var(--surface-tile); color: var(--brand-primary-text); display: grid; place-items: center; }
+.p-hero .c { color: var(--text-secondary); } .p-hero .d { color: var(--text-secondary); max-width: 300px; }
+.p-page { padding: 24px; display: grid; gap: 16px; flex: 1; align-content: start; }
+.p-fab { position: absolute; right: 24px; bottom: 88px; z-index: 6; }
+.p-eyebrow { color: var(--text-muted); display: flex; gap: 8px; align-items: center; }
+.p-eyebrow i { width: 4px; height: 4px; border-radius: 50%; background: var(--progress-done); }
+.p-h1 em { font-style: normal; color: var(--brand-primary-text); }
+.p-sub { color: var(--text-secondary); }
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 004 0"/></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.5 6.5a4.5 4.5 0 00-5.6 5.6L3 18l3 3 5.9-5.9a4.5 4.5 0 005.6-5.6l-2.8 2.8-2.4-.6-.6-2.4z"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M5 17h14M5 17v2M19 17v2M5 17l1.6-5.2a2 2 0 011.9-1.4h7a2 2 0 011.9 1.4L19 17"/><circle cx="8.5" cy="14" r=".8"/><circle cx="15.5" cy="14" r=".8"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M3 7h16a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M3 7l2-3h12"/><path d="M16 14h2"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><path d="M5 12h.01M12 12h.01M19 12h.01"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M8 3h8l5 5v8l-5 5H8l-5-5V8z"/><path d="M12 8v5M12 16h.01"/></symbol>
+    <symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13.5" r="3.5"/></symbol>
+    <symbol id="i-fuel" viewBox="0 0 24 24"><path d="M5 20V5a1 1 0 011-1h7a1 1 0 011 1v15M4 20h10M14 9h2.5a1.5 1.5 0 011.5 1.5V16a1.5 1.5 0 003 0V9l-3-3M7 8h5"/></symbol>
+  </defs>
+</svg>
+<div id="app"></div>
+<script>
+const DS = {"meta":{"name":"pitstop","version":"1.0.0","frame":{"width":393,"height":852}},"colorGroups":[{"id":"brand","title":"Marca","note":"Un verde principal y un ámbar decorativo. El verde tiene un token para rellenos y otro para texto e iconos; solo se separan en modo oscuro.","items":[{"n":"brand/primary","l":"#006045","d":"#12805c","u":"Relleno de botones, segmento activo, logo, progreso, slider"},{"n":"brand/primary-text","l":"#006045","d":"#5fd0a0","u":"Texto e iconos verdes, enlaces, punto del título, navegación activa"},{"n":"brand/accent-amber","l":"#b68d4f","d":"#d9ad63","u":"Punto de notificaciones (decorativo, nunca lleva texto)"}]},{"id":"text","title":"Texto","note":"Cinco niveles. Cada valor cumple 4.5:1 sobre todas las superficies donde se usa, en claro y en oscuro (la cifra es el peor caso medido). El placeholder solo se usa sobre campos.","items":[{"n":"text/strong","l":"#20372d","d":"#e8f1ea","u":"Títulos, nombres, valores","check":"all"},{"n":"text/label","l":"#3a4d3f","d":"#c3d2c7","u":"Etiquetas de campo y cifras del resumen","check":"all","abs":["#3c5534","#465b44","#5e7357","#607459","#61775a","#6e7d64"]},{"n":"text/secondary","l":"#4d5e52","d":"#a3b4a9","u":"Descripciones, subtítulos, segmentos inactivos","check":"all","abs":["#718264","#718265","#728366","#748569","#758078","#758566","#77896a"]},{"n":"text/muted","l":"#5c6b60","d":"#8da093","u":"Captions, eyebrows, navegación inactiva","check":"all","abs":["#808d7d","#859479","#8a977e","#8b9781","#8b9b7e","#8d9a81","#95a08b","#95a487","#9aa58c","#9aa68e"]},{"n":"text/placeholder","l":"#68766c","d":"#7f9386","u":"Placeholder de campos y buscador","check":"input","abs":["#9aa397","#a0ab95","#a0ad92","#a2ad96"]},{"n":"text/on-brand","l":"#ffffff","d":"#ffffff","u":"Texto sobre rellenos verdes"},{"n":"text/avatar","l":"#566b45","d":"#9fc58e","u":"Iniciales del avatar","check":"avatar","abs":["#688153","#7d9266"]}]},{"id":"surface","title":"Superficies","note":"En oscuro cada capa sube un escalón de claridad: app, hoja, tarjeta, campo. Las translúcidas se componen sobre la capa de abajo.","items":[{"n":"surface/app","l":"#e2e8de","d":"#0e1612","u":"Fondo detrás de todo"},{"n":"surface/shell","l":"rgba(244,246,239,.8)","d":"rgba(22,33,27,.8)","u":"Contenedor de la pantalla"},{"n":"surface/glass","l":"rgba(244,246,239,.85)","d":"rgba(22,33,27,.85)","u":"Encabezado (con blur 24)"},{"n":"surface/nav","l":"rgba(248,250,244,.95)","d":"rgba(15,24,19,.95)","u":"Barra inferior (con blur 24)"},{"n":"surface/sheet","l":"#f1f3ed","d":"#17221c","u":"Hojas inferiores"},{"n":"surface/card","l":"rgba(255,255,255,.9)","d":"rgba(30,44,36,.9)","u":"Tarjetas"},{"n":"surface/input","l":"#ffffff","d":"#1b2a21","u":"Campos y botón secundario"},{"n":"surface/track","l":"rgba(233,238,225,.7)","d":"rgba(30,44,36,.7)","u":"Fondo del segmentado"},{"n":"surface/tile","l":"#e6eee6","d":"#1f3328","u":"Fondo de iconos en tarjetas y filas","abs":["#eef3e7"]},{"n":"surface/chip-neutral","l":"#f2f4ed","d":"#213129","u":"Chip de placas"},{"n":"surface/chip-count","l":"#dbe3ce","d":"#2c4236","u":"Contador del segmentado"},{"n":"surface/avatar","l":"#e2e9d6","d":"#263a2e","u":"Avatar","abs":["#eaf0e1"]},{"n":"overlay/scrim","l":"rgba(21,41,30,.35)","d":"rgba(3,8,5,.6)","u":"Fondo detrás de hojas (con blur 3)"}]},{"id":"border","title":"Bordes y avance","note":"Las tarjetas llevan un borde propio: en claro es blanco y en oscuro un blanco muy tenue, porque las sombras casi no se ven sobre fondo oscuro.","items":[{"n":"border/card","l":"rgba(255,255,255,.9)","d":"rgba(255,255,255,.07)","u":"Borde de tarjetas"},{"n":"border/glass","l":"rgba(255,255,255,.6)","d":"rgba(255,255,255,.07)","u":"Línea inferior del encabezado"},{"n":"border/input","l":"#e1e6de","d":"#2e4237","u":"Campos y línea superior de la barra inferior","abs":["#e1e6d9"]},{"n":"border/button","l":"#dce3d7","d":"#36493d","u":"Botón secundario, firma","abs":["#dfe5d9","#dce7d7"]},{"n":"border/divider","l":"#edf1e7","d":"#25362d","u":"Divisores internos","abs":["#eff2e8"]},{"n":"border/dashed","l":"#d1dacb","d":"#3a5042","u":"Estado vacío y línea de firma","abs":["#d9e1d2"]},{"n":"border/grabber","l":"#ccd5c5","d":"#4a6054","u":"Asa de la hoja inferior"},{"n":"border/control","l":"#78897c","d":"#6c8576","u":"Checkbox, radio, switch. Cumple 3:1. Reemplaza al #767676 del navegador","abs":["#767676"]},{"n":"border/focus","l":"#006045","d":"#5fd0a0","u":"Anillo de foco de 2 px en campos y botones"},{"n":"progress/done","l":"#5f8f50","d":"#6fb585","u":"Segmento de avance cumplido. Cumple 3:1 sobre la tarjeta","abs":["#92ac82"]},{"n":"progress/off","l":"#dde5d3","d":"#26382e","u":"Segmento pendiente y riel del slider","abs":["#d9e3ce","#edf1e6","#f1f5f9"]}]}],"contrast":{"surfaces":[{"id":"shell","token":"surface/shell","over":"surface/app"},{"id":"card","token":"surface/card","over":"surface/shell"},{"id":"sheet","token":"surface/sheet"},{"id":"chip","token":"surface/chip-neutral"},{"id":"tile","token":"surface/tile"},{"id":"track","token":"surface/track","over":"surface/shell"},{"id":"nav","token":"surface/nav","over":"surface/shell"},{"id":"input","token":"surface/input"},{"id":"avatar","token":"surface/avatar"}],"sets":{"all":["shell","card","sheet","chip","tile","track","nav"],"input":["input","card"],"avatar":["avatar"]}},"status":{"order":["neutral","archived","info","warning","violet","active","indigo","success","teal","orange","danger","late"],"families":{"neutral":{"n":"Neutral","u":"Recibida, Entregada, Sin cotizar, Sin factura, Dado de baja","l":["#edf0ea","#4d5850","#cacfc8"],"d":["#232b26","#aab6ae","#49524c"]},"archived":{"n":"Archivado","u":"Cerrada. Más gris y firme que Neutral","l":["#dde2dc","#38423b","#b9bfb9"],"d":["#1a1f1c","#9aa69e","#3e4540"]},"info":{"n":"Info","u":"En diagnóstico, Cotizada, En uso, banner informativo","l":["#dfedf4","#1d5d7b","#b4cdd9"],"d":["#14303d","#8dc7e2","#365a6b"]},"warning":{"n":"Advertencia","u":"En cotización, parciales, faltan datos, pendiente, mantenimiento, banner de advertencia","l":["#f6eacb","#80530a","#dcc9a1"],"d":["#3a2d10","#e9bf66","#6b5628"]},"violet":{"n":"Atención","u":"Por aprobar, Cierre pendiente. El cliente o el asesor tienen que actuar","l":["#ebe4f3","#5c3b88","#ccbfdb"],"d":["#2c2340","#c1a9e8","#56496f"]},"active":{"n":"Activo","u":"En reparación, En ejecución, Aprobada. Es el verde de la marca","l":["#d8e9de","#0b5a3f","#abcabb"],"d":["#14382a","#80d4aa","#32644e"]},"indigo":{"n":"Revisión","u":"Control de calidad","l":["#e3e5f4","#3d46a0","#bec2e2"],"d":["#1f2347","#a5aef2","#454a77"]},"success":{"n":"Éxito","u":"Lista para entrega, Aprobada total, Liquidada, Facturada, Disponible, banner de éxito","l":["#e2efd0","#3a6412","#bdd0a6"],"d":["#25371a","#b3dc83","#4d6537"]},"teal":{"n":"Fiscal listo","u":"Lista para facturar","l":["#d6ede9","#0c665e","#aacfca"],"d":["#0f3733","#70d6cb","#2a645e"]},"orange":{"n":"Prioridad","u":"En garantía (reingreso con prioridad alta)","l":["#f8e3d1","#9c470e","#e4c1a6"],"d":["#3d2210","#f2a76c","#70472a"]},"danger":{"n":"Peligro","u":"Cancelada, Factura cancelada, Declinada, banner de peligro","l":["#f6dfdc","#a1281f","#e3b7b2"],"d":["#3d1b1a","#f39a91","#703f3b"]},"late":{"n":"Retraso","u":"Marca RETRASADA. Es la única familia sólida","l":["#b42b40","#ffffff","#b42b40"],"d":["#f27a8d","#3a0b14","#f27a8d"],"solid":true}},"enums":{"OperationalStatus":{"title":"Estado operativo del taller","note":"11 estados de piso más la marca de retraso, que se muestra junto al estado y no lo reemplaza.","items":[["RECIBIDA","Recibida","neutral","Vehículo recién ingresado, esperando turno en patio."],["EN_DIAGNOSTICO","En Diagnóstico","info","Técnico escaneando y revisando fallas mecánicas."],["EN_ESPERA_COTIZACION","En Cotización","warning","Diagnóstico terminado, asesor armando el presupuesto."],["EN_ESPERA_APROBACION","Por Aprobar","violet","Cotización enviada al celular del cliente, esperando firma."],["EN_REPARACION","En Reparación","active","Estado activo principal: mecánicos trabajando en el auto."],["CONTROL_CALIDAD","Control Calidad","indigo","Prueba de manejo e inspección final antes de liberar."],["LISTA_PARA_ENTREGA","Lista p/ Entrega","success","Auto lavado y listo para que el cliente lo recoja."],["ENTREGADA","Entregada","neutral","Vehículo retirado por el cliente de las instalaciones."],["CERRADA","Cerrada","archived","Ciclo concluido, orden inmutable archivada."],["EN_GARANTIA","En Garantía","orange","Reingreso por falla en reparación previa (prioridad alta)."],["CANCELADA","Cancelada","danger","Orden abortada antes de iniciar reparación."],["estaRetrasada","Retrasada","late","Flag paralelo: se superó la fecha pactada de entrega."]]},"CommercialStatus":{"title":"Estado comercial","note":"8 estados de venta y cobranza. Cobrada parcial comparte familia con Aprobada parcial porque ambas significan \"falta algo\".","items":[["SIN_COTIZAR","Sin Cotizar","neutral","Orden sin partidas capturadas."],["COTIZADA","Cotizada","info","Presupuesto generado, no enviado aún."],["APROBADA_PARCIAL","Aprobada Parcial","warning","Cliente aceptó unas líneas y declinó otras."],["APROBADA_TOTAL","Aprobada Total","success","Cliente autorizó el 100% del presupuesto."],["EN_EJECUCION","En Ejecución","active","Trabajo en progreso sobre líneas aprobadas."],["CIERRE_PENDIENTE","Cierre Pendiente","violet","Reparación lista, falta congelar total y cobrar."],["COBRADA_PARCIAL","Cobrada Parcial","warning","Se dio anticipo pero queda saldo pendiente en CxC."],["COBRADA_TOTAL","Liquidada","success","Saldo $0.00: cobro completado al 100%."]]},"BillingStatus":{"title":"Facturación SAT (CFDI 4.0)","note":"","items":[["NO_REQUERIDA","Sin Factura","neutral","Cliente no solicitó comprobante fiscal."],["PENDIENTE_DATOS","Faltan Datos SAT","warning","Requiere factura pero falta RFC, C.P. o Régimen."],["LISTA_PARA_FACTURAR","Lista p/ Facturar","teal","Datos validados ante el SAT, lista para emitir con 1 tap."],["FACTURADA","Facturada (FAC)","success","Folio correlativo FAC-xxxx y UUID emitidos."],["CANCELADA","Factura Cancelada","danger","Comprobante fiscal cancelado con motivo SAT."]]},"QuotationLineApproval":{"title":"Líneas de cotización","note":"","items":[["PENDING","Pendiente","warning","Partida esperando respuesta del cliente."],["APPROVED","Aprobada ✔","active","Partida autorizada por el cliente."],["REJECTED","Declinada ✖","danger","Partida rechazada por el cliente."]]},"ToolStatus":{"title":"Herramientas de taller","note":"","items":[["DISPONIBLE","Disponible","success","Lista para usar en estante."],["EN_USO","En uso","info","Asignada a un mecánico."],["EN_MANTENIMIENTO","En mantenimiento","warning","En calibración o reparación."],["DADO_DE_BAJA","Dado de baja","neutral","Desactivada (soft-delete)."]]}}},"type":{"families":{"ui":"Inter","mono":"JetBrains Mono"},"rnFonts":{"ui-400":"Inter_400Regular","ui-500":"Inter_500Medium","ui-600":"Inter_600SemiBold","mono-400":"JetBrainsMono_400Regular","mono-500":"JetBrainsMono_500Medium"},"styles":[{"id":"display/wordmark","size":24,"line":32,"weight":600,"ls":-0.7,"sample":"pitstop.","use":"Logo del encabezado","was":"23/34.5"},{"id":"heading/xl","size":28,"line":34,"weight":600,"ls":-0.7,"sample":"Detalles del vehículo.","use":"Título de pantalla","was":"27/32.4, 28/33.6 y 28/42"},{"id":"heading/lg","size":24,"line":32,"weight":600,"ls":-0.5,"sample":"Recibe el vehículo","use":"Título de paso en hoja de guía","was":"24/32"},{"id":"heading/md","size":18,"line":28,"weight":600,"ls":-0.3,"sample":"Tu taller, en tres pasos","use":"Título de hojas inferiores","was":"18/28"},{"id":"title/card","size":16,"line":24,"weight":600,"ls":-0.2,"sample":"Nissan Versa","use":"Título de tarjeta de orden","was":"15/22.5"},{"id":"stat/number","size":28,"line":32,"weight":500,"ls":-1,"sample":"01","use":"Cifras del resumen","was":"26/26"},{"id":"input","size":16,"line":24,"weight":400,"ls":0,"sample":"60,000 km","use":"Texto dentro de campos","was":"16/24"},{"id":"body/lg","size":14,"line":22,"weight":400,"ls":0,"sample":"OT-1049 registrada. ¡Listo para el diagnóstico!","use":"Banners, buscador, etiquetas de checkbox","was":"14/22.75 y 12/18"},{"id":"button/md","size":14,"line":20,"weight":600,"ls":0,"sample":"Registrar recepción","use":"Botones, títulos de bloque, estado vacío","was":"14/20 y 13/19.5"},{"id":"label/lg","size":14,"line":20,"weight":500,"ls":0,"sample":"Kilometraje","use":"Etiqueta de campo","was":"13/19.5"},{"id":"body/md","size":12,"line":18,"weight":400,"ls":0,"sample":"Toca Recepción. Captura cliente, placas y falla.","use":"Descripciones y subtítulos","was":"12/19.5"},{"id":"label/md","size":12,"line":16,"weight":500,"ls":0,"sample":"Pertenencias recibidas","use":"Títulos de grupo, filas de acción, segmentos","was":"12/16 y 11/16.5"},{"id":"caption","size":11,"line":16,"weight":400,"ls":0,"sample":"Paso 2 de 2","use":"Notas, fechas, subtítulos de fila","was":"10/15, 9/13.5"},{"id":"caption/medium","size":11,"line":16,"weight":500,"ls":0,"sample":"En taller","use":"Badges, navegación, contadores","was":"10/15, 9/13.5, 8/12"},{"id":"eyebrow","size":11,"line":16,"weight":600,"ls":1.5,"upper":true,"sample":"En el taller","use":"Encabezados de sección y fecha","was":"10/15 y 9/13.5"},{"id":"mono/id","size":11,"line":16,"weight":500,"ls":0,"mono":true,"sample":"OT-1049","use":"Folio de orden","was":"10/15"},{"id":"mono/plate","size":11,"line":16,"weight":400,"ls":0.5,"mono":true,"sample":"PXM-482-B","use":"Placa","was":"9/13.5"}]},"space":{"1":4,"2":8,"3":12,"4":16,"5":20,"6":24,"8":32,"10":40,"12":48},"radius":{"xs":6,"sm":8,"md":12,"lg":16,"xl":24,"sheet":32,"full":999},"radiusUse":{"xs":"Chip de placa, checkbox, contador","sm":"Badge","md":"Tiles de icono, logo, ítems del segmentado y de navegación","lg":"Campos, botones, buscador, banners, segmentado","xl":"Tarjetas, estado vacío","sheet":"Esquinas superiores de la hoja inferior","full":"Avatar, puntos, segmentos de progreso"},"size":{"control":{"sm":40,"md":48,"lg":52},"icon":{"xs":12,"sm":16,"md":20,"lg":24,"xl":32},"tile":{"sm":40,"md":48,"hero":80},"avatar":{"sm":24,"md":32},"checkbox":24,"progressBar":4,"touchMin":44},"border":{"thin":1,"medium":1.5,"thick":2},"shadow":{"card":{"l":[{"x":0,"y":2,"blur":8,"spread":0,"color":"rgba(41,62,40,.06)"}],"d":[{"x":0,"y":3,"blur":12,"spread":0,"color":"rgba(0,0,0,.25)"}],"was":"0 3 12 · 1%","note":"Antes casi invisible; ahora se nota sin competir con el borde."},"segmented":{"l":[{"x":0,"y":1,"blur":1.5,"spread":0,"color":"rgba(0,0,0,.1)"},{"x":0,"y":1,"blur":1,"spread":0,"color":"rgba(0,0,0,.1)"}],"d":[{"x":0,"y":1,"blur":1.5,"spread":0,"color":"rgba(0,0,0,.4)"},{"x":0,"y":1,"blur":1,"spread":0,"color":"rgba(0,0,0,.3)"}],"was":"igual"},"button":{"l":[{"x":0,"y":4,"blur":5,"spread":0,"color":"rgba(0,96,69,.07)"}],"d":[{"x":0,"y":4,"blur":5,"spread":0,"color":"rgba(0,0,0,.3)"}],"was":"igual"},"fab":{"l":[{"x":0,"y":7,"blur":12.5,"spread":0,"color":"rgba(0,96,69,.14)"}],"d":[{"x":0,"y":7,"blur":12.5,"spread":0,"color":"rgba(0,0,0,.45)"}],"was":"igual"},"floating":{"l":[{"x":0,"y":20,"blur":12.5,"spread":0,"color":"rgba(0,0,0,.1)"},{"x":0,"y":8,"blur":5,"spread":0,"color":"rgba(0,0,0,.1)"}],"d":[{"x":0,"y":20,"blur":14,"spread":0,"color":"rgba(0,0,0,.35)"},{"x":0,"y":8,"blur":6,"spread":0,"color":"rgba(0,0,0,.3)"}],"was":"igual (antes se llamaba toast)"},"sheet":{"l":[{"x":0,"y":-8,"blur":24,"spread":0,"color":"rgba(0,0,0,.16)"}],"d":[{"x":0,"y":-8,"blur":24,"spread":0,"color":"rgba(0,0,0,.5)"}],"was":"0 25 25 · 25%","note":"Antes caía hacia abajo, fuera de la pantalla. Ahora sube sobre el scrim."}},"layout":{"frame":{"width":393,"height":852},"columns":4,"margin":24,"gutter":12,"maxContentWidth":460,"statusBar":56,"headerRow":56,"headerPaddingBottom":8,"bottomNavContent":72,"homeIndicator":34,"fabGapAboveNav":16,"rhythm":{"section":32,"group":24,"field":16,"labelToField":8,"cardPadding":16,"cardPaddingLg":20}}};
+const COMPONENTS = [{"id":"button","title":"Button","figma":"Button / Type × State","variants":[["Type","Primary · Secondary · FAB · Icon"],["State","Default · Pressed · Disabled"]],"props":[["Label","Text","Texto del botón."],["Leading icon","Boolean","Muestra u oculta la capa Icon leading."],["Leading icon type","Instance swap","Elige qué icono va al inicio."],["Trailing icon","Boolean","Muestra u oculta la capa Icon trailing."],["Trailing icon type","Instance swap","Elige qué icono va al final."]],"notes":["Ancho completo no es una propiedad. Se logra poniendo la instancia en Fill container dentro de un padre con auto layout.","Pressed: relleno 8 % más oscuro (Primary) o surface/track (Secondary). Disabled: opacidad 40 % y sin sombra."],"parts":[{"name":"Button","rows":[["Button","Horizontal","8","V 0 · H 20","Centro · Centro","W Hug (mín. 96) · H 52 fijo","Radio 16. Relleno brand/primary. Clip content apagado."],["Icon leading","—","—","—","—","20 × 20 fijo","Instancia del componente Icon. Boolean + Instance swap."],["Label","—","—","—","—","W Hug · H Hug","Estilo button/md. Una sola línea, sin truncar."],["Icon trailing","—","—","—","—","20 × 20 fijo","Mismo patrón que el inicial."],["Type = Icon","Horizontal","0","0","Centro · Centro","48 × 48 fijo","Sin Label ni iconos opcionales. Un solo Icon centrado."],["Type = FAB","Horizontal","8","V 0 · H 20","Centro · Centro","W Hug · H 52 fijo","En la pantalla: Ignore auto layout, constraints Right 24 y Bottom = nav + 16. Sombra fab."]]}]},{"id":"field","title":"Field","figma":"Field / Type × State","variants":[["Type","Text · Select · Textarea"],["State","Empty · Filled · Focus · Error · Disabled"]],"props":[["Label","Text","Etiqueta. El sufijo « · opcional» va en el mismo texto."],["Value","Text","Valor. En Empty se escribe el placeholder."],["Helper text","Boolean + Text","Línea de ayuda o de error debajo."],["Leading icon","Boolean","Icono al inicio del control."],["Trailing icon","Boolean","Chevron en Select, otro icono en los demás."]],"notes":["Focus: borde 2 border/focus. Error: borde 1.5 en status/danger-fg y la ayuda también. Disabled: relleno surface/track y texto text/placeholder.","El borde de reposo (border/input) es suave a propósito; la etiqueta, el relleno y el anillo de foco son lo que identifica al campo."],"parts":[{"name":"Field","rows":[["Field","Vertical","8","0","Inicio · Estirar","W Fill · H Hug","Etiqueta arriba, control abajo, ayuda opcional."],["Label","—","—","—","—","W Fill · H Hug","label/lg · text/label."],["Control","Horizontal","12","V 0 · H 16","Inicio · Centro","W Fill · H 52 fijo","Radio 16, borde 1 border/input (inside). Textarea: V 16, H Hug, mín. 104, alineación superior."],["Leading icon","—","—","—","—","20 × 20 fijo","Boolean. Color text/muted."],["Value","—","—","—","—","W Fill · H Hug","input (16/24). Empty usa text/placeholder, Filled text/strong. Una línea."],["Trailing icon","—","—","—","—","20 × 20 fijo","Boolean. Color text/muted."],["Helper","—","—","—","—","W Fill · H Hug","body/md · text/secondary. En Error usa status/danger-fg."],["Fila de 2 campos","Horizontal","12","0","Inicio · Inicio","W Fill · H Hug","Cada Field en Fill: ocupa 2 columnas de la cuadrícula."],["Campo + botón","Horizontal","8","0","Inicio · Fin","W Fill · H Hug","Field en Fill y botón de cámara de 52 × 52 fijo (placa)."]]},{"name":"Checkbox","rows":[["Checkbox row","Horizontal","12","V 12 · H 0","Inicio · Centro","W Fill · H Hug (mín. 48)","Toda la fila es área de toque. Variante Checked = Off · On."],["Box","—","—","—","—","24 × 24 fijo","Radio 6, borde 1.5 border/control. On: relleno brand/primary y check blanco de 16."],["Label","—","—","—","—","W Fill · H Hug","body/lg · text/label."],["Lista de 2 columnas","Vertical","0","0","Inicio · Estirar","W Fill · H Hug","Filas horizontales con dos Checkbox en Fill y gap 12."]]},{"name":"Slider de combustible","rows":[["Card","Vertical","12","16","Inicio · Estirar","W Fill · H Hug","Radio 24, surface/card, borde border/card."],["Header","Horizontal","8","0","Espacio entre · Centro","W Fill · H Hug","Izquierda: icono 16 + label/md. Derecha: valor en button/md y brand/primary-text."],["Slider","Horizontal","0","V 8 · H 0","Inicio · Centro","W Fill · H 24 fijo","Contiene Track y Thumb. Variante Value = 0 · 25 · 50 · 75 · 100."],["Track","—","—","—","—","W Fill · H 8 fijo","Radio full. Riel progress/off y progreso brand/primary (absoluto, ancho = %)."],["Thumb","—","—","—","—","24 × 24 fijo","Relleno blanco, borde 2 brand/primary. Ignore auto layout, posición según el valor."],["Escala","Horizontal","0","0","Espacio entre · Inicio","W Fill · H Hug","Vacío · ½ · Lleno en caption y text/muted."]]}]},{"id":"stats","title":"Resumen, búsqueda y filtros","figma":"StatSummary · SearchBar · Segmented · SectionTitle","variants":[["Segmented item · State","Active · Inactive"]],"props":[["Segmented item · Label","Text","Nombre del filtro."],["Segmented item · Count","Boolean + Text","Contador al lado de la etiqueta."],["SectionTitle · Count","Text","«1 orden» / «2 órdenes»."],["SectionTitle · Action","Boolean","Muestra el IconButton de filtros."]],"notes":["Texto del contador: «1 orden» y «2 órdenes». Antes decía «1 órdenes»."],"parts":[{"name":"StatSummary","rows":[["StatSummary","Horizontal","0","V 16 · H 0","Inicio · Centro","W Fill · H Hug","Tarjeta radio 24, sombra card."],["Stat ×3","Vertical","8","0","Centro · Centro","W Fill · H Hug","Cifra stat/number en text/label, etiqueta caption en text/muted. Stroke individual solo izquierdo (border/divider) en el 2.º y 3.º."]]},{"name":"SearchBar","rows":[["SearchBar","Horizontal","12","V 0 · H 16","Inicio · Centro","W Fill · H 48 fijo","Radio 16. Relleno surface/input al 60 %, borde border/card."],["Icon","—","—","—","—","20 × 20 fijo","text/muted."],["Text","—","—","—","—","W Fill · H Hug","body/lg · text/placeholder."]]},{"name":"Segmented","rows":[["Segmented","Horizontal","4","4","Inicio · Estirar","W Fill · H Hug (56)","Radio 16. Relleno surface/track."],["Item","Horizontal","8","V 0 · H 12","Centro · Centro","W Fill · H 48 fijo","Radio 12. Active: relleno brand/primary, texto blanco, sombra segmented. Inactive: sin relleno, text/secondary. Texto label/md."],["Count chip","Horizontal","0","V 2 · H 8","Centro · Centro","W Hug · H 20 fijo","Radio 6, surface/chip-count, caption/medium. Boolean."]]},{"name":"SectionTitle","rows":[["SectionTitle","Horizontal","8","0","Espacio entre · Centro","W Fill · H Hug (mín. 48)","Izquierda: eyebrow. Derecha: contador (caption) + IconButton 48."]]}]},{"id":"ordercard","title":"OrderCard","figma":"OrderCard · Badge · PlateChip","variants":[["OrderCard · Progress","0 · 1 · 2 · 3 · 4 · 5 · 6"],["Badge · Tone","neutral · archived · info · warning · violet · active · indigo · success · teal · orange · danger · late"]],"props":[["Folio","Text","OT-1049."],["Due date","Text","Fecha de entrega pactada."],["Vehicle · Client · Advisor","Text","Nombre del vehículo, cliente y asesor."],["Plate","Instance","Instancia de PlateChip."],["Status","Instance","Instancia de Badge. El color lo da la variante Tone; el texto, la propiedad Label."],["Late flag","Boolean","Muestra el Badge sólido «Retrasada» al lado del estado."]],"notes":["Los colores de Badge salen de variables con modos Claro y Oscuro, así que solo necesitas 12 variantes, no 24."],"parts":[{"name":"OrderCard","rows":[["OrderCard","Vertical","12","16","Inicio · Estirar","W Fill · H Hug","Radio 24, surface/card, borde 1 border/card, sombra card."],["MetaRow","Horizontal","8","0","Espacio entre · Centro","W Fill · H Hug","Folio (mono/id, text/muted) y fecha: icono 12 + caption (gap 4)."],["MainRow","Horizontal","12","0","Inicio · Centro","W Fill · H Hug","Tile 48 × 48 fijo (radio 12, surface/tile, icono 24 en brand/primary-text), Info en Fill y Chevron 20."],["Info","Vertical","4","0","Inicio · Estirar","W Fill · H Hug","Título title/card y fila Meta (horizontal, gap 8): PlateChip + cliente en caption."],["Footer","Horizontal","8","T 12 · otros 0","Espacio entre · Centro","W Fill · H Hug","Stroke individual solo superior (border/divider). Badge a la izquierda, asesor a la derecha."],["Advisor","Horizontal","8","0","Fin · Centro","W Hug · H Hug","Avatar 24 (inicial en caption/medium) + nombre en caption y text/muted."],["Progress","Horizontal","8","0","Inicio · Estirar","W Fill · H 4 fijo","6 segmentos en Fill, radio full. Hechos progress/done, pendientes progress/off."]]},{"name":"Badge y PlateChip","rows":[["Badge","Horizontal","8","V 4 · H 12","Centro · Centro","W Hug · H Hug","Radio 8, borde 1. Relleno, texto y borde de la familia. Dot de 8 + caption/medium."],["Badge · Late","Horizontal","4","V 4 · H 8","Centro · Centro","W Hug · H Hug","Sólido, radio 8, icono de reloj 12 y texto en mayúsculas."],["PlateChip","Horizontal","0","V 4 · H 8","Centro · Centro","W Hug · H Hug","Radio 6, surface/chip-neutral, mono/plate."]]}]},{"id":"empty","title":"EmptyState","figma":"EmptyState","variants":[],"props":[["Icon","Instance swap","Icono de 32."],["Title · Description","Text","Textos centrados."],["Action","Boolean","Muestra el botón secundario."]],"notes":[],"parts":[{"name":"EmptyState","rows":[["EmptyState","Vertical","8","V 40 · H 24","Centro · Centro","W Fill · H Hug","Radio 24, stroke 1 dashed border/dashed, sin relleno."],["Icon","—","—","—","—","32 × 32 fijo","text/muted."],["Title","—","—","—","—","W Fill · H Hug","button/md · text/strong · centrado."],["Description","—","—","—","—","W Fill (máx. 280) · H Hug","body/md · text/secondary · centrado."],["Action","Vertical","0","T 12 · otros 0","Centro · Centro","W Hug · H Hug","Contiene un Button Secondary. Boolean."]]}]},{"id":"banner","title":"Banner (incluye toast)","figma":"Banner / Type × Layout × Dismissible","variants":[["Type","Info · Warning · Danger · Success"],["Layout","Inline · Floating"],["Dismissible","Off · On"]],"props":[["Title","Boolean + Text","Título en negritas."],["Message","Text","Mensaje."],["Action","Boolean + Text","Acción en texto, por ejemplo «Reintentar»."]],"notes":["Dismissible es una variante y no un booleano porque cambia el padding derecho, y un booleano no puede cambiar el layout.","Danger se anuncia con role alert (accessibilityRole=\"alert\" en React Native); los demás, con status."],"parts":[{"name":"Banner","rows":[["Banner","Horizontal","12","16 (Dismissible On: derecha 8)","Inicio · Inicio","W Fill · H Hug","Radio 16, borde 1. Relleno, texto y borde de la familia: status/info, warning, danger o success."],["Icon","—","—","—","—","20 × 20 fijo","Info: círculo con i. Warning: triángulo. Danger: octágono. Success: círculo con palomita."],["Content","Vertical","4","0","Inicio · Estirar","W Fill · H Hug","Title (button/md, opcional) y Message (body/lg)."],["Action","—","—","—","—","W Hug · H 40 fijo","Texto button/md en el color fg de la familia. Boolean."],["Close","—","—","—","—","40 × 40 fijo","Solo con Dismissible On. Icono 20."],["Layout = Floating","—","—","—","—","W Fill (constraints L/R 16)","Ignore auto layout dentro de la pantalla: x 16, y = status bar + 8. Sombra floating, por encima de todo."]]}]},{"id":"headernav","title":"Barra superior e inferior","figma":"AppHeader · BottomNav","variants":[["AppHeader · Type","Home · Detail"],["NavItem · State","Active · Inactive"]],"props":[["Notification dot","Boolean","Punto ámbar sobre la campana."],["Avatar initials","Text","Iniciales."],["Title (Detail)","Text","Título junto al botón de atrás."]],"notes":[],"parts":[{"name":"AppHeader","rows":[["AppHeader","Vertical","0","B 8","Inicio · Estirar","W Fill · H Hug (120)","Relleno surface/glass, stroke inferior 1 border/glass."],["StatusBar","—","—","—","—","W Fill · H 56 fijo","Solo en Figma. En React Native no se dibuja: usa el inset superior."],["Row","Horizontal","8","V 0 · H 24","Espacio entre · Centro","W Fill · H 56 fijo","Variante Home o Detail."],["Logo (Home)","Horizontal","8","0","Inicio · Centro","W Hug · H Hug","Tile 40 (radio 12, brand/primary) y wordmark display/wordmark."],["Actions (Home)","Horizontal","4","0","Fin · Centro","W Hug · H Hug","IconButton 48, IconButton 48 con punto ámbar de 8 (absoluto, arriba a la derecha) y Avatar 32 dentro de 48."],["Back + título (Detail)","Horizontal","4","0","Inicio · Centro","W Hug · H Hug","IconButton 48 y título label/lg en text/secondary."]]},{"name":"BottomNav","rows":[["BottomNav","Horizontal","0","V 8 · H 12","Inicio · Centro","W Fill · H Hug (72)","Relleno surface/nav, stroke superior 1 border/input. En Figma, el Home indicator (34) va debajo; en React Native suma el inset inferior."],["NavItem ×5","Vertical","4","0","Centro · Centro","W Fill · H 56 fijo","Radio 12. Icono 24 y etiqueta caption/medium. Active: brand/primary-text y punto de 4 absoluto abajo al centro. Inactive: text/muted."]]}]},{"id":"sheet","title":"Hoja inferior","figma":"BottomSheet · ActionRow · StepProgress · GuideCard","variants":[["BottomSheet · Type","Onboarding · Search · Capture"],["StepProgress · Step","1 · 2 · 3"],["StepProgress · Total","2 · 3"]],"props":[["Title","Text","Título de la hoja."],["Close","Boolean","Botón de cerrar."],["Body","Slot","Contenido: usa Instance swap con tus bloques (ActionList, Field, hero)."]],"notes":[],"parts":[{"name":"BottomSheet","rows":[["Scrim","Vertical","0","0","Fin · Centro","W Fill · H Fill","Relleno overlay/scrim con blur de fondo 3."],["Sheet","Vertical","0","0","Inicio · Estirar","W Fill (máx. 460) · H Hug (máx. pantalla − 56)","Radio superior 32, clip content, surface/sheet, sombra sheet."],["Grabber area","Vertical","0","T 12","Inicio · Centro","W Fill · H Hug","Grabber 36 × 4, radio full, border/grabber."],["Header","Horizontal","8","V 12 · H 24","Espacio entre · Centro","W Fill · H Hug (72)","Título heading/md en Fill e IconButton 48."],["Body","Vertical","16","T 0 · H 24 · B 24 + safe area","Inicio · Estirar","W Fill · H Hug","Scroll vertical si se pasa de alto."],["Hero (Onboarding)","Vertical","12","T 24","Centro · Centro","W Fill · H Hug","Tile 80 (radio 24, icono 32), contador caption, título heading/lg y texto body/md centrado (ancho máx. 300)."]]},{"name":"StepProgress, ActionRow y GuideCard","rows":[["StepProgress","Horizontal","8","0","Inicio · Estirar","W Fill · H 4 fijo","Segmentos en Fill, radio full. Activo brand/primary, inactivo progress/off."],["ActionList","Vertical","0","0","Inicio · Estirar","W Fill · H Hug","Tarjeta radio 24 con clip content. Contiene filas ActionRow."],["ActionRow","Horizontal","12","V 0 · H 16","Inicio · Centro","W Fill · H Hug (mín. 72)","Tile 40, Text en Fill (vertical, gap 4: label/md y caption) y chevron 20. Stroke inferior 1 border/divider, salvo la última."],["GuideCard","Vertical","12","20","Inicio · Estirar","W Fill · H Hug","Radio 24. Tile 40, título button/md y texto body/md."]]}]}];
+const FILES = {"css":"/* pitstop · tokens de diseño\n   Generado desde tokens.json. No lo edites a mano.\n   Modo claro por defecto; el oscuro se activa con el sistema o con data-theme=\"dark\".\n   Para React Native con StyleSheet usa pitstop-theme.ts; este archivo sirve para web, NativeWind o documentación. */\n\n:root {\n  /* Marca */\n  --brand-primary: #006045;\n  --brand-primary-text: #006045;\n  --brand-accent-amber: #b68d4f;\n\n  /* Texto */\n  --text-strong: #20372d;\n  --text-label: #3a4d3f;\n  --text-secondary: #4d5e52;\n  --text-muted: #5c6b60;\n  --text-placeholder: #68766c;\n  --text-on-brand: #ffffff;\n  --text-avatar: #566b45;\n\n  /* Superficies */\n  --surface-app: #e2e8de;\n  --surface-shell: rgba(244,246,239,.8);\n  --surface-glass: rgba(244,246,239,.85);\n  --surface-nav: rgba(248,250,244,.95);\n  --surface-sheet: #f1f3ed;\n  --surface-card: rgba(255,255,255,.9);\n  --surface-input: #ffffff;\n  --surface-track: rgba(233,238,225,.7);\n  --surface-tile: #e6eee6;\n  --surface-chip-neutral: #f2f4ed;\n  --surface-chip-count: #dbe3ce;\n  --surface-avatar: #e2e9d6;\n  --overlay-scrim: rgba(21,41,30,.35);\n\n  /* Bordes y avance */\n  --border-card: rgba(255,255,255,.9);\n  --border-glass: rgba(255,255,255,.6);\n  --border-input: #e1e6de;\n  --border-button: #dce3d7;\n  --border-divider: #edf1e7;\n  --border-dashed: #d1dacb;\n  --border-grabber: #ccd5c5;\n  --border-control: #78897c;\n  --border-focus: #006045;\n  --progress-done: #5f8f50;\n  --progress-off: #dde5d3;\n\n  /* Estados y avisos (bg · fg · border) */\n  --status-neutral-bg: #edf0ea;\n  --status-neutral-fg: #4d5850;\n  --status-neutral-border: #cacfc8;\n  --status-archived-bg: #dde2dc;\n  --status-archived-fg: #38423b;\n  --status-archived-border: #b9bfb9;\n  --status-info-bg: #dfedf4;\n  --status-info-fg: #1d5d7b;\n  --status-info-border: #b4cdd9;\n  --status-warning-bg: #f6eacb;\n  --status-warning-fg: #80530a;\n  --status-warning-border: #dcc9a1;\n  --status-violet-bg: #ebe4f3;\n  --status-violet-fg: #5c3b88;\n  --status-violet-border: #ccbfdb;\n  --status-active-bg: #d8e9de;\n  --status-active-fg: #0b5a3f;\n  --status-active-border: #abcabb;\n  --status-indigo-bg: #e3e5f4;\n  --status-indigo-fg: #3d46a0;\n  --status-indigo-border: #bec2e2;\n  --status-success-bg: #e2efd0;\n  --status-success-fg: #3a6412;\n  --status-success-border: #bdd0a6;\n  --status-teal-bg: #d6ede9;\n  --status-teal-fg: #0c665e;\n  --status-teal-border: #aacfca;\n  --status-orange-bg: #f8e3d1;\n  --status-orange-fg: #9c470e;\n  --status-orange-border: #e4c1a6;\n  --status-danger-bg: #f6dfdc;\n  --status-danger-fg: #a1281f;\n  --status-danger-border: #e3b7b2;\n  --status-late-bg: #b42b40;\n  --status-late-fg: #ffffff;\n  --status-late-border: #b42b40;\n\n  /* Sombras */\n  --shadow-card: 0 2px 8px 0 rgba(41,62,40,.06);\n  --shadow-segmented: 0 1px 1.5px 0 rgba(0,0,0,.1), 0 1px 1px 0 rgba(0,0,0,.1);\n  --shadow-button: 0 4px 5px 0 rgba(0,96,69,.07);\n  --shadow-fab: 0 7px 12.5px 0 rgba(0,96,69,.14);\n  --shadow-floating: 0 20px 12.5px 0 rgba(0,0,0,.1), 0 8px 5px 0 rgba(0,0,0,.1);\n  --shadow-sheet: 0 -8px 24px 0 rgba(0,0,0,.16);\n\n  /* Tipografía */\n  --font-ui: \"Inter\", system-ui, sans-serif;\n  --font-mono: \"JetBrains Mono\", ui-monospace, monospace;\n  --type-display-wordmark-size: 24px;\n  --type-display-wordmark-line: 32px;\n  --type-display-wordmark-weight: 600;\n  --type-display-wordmark-ls: -0.7px;\n  --type-heading-xl-size: 28px;\n  --type-heading-xl-line: 34px;\n  --type-heading-xl-weight: 600;\n  --type-heading-xl-ls: -0.7px;\n  --type-heading-lg-size: 24px;\n  --type-heading-lg-line: 32px;\n  --type-heading-lg-weight: 600;\n  --type-heading-lg-ls: -0.5px;\n  --type-heading-md-size: 18px;\n  --type-heading-md-line: 28px;\n  --type-heading-md-weight: 600;\n  --type-heading-md-ls: -0.3px;\n  --type-title-card-size: 16px;\n  --type-title-card-line: 24px;\n  --type-title-card-weight: 600;\n  --type-title-card-ls: -0.2px;\n  --type-stat-number-size: 28px;\n  --type-stat-number-line: 32px;\n  --type-stat-number-weight: 500;\n  --type-stat-number-ls: -1px;\n  --type-input-size: 16px;\n  --type-input-line: 24px;\n  --type-input-weight: 400;\n  --type-input-ls: 0px;\n  --type-body-lg-size: 14px;\n  --type-body-lg-line: 22px;\n  --type-body-lg-weight: 400;\n  --type-body-lg-ls: 0px;\n  --type-button-md-size: 14px;\n  --type-button-md-line: 20px;\n  --type-button-md-weight: 600;\n  --type-button-md-ls: 0px;\n  --type-label-lg-size: 14px;\n  --type-label-lg-line: 20px;\n  --type-label-lg-weight: 500;\n  --type-label-lg-ls: 0px;\n  --type-body-md-size: 12px;\n  --type-body-md-line: 18px;\n  --type-body-md-weight: 400;\n  --type-body-md-ls: 0px;\n  --type-label-md-size: 12px;\n  --type-label-md-line: 16px;\n  --type-label-md-weight: 500;\n  --type-label-md-ls: 0px;\n  --type-caption-size: 11px;\n  --type-caption-line: 16px;\n  --type-caption-weight: 400;\n  --type-caption-ls: 0px;\n  --type-caption-medium-size: 11px;\n  --type-caption-medium-line: 16px;\n  --type-caption-medium-weight: 500;\n  --type-caption-medium-ls: 0px;\n  --type-eyebrow-size: 11px;\n  --type-eyebrow-line: 16px;\n  --type-eyebrow-weight: 600;\n  --type-eyebrow-ls: 1.5px;\n  --type-mono-id-size: 11px;\n  --type-mono-id-line: 16px;\n  --type-mono-id-weight: 500;\n  --type-mono-id-ls: 0px;\n  --type-mono-plate-size: 11px;\n  --type-mono-plate-line: 16px;\n  --type-mono-plate-weight: 400;\n  --type-mono-plate-ls: 0.5px;\n\n  /* Espaciado */\n  --space-1: 4px;\n  --space-2: 8px;\n  --space-3: 12px;\n  --space-4: 16px;\n  --space-5: 20px;\n  --space-6: 24px;\n  --space-8: 32px;\n  --space-10: 40px;\n  --space-12: 48px;\n\n  /* Radios */\n  --radius-xs: 6px;\n  --radius-sm: 8px;\n  --radius-md: 12px;\n  --radius-lg: 16px;\n  --radius-xl: 24px;\n  --radius-sheet: 32px;\n  --radius-full: 999px;\n\n  /* Tamaños */\n  --size-control-sm: 40px;\n  --size-control-md: 48px;\n  --size-control-lg: 52px;\n  --size-icon-xs: 12px;\n  --size-icon-sm: 16px;\n  --size-icon-md: 20px;\n  --size-icon-lg: 24px;\n  --size-icon-xl: 32px;\n  --size-tile-sm: 40px;\n  --size-tile-md: 48px;\n  --size-tile-hero: 80px;\n  --size-avatar-sm: 24px;\n  --size-avatar-md: 32px;\n  --size-checkbox: 24px;\n  --size-progress-bar: 4px;\n  --size-touch-min: 44px;\n\n  /* Anchos de borde */\n  --border-width-thin: 1px;\n  --border-width-medium: 1.5px;\n  --border-width-thick: 2px;\n\n  /* Layout grid (frame base 393 × 852) */\n  --layout-columns: 4;\n  --layout-margin: 24px;\n  --layout-gutter: 12px;\n  --layout-max-content-width: 460px;\n  --layout-header-row: 56px;\n  --layout-bottom-nav: 72px;\n  --layout-gap-section: 32px;\n  --layout-gap-group: 24px;\n  --layout-gap-field: 16px;\n  --layout-gap-label: 8px;\n}\n\n/* Modo oscuro: solo se redefine lo que cambia */\n@media (prefers-color-scheme: dark) {\n  :root:not([data-theme=\"light\"]) {\n    color-scheme: dark;\n    /* Marca */\n    --brand-primary: #12805c;\n    --brand-primary-text: #5fd0a0;\n    --brand-accent-amber: #d9ad63;\n\n    /* Texto */\n    --text-strong: #e8f1ea;\n    --text-label: #c3d2c7;\n    --text-secondary: #a3b4a9;\n    --text-muted: #8da093;\n    --text-placeholder: #7f9386;\n    --text-on-brand: #ffffff;\n    --text-avatar: #9fc58e;\n\n    /* Superficies */\n    --surface-app: #0e1612;\n    --surface-shell: rgba(22,33,27,.8);\n    --surface-glass: rgba(22,33,27,.85);\n    --surface-nav: rgba(15,24,19,.95);\n    --surface-sheet: #17221c;\n    --surface-card: rgba(30,44,36,.9);\n    --surface-input: #1b2a21;\n    --surface-track: rgba(30,44,36,.7);\n    --surface-tile: #1f3328;\n    --surface-chip-neutral: #213129;\n    --surface-chip-count: #2c4236;\n    --surface-avatar: #263a2e;\n    --overlay-scrim: rgba(3,8,5,.6);\n\n    /* Bordes y avance */\n    --border-card: rgba(255,255,255,.07);\n    --border-glass: rgba(255,255,255,.07);\n    --border-input: #2e4237;\n    --border-button: #36493d;\n    --border-divider: #25362d;\n    --border-dashed: #3a5042;\n    --border-grabber: #4a6054;\n    --border-control: #6c8576;\n    --border-focus: #5fd0a0;\n    --progress-done: #6fb585;\n    --progress-off: #26382e;\n\n    /* Estados y avisos (bg · fg · border) */\n    --status-neutral-bg: #232b26;\n    --status-neutral-fg: #aab6ae;\n    --status-neutral-border: #49524c;\n    --status-archived-bg: #1a1f1c;\n    --status-archived-fg: #9aa69e;\n    --status-archived-border: #3e4540;\n    --status-info-bg: #14303d;\n    --status-info-fg: #8dc7e2;\n    --status-info-border: #365a6b;\n    --status-warning-bg: #3a2d10;\n    --status-warning-fg: #e9bf66;\n    --status-warning-border: #6b5628;\n    --status-violet-bg: #2c2340;\n    --status-violet-fg: #c1a9e8;\n    --status-violet-border: #56496f;\n    --status-active-bg: #14382a;\n    --status-active-fg: #80d4aa;\n    --status-active-border: #32644e;\n    --status-indigo-bg: #1f2347;\n    --status-indigo-fg: #a5aef2;\n    --status-indigo-border: #454a77;\n    --status-success-bg: #25371a;\n    --status-success-fg: #b3dc83;\n    --status-success-border: #4d6537;\n    --status-teal-bg: #0f3733;\n    --status-teal-fg: #70d6cb;\n    --status-teal-border: #2a645e;\n    --status-orange-bg: #3d2210;\n    --status-orange-fg: #f2a76c;\n    --status-orange-border: #70472a;\n    --status-danger-bg: #3d1b1a;\n    --status-danger-fg: #f39a91;\n    --status-danger-border: #703f3b;\n    --status-late-bg: #f27a8d;\n    --status-late-fg: #3a0b14;\n    --status-late-border: #f27a8d;\n\n    /* Sombras */\n    --shadow-card: 0 3px 12px 0 rgba(0,0,0,.25);\n    --shadow-segmented: 0 1px 1.5px 0 rgba(0,0,0,.4), 0 1px 1px 0 rgba(0,0,0,.3);\n    --shadow-button: 0 4px 5px 0 rgba(0,0,0,.3);\n    --shadow-fab: 0 7px 12.5px 0 rgba(0,0,0,.45);\n    --shadow-floating: 0 20px 14px 0 rgba(0,0,0,.35), 0 8px 6px 0 rgba(0,0,0,.3);\n    --shadow-sheet: 0 -8px 24px 0 rgba(0,0,0,.5);\n  }\n}\n:root[data-theme=\"dark\"] {\n  color-scheme: dark;\n  /* Marca */\n  --brand-primary: #12805c;\n  --brand-primary-text: #5fd0a0;\n  --brand-accent-amber: #d9ad63;\n\n  /* Texto */\n  --text-strong: #e8f1ea;\n  --text-label: #c3d2c7;\n  --text-secondary: #a3b4a9;\n  --text-muted: #8da093;\n  --text-placeholder: #7f9386;\n  --text-on-brand: #ffffff;\n  --text-avatar: #9fc58e;\n\n  /* Superficies */\n  --surface-app: #0e1612;\n  --surface-shell: rgba(22,33,27,.8);\n  --surface-glass: rgba(22,33,27,.85);\n  --surface-nav: rgba(15,24,19,.95);\n  --surface-sheet: #17221c;\n  --surface-card: rgba(30,44,36,.9);\n  --surface-input: #1b2a21;\n  --surface-track: rgba(30,44,36,.7);\n  --surface-tile: #1f3328;\n  --surface-chip-neutral: #213129;\n  --surface-chip-count: #2c4236;\n  --surface-avatar: #263a2e;\n  --overlay-scrim: rgba(3,8,5,.6);\n\n  /* Bordes y avance */\n  --border-card: rgba(255,255,255,.07);\n  --border-glass: rgba(255,255,255,.07);\n  --border-input: #2e4237;\n  --border-button: #36493d;\n  --border-divider: #25362d;\n  --border-dashed: #3a5042;\n  --border-grabber: #4a6054;\n  --border-control: #6c8576;\n  --border-focus: #5fd0a0;\n  --progress-done: #6fb585;\n  --progress-off: #26382e;\n\n  /* Estados y avisos (bg · fg · border) */\n  --status-neutral-bg: #232b26;\n  --status-neutral-fg: #aab6ae;\n  --status-neutral-border: #49524c;\n  --status-archived-bg: #1a1f1c;\n  --status-archived-fg: #9aa69e;\n  --status-archived-border: #3e4540;\n  --status-info-bg: #14303d;\n  --status-info-fg: #8dc7e2;\n  --status-info-border: #365a6b;\n  --status-warning-bg: #3a2d10;\n  --status-warning-fg: #e9bf66;\n  --status-warning-border: #6b5628;\n  --status-violet-bg: #2c2340;\n  --status-violet-fg: #c1a9e8;\n  --status-violet-border: #56496f;\n  --status-active-bg: #14382a;\n  --status-active-fg: #80d4aa;\n  --status-active-border: #32644e;\n  --status-indigo-bg: #1f2347;\n  --status-indigo-fg: #a5aef2;\n  --status-indigo-border: #454a77;\n  --status-success-bg: #25371a;\n  --status-success-fg: #b3dc83;\n  --status-success-border: #4d6537;\n  --status-teal-bg: #0f3733;\n  --status-teal-fg: #70d6cb;\n  --status-teal-border: #2a645e;\n  --status-orange-bg: #3d2210;\n  --status-orange-fg: #f2a76c;\n  --status-orange-border: #70472a;\n  --status-danger-bg: #3d1b1a;\n  --status-danger-fg: #f39a91;\n  --status-danger-border: #703f3b;\n  --status-late-bg: #f27a8d;\n  --status-late-fg: #3a0b14;\n  --status-late-border: #f27a8d;\n\n  /* Sombras */\n  --shadow-card: 0 3px 12px 0 rgba(0,0,0,.25);\n  --shadow-segmented: 0 1px 1.5px 0 rgba(0,0,0,.4), 0 1px 1px 0 rgba(0,0,0,.3);\n  --shadow-button: 0 4px 5px 0 rgba(0,0,0,.3);\n  --shadow-fab: 0 7px 12.5px 0 rgba(0,0,0,.45);\n  --shadow-floating: 0 20px 14px 0 rgba(0,0,0,.35), 0 8px 6px 0 rgba(0,0,0,.3);\n  --shadow-sheet: 0 -8px 24px 0 rgba(0,0,0,.5);\n}\n\n/* Estilos de texto */\n.t-display-wordmark { font: 600 24px/32px var(--font-ui); letter-spacing: -0.7px; }\n.t-heading-xl { font: 600 28px/34px var(--font-ui); letter-spacing: -0.7px; }\n.t-heading-lg { font: 600 24px/32px var(--font-ui); letter-spacing: -0.5px; }\n.t-heading-md { font: 600 18px/28px var(--font-ui); letter-spacing: -0.3px; }\n.t-title-card { font: 600 16px/24px var(--font-ui); letter-spacing: -0.2px; }\n.t-stat-number { font: 500 28px/32px var(--font-ui); letter-spacing: -1px; }\n.t-input { font: 400 16px/24px var(--font-ui); }\n.t-body-lg { font: 400 14px/22px var(--font-ui); }\n.t-button-md { font: 600 14px/20px var(--font-ui); }\n.t-label-lg { font: 500 14px/20px var(--font-ui); }\n.t-body-md { font: 400 12px/18px var(--font-ui); }\n.t-label-md { font: 500 12px/16px var(--font-ui); }\n.t-caption { font: 400 11px/16px var(--font-ui); }\n.t-caption-medium { font: 500 11px/16px var(--font-ui); }\n.t-eyebrow { font: 600 11px/16px var(--font-ui); letter-spacing: 1.5px; text-transform: uppercase; }\n.t-mono-id { font: 500 11px/16px var(--font-mono); }\n.t-mono-plate { font: 400 11px/16px var(--font-mono); letter-spacing: 0.5px; }\n","ts":"/**\n * pitstop · theme para React Native / Expo\n * Generado desde tokens.json. No lo edites a mano.\n *\n * Fuentes (Expo):\n *   npx expo install expo-font @expo-google-fonts/inter @expo-google-fonts/jetbrains-mono\n *   useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold,\n *              JetBrainsMono_400Regular, JetBrainsMono_500Medium })\n * No combines fontFamily con fontWeight: cada peso ya es su propia familia.\n *\n * Sombras: `boxShadow` funciona con React Native 0.76+ y la New Architecture\n * (Expo SDK 52+). Para versiones anteriores usa `...shadow.legacy`.\n * Bordes: 1 px. Para divisores muy finos puedes usar StyleSheet.hairlineWidth.\n * Blur (encabezado, barra inferior, scrim): expo-blur.\n */\nimport type { TextStyle } from 'react-native';\n\nexport type ColorScheme = 'light' | 'dark';\n\n/* ---------- Color ---------- */\nconst light = {\n  brand: {\n    primary: '#006045',\n    primaryText: '#006045',\n    accentAmber: '#b68d4f',\n  },\n  text: {\n    strong: '#20372d',\n    label: '#3a4d3f',\n    secondary: '#4d5e52',\n    muted: '#5c6b60',\n    placeholder: '#68766c',\n    onBrand: '#ffffff',\n    avatar: '#566b45',\n  },\n  surface: {\n    app: '#e2e8de',\n    shell: 'rgba(244,246,239,.8)',\n    glass: 'rgba(244,246,239,.85)',\n    nav: 'rgba(248,250,244,.95)',\n    sheet: '#f1f3ed',\n    card: 'rgba(255,255,255,.9)',\n    input: '#ffffff',\n    track: 'rgba(233,238,225,.7)',\n    tile: '#e6eee6',\n    chipNeutral: '#f2f4ed',\n    chipCount: '#dbe3ce',\n    avatar: '#e2e9d6',\n  },\n  overlay: {\n    scrim: 'rgba(21,41,30,.35)',\n  },\n  border: {\n    card: 'rgba(255,255,255,.9)',\n    glass: 'rgba(255,255,255,.6)',\n    input: '#e1e6de',\n    button: '#dce3d7',\n    divider: '#edf1e7',\n    dashed: '#d1dacb',\n    grabber: '#ccd5c5',\n    control: '#78897c',\n    focus: '#006045',\n  },\n  progress: {\n    done: '#5f8f50',\n    off: '#dde5d3',\n  },\n} as const;\n\ntype Widen\u003cT> = { [K in keyof T]: T[K] extends string ? string : Widen\u003cT[K]> };\nexport type Colors = Widen\u003ctypeof light>;\n\nexport const lightColors: Colors = light;\nexport const darkColors: Colors = {\n  brand: {\n    primary: '#12805c',\n    primaryText: '#5fd0a0',\n    accentAmber: '#d9ad63',\n  },\n  text: {\n    strong: '#e8f1ea',\n    label: '#c3d2c7',\n    secondary: '#a3b4a9',\n    muted: '#8da093',\n    placeholder: '#7f9386',\n    onBrand: '#ffffff',\n    avatar: '#9fc58e',\n  },\n  surface: {\n    app: '#0e1612',\n    shell: 'rgba(22,33,27,.8)',\n    glass: 'rgba(22,33,27,.85)',\n    nav: 'rgba(15,24,19,.95)',\n    sheet: '#17221c',\n    card: 'rgba(30,44,36,.9)',\n    input: '#1b2a21',\n    track: 'rgba(30,44,36,.7)',\n    tile: '#1f3328',\n    chipNeutral: '#213129',\n    chipCount: '#2c4236',\n    avatar: '#263a2e',\n  },\n  overlay: {\n    scrim: 'rgba(3,8,5,.6)',\n  },\n  border: {\n    card: 'rgba(255,255,255,.07)',\n    glass: 'rgba(255,255,255,.07)',\n    input: '#2e4237',\n    button: '#36493d',\n    divider: '#25362d',\n    dashed: '#3a5042',\n    grabber: '#4a6054',\n    control: '#6c8576',\n    focus: '#5fd0a0',\n  },\n  progress: {\n    done: '#6fb585',\n    off: '#26382e',\n  },\n};\n\n/* ---------- Estados y avisos ---------- */\nexport type StatusFamily = 'neutral' | 'archived' | 'info' | 'warning' | 'violet' | 'active' | 'indigo' | 'success' | 'teal' | 'orange' | 'danger' | 'late';\nexport type StatusTone = { bg: string; fg: string; border: string };\ntype StatusEntry = { label: string; family: StatusFamily };\n\nexport const statusTones: Record\u003cColorScheme, Record\u003cStatusFamily, StatusTone>> = {\n  light: {\n    neutral: { bg: '#edf0ea', fg: '#4d5850', border: '#cacfc8' },\n    archived: { bg: '#dde2dc', fg: '#38423b', border: '#b9bfb9' },\n    info: { bg: '#dfedf4', fg: '#1d5d7b', border: '#b4cdd9' },\n    warning: { bg: '#f6eacb', fg: '#80530a', border: '#dcc9a1' },\n    violet: { bg: '#ebe4f3', fg: '#5c3b88', border: '#ccbfdb' },\n    active: { bg: '#d8e9de', fg: '#0b5a3f', border: '#abcabb' },\n    indigo: { bg: '#e3e5f4', fg: '#3d46a0', border: '#bec2e2' },\n    success: { bg: '#e2efd0', fg: '#3a6412', border: '#bdd0a6' },\n    teal: { bg: '#d6ede9', fg: '#0c665e', border: '#aacfca' },\n    orange: { bg: '#f8e3d1', fg: '#9c470e', border: '#e4c1a6' },\n    danger: { bg: '#f6dfdc', fg: '#a1281f', border: '#e3b7b2' },\n    late: { bg: '#b42b40', fg: '#ffffff', border: '#b42b40' },\n  },\n  dark: {\n    neutral: { bg: '#232b26', fg: '#aab6ae', border: '#49524c' },\n    archived: { bg: '#1a1f1c', fg: '#9aa69e', border: '#3e4540' },\n    info: { bg: '#14303d', fg: '#8dc7e2', border: '#365a6b' },\n    warning: { bg: '#3a2d10', fg: '#e9bf66', border: '#6b5628' },\n    violet: { bg: '#2c2340', fg: '#c1a9e8', border: '#56496f' },\n    active: { bg: '#14382a', fg: '#80d4aa', border: '#32644e' },\n    indigo: { bg: '#1f2347', fg: '#a5aef2', border: '#454a77' },\n    success: { bg: '#25371a', fg: '#b3dc83', border: '#4d6537' },\n    teal: { bg: '#0f3733', fg: '#70d6cb', border: '#2a645e' },\n    orange: { bg: '#3d2210', fg: '#f2a76c', border: '#70472a' },\n    danger: { bg: '#3d1b1a', fg: '#f39a91', border: '#703f3b' },\n    late: { bg: '#f27a8d', fg: '#3a0b14', border: '#f27a8d' },\n  },\n};\n\nexport const OperationalStatus = {\n  RECIBIDA: { label: 'Recibida', family: 'neutral' },\n  EN_DIAGNOSTICO: { label: 'En Diagnóstico', family: 'info' },\n  EN_ESPERA_COTIZACION: { label: 'En Cotización', family: 'warning' },\n  EN_ESPERA_APROBACION: { label: 'Por Aprobar', family: 'violet' },\n  EN_REPARACION: { label: 'En Reparación', family: 'active' },\n  CONTROL_CALIDAD: { label: 'Control Calidad', family: 'indigo' },\n  LISTA_PARA_ENTREGA: { label: 'Lista p/ Entrega', family: 'success' },\n  ENTREGADA: { label: 'Entregada', family: 'neutral' },\n  CERRADA: { label: 'Cerrada', family: 'archived' },\n  EN_GARANTIA: { label: 'En Garantía', family: 'orange' },\n  CANCELADA: { label: 'Cancelada', family: 'danger' },\n} as const satisfies Record\u003cstring, StatusEntry>;\nexport type OperationalStatus = keyof typeof OperationalStatus;\n\nexport const CommercialStatus = {\n  SIN_COTIZAR: { label: 'Sin Cotizar', family: 'neutral' },\n  COTIZADA: { label: 'Cotizada', family: 'info' },\n  APROBADA_PARCIAL: { label: 'Aprobada Parcial', family: 'warning' },\n  APROBADA_TOTAL: { label: 'Aprobada Total', family: 'success' },\n  EN_EJECUCION: { label: 'En Ejecución', family: 'active' },\n  CIERRE_PENDIENTE: { label: 'Cierre Pendiente', family: 'violet' },\n  COBRADA_PARCIAL: { label: 'Cobrada Parcial', family: 'warning' },\n  COBRADA_TOTAL: { label: 'Liquidada', family: 'success' },\n} as const satisfies Record\u003cstring, StatusEntry>;\nexport type CommercialStatus = keyof typeof CommercialStatus;\n\nexport const BillingStatus = {\n  NO_REQUERIDA: { label: 'Sin Factura', family: 'neutral' },\n  PENDIENTE_DATOS: { label: 'Faltan Datos SAT', family: 'warning' },\n  LISTA_PARA_FACTURAR: { label: 'Lista p/ Facturar', family: 'teal' },\n  FACTURADA: { label: 'Facturada (FAC)', family: 'success' },\n  CANCELADA: { label: 'Factura Cancelada', family: 'danger' },\n} as const satisfies Record\u003cstring, StatusEntry>;\nexport type BillingStatus = keyof typeof BillingStatus;\n\nexport const QuotationLineApproval = {\n  PENDING: { label: 'Pendiente', family: 'warning' },\n  APPROVED: { label: 'Aprobada ✔', family: 'active' },\n  REJECTED: { label: 'Declinada ✖', family: 'danger' },\n} as const satisfies Record\u003cstring, StatusEntry>;\nexport type QuotationLineApproval = keyof typeof QuotationLineApproval;\n\nexport const ToolStatus = {\n  DISPONIBLE: { label: 'Disponible', family: 'success' },\n  EN_USO: { label: 'En uso', family: 'info' },\n  EN_MANTENIMIENTO: { label: 'En mantenimiento', family: 'warning' },\n  DADO_DE_BAJA: { label: 'Dado de baja', family: 'neutral' },\n} as const satisfies Record\u003cstring, StatusEntry>;\nexport type ToolStatus = keyof typeof ToolStatus;\n\n/** Marca paralela de OperationalStatus (estaRetrasada). Se muestra junto al estado. */\nexport const lateFlag: StatusEntry = { label: 'Retrasada', family: 'late' };\n\n/** Tipos de Banner (incluye el toast flotante). */\nexport const bannerFamily = { info: 'info', warning: 'warning', danger: 'danger', success: 'success' } as const satisfies Record\u003cstring, StatusFamily>;\n\n/* ---------- Tipografía ---------- */\nexport const fonts = {\n  ui400: 'Inter_400Regular',\n  ui500: 'Inter_500Medium',\n  ui600: 'Inter_600SemiBold',\n  mono400: 'JetBrainsMono_400Regular',\n  mono500: 'JetBrainsMono_500Medium',\n} as const;\n\nexport const typography = {\n  displayWordmark: { fontFamily: fonts.ui600, fontSize: 24, lineHeight: 32, letterSpacing: -0.7 },\n  headingXl: { fontFamily: fonts.ui600, fontSize: 28, lineHeight: 34, letterSpacing: -0.7 },\n  headingLg: { fontFamily: fonts.ui600, fontSize: 24, lineHeight: 32, letterSpacing: -0.5 },\n  headingMd: { fontFamily: fonts.ui600, fontSize: 18, lineHeight: 28, letterSpacing: -0.3 },\n  titleCard: { fontFamily: fonts.ui600, fontSize: 16, lineHeight: 24, letterSpacing: -0.2 },\n  statNumber: { fontFamily: fonts.ui500, fontSize: 28, lineHeight: 32, letterSpacing: -1 },\n  input: { fontFamily: fonts.ui400, fontSize: 16, lineHeight: 24 },\n  bodyLg: { fontFamily: fonts.ui400, fontSize: 14, lineHeight: 22 },\n  buttonMd: { fontFamily: fonts.ui600, fontSize: 14, lineHeight: 20 },\n  labelLg: { fontFamily: fonts.ui500, fontSize: 14, lineHeight: 20 },\n  bodyMd: { fontFamily: fonts.ui400, fontSize: 12, lineHeight: 18 },\n  labelMd: { fontFamily: fonts.ui500, fontSize: 12, lineHeight: 16 },\n  caption: { fontFamily: fonts.ui400, fontSize: 11, lineHeight: 16 },\n  captionMedium: { fontFamily: fonts.ui500, fontSize: 11, lineHeight: 16 },\n  eyebrow: { fontFamily: fonts.ui600, fontSize: 11, lineHeight: 16, letterSpacing: 1.5, textTransform: 'uppercase' },\n  monoId: { fontFamily: fonts.mono500, fontSize: 11, lineHeight: 16 },\n  monoPlate: { fontFamily: fonts.mono400, fontSize: 11, lineHeight: 16, letterSpacing: 0.5 },\n} satisfies Record\u003cstring, TextStyle>;\n\n/* ---------- Espaciado, radios, tamaños, bordes ---------- */\nexport const space = { 1: 4, 2: 8, 3: 12, 4: 16, 5: 20, 6: 24, 8: 32, 10: 40, 12: 48 } as const;\nexport const radius = { xs: 6, sm: 8, md: 12, lg: 16, xl: 24, sheet: 32, full: 999 } as const;\nexport const size = {\n  control: { sm: 40, md: 48, lg: 52 },\n  icon: { xs: 12, sm: 16, md: 20, lg: 24, xl: 32 },\n  tile: { sm: 40, md: 48, hero: 80 },\n  avatar: { sm: 24, md: 32 },\n  checkbox: 24,\n  progressBar: 4,\n  touchMin: 44,\n} as const;\nexport const borderWidth = { thin: 1, medium: 1.5, thick: 2 } as const;\n\n/* ---------- Sombras ---------- */\nexport type BoxShadowLayer = { offsetX: number; offsetY: number; blurRadius: number; spreadDistance: number; color: string };\nexport type ShadowToken = {\n  boxShadow: BoxShadowLayer[];\n  /** Respaldo para arquitectura anterior: una sola capa + elevation (Android). */\n  legacy: { shadowColor: string; shadowOffset: { width: number; height: number }; shadowOpacity: number; shadowRadius: number; elevation: number };\n};\ntype ShadowName = 'card' | 'segmented' | 'button' | 'fab' | 'floating' | 'sheet';\nexport const lightShadows: Record\u003cShadowName, ShadowToken> = {\n  card: {\n    boxShadow: [\n      { offsetX: 0, offsetY: 2, blurRadius: 8, spreadDistance: 0, color: 'rgba(41,62,40,0.06)' },\n    ],\n    legacy: { shadowColor: 'rgb(41,62,40)', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 4, elevation: 2 },\n  },\n  segmented: {\n    boxShadow: [\n      { offsetX: 0, offsetY: 1, blurRadius: 1.5, spreadDistance: 0, color: 'rgba(0,0,0,0.1)' },\n      { offsetX: 0, offsetY: 1, blurRadius: 1, spreadDistance: 0, color: 'rgba(0,0,0,0.1)' },\n    ],\n    legacy: { shadowColor: 'rgb(0,0,0)', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 0.75, elevation: 1 },\n  },\n  button: {\n    boxShadow: [\n      { offsetX: 0, offsetY: 4, blurRadius: 5, spreadDistance: 0, color: 'rgba(0,96,69,0.07)' },\n    ],\n    legacy: { shadowColor: 'rgb(0,96,69)', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.07, shadowRadius: 2.5, elevation: 3 },\n  },\n  fab: {\n    boxShadow: [\n      { offsetX: 0, offsetY: 7, blurRadius: 12.5, spreadDistance: 0, color: 'rgba(0,96,69,0.14)' },\n    ],\n    legacy: { shadowColor: 'rgb(0,96,69)', shadowOffset: { width: 0, height: 7 }, shadowOpacity: 0.14, shadowRadius: 6.25, elevation: 6 },\n  },\n  floating: {\n    boxShadow: [\n      { offsetX: 0, offsetY: 20, blurRadius: 12.5, spreadDistance: 0, color: 'rgba(0,0,0,0.1)' },\n      { offsetX: 0, offsetY: 8, blurRadius: 5, spreadDistance: 0, color: 'rgba(0,0,0,0.1)' },\n    ],\n    legacy: { shadowColor: 'rgb(0,0,0)', shadowOffset: { width: 0, height: 20 }, shadowOpacity: 0.1, shadowRadius: 6.25, elevation: 10 },\n  },\n  sheet: {\n    boxShadow: [\n      { offsetX: 0, offsetY: -8, blurRadius: 24, spreadDistance: 0, color: 'rgba(0,0,0,0.16)' },\n    ],\n    legacy: { shadowColor: 'rgb(0,0,0)', shadowOffset: { width: 0, height: -8 }, shadowOpacity: 0.16, shadowRadius: 12, elevation: 16 },\n  },\n};\nexport const darkShadows: Record\u003cShadowName, ShadowToken> = {\n  card: {\n    boxShadow: [\n      { offsetX: 0, offsetY: 3, blurRadius: 12, spreadDistance: 0, color: 'rgba(0,0,0,0.25)' },\n    ],\n    legacy: { shadowColor: 'rgb(0,0,0)', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.25, shadowRadius: 6, elevation: 2 },\n  },\n  segmented: {\n    boxShadow: [\n      { offsetX: 0, offsetY: 1, blurRadius: 1.5, spreadDistance: 0, color: 'rgba(0,0,0,0.4)' },\n      { offsetX: 0, offsetY: 1, blurRadius: 1, spreadDistance: 0, color: 'rgba(0,0,0,0.3)' },\n    ],\n    legacy: { shadowColor: 'rgb(0,0,0)', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.4, shadowRadius: 0.75, elevation: 1 },\n  },\n  button: {\n    boxShadow: [\n      { offsetX: 0, offsetY: 4, blurRadius: 5, spreadDistance: 0, color: 'rgba(0,0,0,0.3)' },\n    ],\n    legacy: { shadowColor: 'rgb(0,0,0)', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 2.5, elevation: 3 },\n  },\n  fab: {\n    boxShadow: [\n      { offsetX: 0, offsetY: 7, blurRadius: 12.5, spreadDistance: 0, color: 'rgba(0,0,0,0.45)' },\n    ],\n    legacy: { shadowColor: 'rgb(0,0,0)', shadowOffset: { width: 0, height: 7 }, shadowOpacity: 0.45, shadowRadius: 6.25, elevation: 6 },\n  },\n  floating: {\n    boxShadow: [\n      { offsetX: 0, offsetY: 20, blurRadius: 14, spreadDistance: 0, color: 'rgba(0,0,0,0.35)' },\n      { offsetX: 0, offsetY: 8, blurRadius: 6, spreadDistance: 0, color: 'rgba(0,0,0,0.3)' },\n    ],\n    legacy: { shadowColor: 'rgb(0,0,0)', shadowOffset: { width: 0, height: 20 }, shadowOpacity: 0.35, shadowRadius: 7, elevation: 10 },\n  },\n  sheet: {\n    boxShadow: [\n      { offsetX: 0, offsetY: -8, blurRadius: 24, spreadDistance: 0, color: 'rgba(0,0,0,0.5)' },\n    ],\n    legacy: { shadowColor: 'rgb(0,0,0)', shadowOffset: { width: 0, height: -8 }, shadowOpacity: 0.5, shadowRadius: 12, elevation: 16 },\n  },\n};\n\n/* ---------- Layout grid ---------- */\nexport const layout = {\n  frame: { width: 393, height: 852 },\n  columns: 4,\n  margin: 24,\n  gutter: 12,\n  maxContentWidth: 460,\n  headerRow: 56,\n  headerPaddingBottom: 8,\n  bottomNavContent: 72,\n  fabGapAboveNav: 16,\n  rhythm: { section: 32, group: 24, field: 16, labelToField: 8, cardPadding: 16, cardPaddingLg: 20 },\n} as const;\n\n/** Ancho de una columna para un ancho de pantalla dado. */\nexport function columnWidth(screenWidth: number): number {\n  const content = Math.min(screenWidth, layout.maxContentWidth) - layout.margin * 2;\n  return (content - layout.gutter * (layout.columns - 1)) / layout.columns;\n}\n/** Ancho de un elemento que ocupa n columnas (incluye los gutters intermedios). */\nexport function span(n: number, screenWidth: number): number {\n  return columnWidth(screenWidth) * n + layout.gutter * (n - 1);\n}\n\n/* ---------- Theme ---------- */\nexport function getTheme(scheme: ColorScheme) {\n  return {\n    scheme,\n    colors: scheme === 'dark' ? darkColors : lightColors,\n    status: statusTones[scheme],\n    shadows: scheme === 'dark' ? darkShadows : lightShadows,\n    typography, fonts, space, radius, size, borderWidth, layout,\n  };\n}\nexport type Theme = ReturnType\u003ctypeof getTheme>;\n\n/** Colores de un estado, listos para pintar un Badge o Banner. */\nexport function statusColors(scheme: ColorScheme, family: StatusFamily): StatusTone {\n  return statusTones[scheme][family];\n}\n"};
+
+</script>
+<script>
+/* ===== utilidades ===== */
+const kebab = (s) => s.replace(/\//g, '-');
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const allColors = DS.colorGroups.flatMap((g) => g.items);
+const tok = (n) => allColors.find((x) => x.n === n);
+const px = (n) => (n === 0 ? '0' : n + 'px');
+const shadowCss = (layers) => layers.map((s) => `${px(s.x)} ${px(s.y)} ${px(s.blur)} ${px(s.spread)} ${s.color}`).join(', ');
+const MODES = { l: 'Claro', d: 'Oscuro' };
+
+/* color y contraste */
+const parseC = (c) => {
+  if (c[0] === '#') {
+    let h = c.slice(1);
+    if (h.length === 3) h = [...h].map((x) => x + x).join('');
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16), 1];
+  }
+  const m = c.match(/rgba?\(([^)]+)\)/)[1].split(',').map(parseFloat);
+  return [m[0], m[1], m[2], m[3] ?? 1];
+};
+const overC = (t, b) => [0, 1, 2].map((i) => t[i] * t[3] + b[i] * (1 - t[3])).concat(1);
+const lumC = ([r, g, b]) => {
+  const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+};
+const crC = (a, b) => { const x = lumC(a), y = lumC(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+const fmt = (n) => n.toFixed(1) + ':1';
+function surfacesOf(mode) {
+  const get = (n) => parseC(tok(n)[mode]);
+  const app = get('surface/app');
+  const base = (n) => (n === 'surface/app' ? app : overC(get(n), app));
+  const out = {};
+  for (const s of DS.contrast.surfaces) {
+    const c = get(s.token);
+    out[s.id] = c[3] < 1 ? overC(c, base(s.over || 'surface/app')) : c;
+  }
+  return out;
+}
+const SURF = { l: surfacesOf('l'), d: surfacesOf('d') };
+function minContrast(hex, set, mode) {
+  const c = parseC(hex);
+  return Math.min(...DS.contrast.sets[set].map((id) => crC(c, SURF[mode][id])));
+}
+const NONTEXT = ['border/control', 'progress/done', 'border/focus'];
+const vsCard = (hex, mode) => crC(parseC(hex), SURF[mode].card);
+
+/* ===== variables CSS de los especímenes ===== */
+function varsFor(mode) {
+  let o = '';
+  for (const it of allColors) o += `--${kebab(it.n)}:${it[mode]};`;
+  for (const f of DS.status.order) {
+    const v = DS.status.families[f][mode];
+    o += `--status-${f}-bg:${v[0]};--status-${f}-fg:${v[1]};--status-${f}-border:${v[2]};`;
+  }
+  for (const [n, s] of Object.entries(DS.shadow)) o += `--shadow-${n}:${shadowCss(s[mode])};`;
+  return o;
+}
+const typeCss = DS.type.styles
+  .map((s) => `.t-${kebab(s.id)}{font:${s.weight} ${s.size}px/${s.line}px ${s.mono ? 'var(--font-mono)' : 'var(--font-ui)'};${s.ls ? `letter-spacing:${s.ls}px;` : ''}${s.upper ? 'text-transform:uppercase;' : ''}}`)
+  .join('');
+const dyn = document.createElement('style');
+dyn.textContent = `.pit{${varsFor('l')}}\n:root[data-theme="dark"] .pit{${varsFor('d')}}\n${typeCss}`;
+document.head.appendChild(dyn);
+
+/* ===== especímenes ===== */
+const ic = (n, c = '') => `<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const T = (id) => 't-' + kebab(id);
+
+const btn = ({ label = 'Registrar recepción', type = 'primary', lead, trail, dis, full, pressed } = {}) =>
+  `<button class="p-btn ${type} ${dis ? 'dis' : ''} ${full ? 'full' : ''} ${T('button/md')}" ${dis ? 'disabled' : ''} ${pressed ? 'style="filter:brightness(.92)"' : ''} type="button">${lead ? ic(lead) : ''}<span>${label}</span>${trail ? ic(trail) : ''}</button>`;
+const iconBtn = (n) => `<span class="p-btn icon">${ic(n)}</span>`;
+const fabBtn = () => `<span class="p-btn fab ${T('button/md')}">${ic('plus')}<span>Nueva orden</span></span>`;
+const cap = (t) => `<div class="${T('caption')}" style="color:var(--text-muted);margin-top:6px">${t}</div>`;
+
+const field = ({ label, value, state = 'empty', help, lead, trail, area } = {}) => {
+  const cls = { empty: '', filled: 'filled', focus: 'focus', err: 'err' }[state];
+  return `<div class="p-field"><span class="lab ${T('label/lg')}">${label}</span>
+  <div class="p-ctl ${cls} ${area ? 'area' : ''} ${T('input')}">${lead ? ic(lead, 'tr') : ''}<span class="grow">${value}</span>${trail ? ic(trail, 'tr') : ''}</div>
+  ${help ? `<span class="p-help ${state === 'err' ? 'err' : ''} ${T('body/md')}">${help}</span>` : ''}</div>`;
+};
+const chk = (label, on) => `<div class="p-chk ${T('body/lg')}"><span class="p-box ${on ? 'on' : ''}">${on ? ic('check', 's16') : ''}</span><span>${label}</span></div>`;
+const sliderCard = () => `<div class="p-card p-slider-card">
+  <div class="p-sl-head"><span class="l ${T('label/md')}">${ic('fuel', 's16')}Combustible</span><span class="v ${T('button/md')}">50 %</span></div>
+  <div class="p-sl"><div class="tk"><b></b><span class="th"></span></div></div>
+  <div class="p-sl-scale ${T('caption')}"><span>Vacío</span><span>½</span><span>Lleno</span></div></div>`;
+
+const badge = (fam, label) => `<span class="chip" style="--bg:var(--status-${fam}-bg);--fg:var(--status-${fam}-fg);--bd:var(--status-${fam}-border)"><i></i>${label}</span>`;
+const lateBadge = () => `<span class="chip solid" style="--bg:var(--status-late-bg);--fg:var(--status-late-fg)"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clock"/></svg>RETRASADA</span>`;
+
+const statSummary = () => `<div class="p-card p-stats">
+  ${[['03', 'En taller'], ['01', 'Listas'], ['01', 'Retrasadas']].map(([n, c]) => `<div><span class="n ${T('stat/number')}">${n}</span><span class="c ${T('caption')}">${c}</span></div>`).join('')}</div>`;
+const searchBar = () => `<div class="p-search">${ic('search')}<span class="${T('body/lg')}">Buscar por folio, placa o cliente</span></div>`;
+const segmented = () => `<div class="p-seg"><div class="on ${T('label/md')}">Todas<span class="p-count ${T('caption/medium')}" style="background:rgba(255,255,255,.2);color:var(--text-on-brand)">3</span></div><div class="${T('label/md')}">En taller<span class="p-count ${T('caption/medium')}">2</span></div><div class="${T('label/md')}">Listas<span class="p-count ${T('caption/medium')}">1</span></div></div>`;
+const sectionTitle = () => `<div class="p-sect"><span class="${T('eyebrow')}">En el taller</span><span class="r"><span class="${T('caption')}">2 órdenes</span>${iconBtn('list')}</span></div>`;
+const orderCard = ({ done = 3, fam = 'active', label = 'En Reparación', late = false, car = 'Nissan Versa', plate = 'PXM-482-B', client = 'Carlos Mendoza', folio = 'OT-1049', adv = 'Ana Ruiz' } = {}) => `<div class="p-card p-order">
+  <div class="meta"><span class="${T('mono/id')}">${folio}</span><span class="due ${T('caption')}">${ic('clock', 's12')}Entrega 12 oct</span></div>
+  <div class="main"><span class="p-tile">${ic('car', 's24')}</span><div class="info"><span class="${T('title/card')}">${car}</span><span class="sub"><span class="p-plate ${T('mono/plate')}">${plate}</span><span class="${T('caption')}">${client}</span></span></div>${ic('chev', 'go')}</div>
+  <div class="foot"><span class="p-row" style="gap:8px">${badge(fam, label)}${late ? lateBadge() : ''}</span><span class="p-adv"><span class="p-av ${T('caption/medium')}">${adv[0]}</span><span class="${T('caption')}">${adv}</span></span></div>
+  <div class="p-bars">${[0, 1, 2, 3, 4, 5].map((i) => `<i class="${i < done ? 'on' : ''}"></i>`).join('')}</div></div>`;
+const emptyState = () => `<div class="p-empty">${ic('doc', 's32')}<span class="${T('button/md')}">Sin órdenes todavía</span><span class="d ${T('body/md')}">Cuando registres una recepción, la orden aparece aquí.</span><div style="padding-top:12px">${btn({ label: 'Nueva recepción', type: 'secondary' })}</div></div>`;
+
+const BI = { info: 'info', warning: 'warn', danger: 'alert', success: 'ok' };
+const banner = ({ type, title, msg, action, dismiss, float }) => `<div class="p-banner ${dismiss ? 'x' : ''} ${float ? 'float' : ''}" role="${type === 'danger' ? 'alert' : 'status'}" style="--b-bg:var(--status-${type}-bg);--b-fg:var(--status-${type}-fg);--b-bd:var(--status-${type}-border)">${ic(BI[type])}<div class="tx">${title ? `<span class="${T('button/md')}">${title}</span>` : ''}<span class="${T('body/lg')}">${msg}</span></div>${action ? `<span class="act ${T('button/md')}">${action}</span>` : ''}${dismiss ? `<span class="cl">${ic('close')}</span>` : ''}</div>`;
+
+const headerHome = () => `<div class="p-hdr"><div class="sb"><span>9:41</span><span>●●●</span></div><div class="row">
+  <div class="p-logo"><span class="lt">${ic('wrench', 's24')}</span><span class="${T('display/wordmark')}">pitstop<em>.</em></span></div>
+  <div class="p-actions"><span class="ib">${ic('search')}</span><span class="ib">${ic('bell')}<span class="nd"></span></span><span class="ib"><span class="p-av md ${T('caption/medium')}">M</span></span></div></div></div>`;
+const headerDetail = () => `<div class="p-hdr"><div class="sb"><span>9:41</span><span>●●●</span></div><div class="row"><div class="p-actions">${iconBtn('back')}<span class="${T('label/lg')}" style="color:var(--text-secondary)">Nueva recepción</span></div></div></div>`;
+const bottomNav = () => `<div class="p-nav">${[['list', 'Inicio', 1], ['wrench', 'Taller'], ['car', 'Clientes'], ['wallet', 'Cobros'], ['doc', 'Facturas']].map(([i, l, on]) => `<div class="${on ? 'on' : ''}">${ic(i, 's24')}<span class="${T('caption/medium')}">${l}</span></div>`).join('')}</div>`;
+
+const actionRows = () => `<div class="p-card p-list">${[['wrench', 'Recepción', 'Cliente, placas y falla'], ['camera', 'Fotos del vehículo', 'Golpes y pertenencias'], ['shield', 'Firma del cliente', 'Aprobación de la cotización']].map(([i, l, s]) => `<div class="p-arow"><span class="p-tile sm">${ic(i)}</span><div class="tx"><span class="${T('label/md')}">${l}</span><span class="s ${T('caption')}">${s}</span></div>${ic('chev', 'go')}</div>`).join('')}</div>`;
+const sheetOnboarding = () => `<div class="p-sheet-scrim"><div class="p-sheet"><div class="grab"></div>
+  <div class="hd"><span class="${T('heading/md')}">Tu taller, en tres pasos</span>${iconBtn('close')}</div>
+  <div class="p-steps"><i class="on"></i><i></i><i></i></div>
+  <div class="p-hero"><span class="big">${ic('wrench', 's32')}</span><span class="c ${T('caption')}">Paso 1 de 3</span><span class="${T('heading/lg')}">Recibe el vehículo</span><span class="d ${T('body/md')}">Toca Recepción. Captura cliente, placas y falla.</span></div>
+  <div class="p-card p-guide" style="margin:24px 24px 0"><span class="p-tile sm">${ic('shield')}</span><span class="${T('button/md')}">Consejo</span><span class="d ${T('body/md')}">Toma fotos antes de entrar al taller.</span></div></div></div>`;
+const sheetSearch = () => `<div class="p-sheet-scrim"><div class="p-sheet"><div class="grab"></div>
+  <div class="hd"><span class="${T('heading/md')}">Nueva orden</span>${iconBtn('close')}</div>${actionRows()}</div></div>`;
+
+const homeScreen = (grid) => `<div class="phone pit" id="phone"><div class="screen">${headerHome()}
+  <div class="p-page">
+    <div><div class="p-eyebrow ${T('eyebrow')}"><i></i>Martes 7 de octubre</div><div class="p-h1 ${T('heading/xl')}">Hola, <em>Mary.</em></div><div class="p-sub ${T('body/md')}">Tienes una orden retrasada.</div></div>
+    ${statSummary()}${searchBar()}${segmented()}${sectionTitle()}${orderCard({ late: true })}${orderCard({ done: 5, fam: 'success', label: 'Lista p/ Entrega', car: 'Mazda 3', plate: 'RTL-190-C', client: 'Lucía Prado', folio: 'OT-1047' })}
+  </div>
+  <span class="p-fab">${fabBtn()}</span>${bottomNav()}${grid ? '<div class="grid-ov" id="gridov"><i></i><i></i><i></i><i></i></div>' : ''}</div></div>`;
+/* ===== secciones ===== */
+const sec = (id, eyebrow, title, lede, body) => `<section id="${id}"><div class="wrap"><header><span class="eyebrow">${eyebrow}</span><h2>${title}</h2>${lede ? `<p>${lede}</p>` : ''}</header>${body}</div></section>`;
+const dotsOf = (arr, max = 4) => `<span class="absorbs" style="margin:0">${arr.slice(0, max).map((h) => `<span class="dot"><i style="--c:${h}"></i>${h}</span>`).join('')}${arr.length > max ? `<small>+${arr.length - max} más</small>` : ''}</span>`;
+const sw2 = (it) => `<span class="dot" style="font-size:11px"><i style="--c:${it.l}"></i>${it.l}</span> <span class="dot" style="font-size:11px"><i style="--c:${it.d}"></i>${it.d}</span>`;
+
+/* ---- Resumen ---- */
+function resumen() {
+  let rows = '';
+  const grp = (t) => `<tr class="grp"><td colspan="4">${t}</td></tr>`;
+  rows += grp('Color');
+  for (const it of allColors) {
+    if (!it.abs) continue;
+    let was;
+    if (it.check) {
+      const worst = Math.min(...it.abs.map((h) => minContrast(h, it.check, 'l')));
+      const now = minContrast(it.l, it.check, 'l');
+      was = `${dotsOf(it.abs)} <span class="mono">peor ${fmt(worst)}</span>`;
+      rows += `<tr><td class="m">${it.n}</td><td class="was">${was}</td><td class="now">${sw2(it)}<div class="mono dim">claro ${fmt(now)} · oscuro ${fmt(minContrast(it.d, it.check, 'd'))}</div></td><td class="dim">${it.abs.length} grises casi iguales y bajo 4.5:1 pasan a un solo valor.</td></tr>`;
+    } else {
+      const nt = NONTEXT.includes(it.n);
+      const extra = nt ? `<div class="mono dim">vs tarjeta: claro ${fmt(vsCard(it.l, 'l'))} · oscuro ${fmt(vsCard(it.d, 'd'))}</div>` : '';
+      const why = nt ? 'Los controles necesitan 3:1 contra la tarjeta. Antes no llegaban.' : 'Tonos casi idénticos unificados en un token.';
+      rows += `<tr><td class="m">${it.n}</td><td class="was">${dotsOf(it.abs)}</td><td class="now">${sw2(it)}${extra}</td><td class="dim">${why}</td></tr>`;
+    }
+  }
+  rows += grp('Tipografía');
+  for (const s of DS.type.styles) {
+    const sizes = [...s.was.matchAll(/(\d+(?:\.\d+)?)\//g)].map((m) => parseFloat(m[1]));
+    const low = Math.min(...sizes) < 11;
+    rows += `<tr><td class="m">${s.id}</td><td class="was">${s.was}</td><td class="now m">${s.size}/${s.line} · ${s.weight}${s.ls ? ' · ' + s.ls : ''}</td><td class="dim">${low ? '<span class="tag ok">subió a 11 px</span> ' : ''}${esc(s.use)}</td></tr>`;
+  }
+  rows += grp('Forma y sombra');
+  rows += `<tr><td class="m">radius/xl</td><td class="was">22, 24 y otros cercanos</td><td class="now m">24</td><td class="dim">Tarjetas y estado vacío con el mismo radio.</td></tr>`;
+  for (const [n, s] of Object.entries(DS.shadow)) if (s.was && s.was !== 'igual') rows += `<tr><td class="m">shadow/${n}</td><td class="was">${s.was}</td><td class="now m">${shadowCss(s.l[0] ? s.l : s.l)}</td><td class="dim">${esc(s.note || '')}</td></tr>`;
+  rows += grp('Componentes');
+  rows += `<tr><td class="m">Banner + Toast</td><td class="was">Dos componentes</td><td class="now">Uno: Type × Layout × Dismissible</td><td class="dim">Toast es Layout = Floating.</td></tr>
+  <tr><td class="m">SectionTitle</td><td class="was">«1 órdenes»</td><td class="now">«1 orden» / «2 órdenes»</td><td class="dim">Concordancia de número.</td></tr>
+  <tr><td class="m">Segmented</td><td class="was">Items bajos</td><td class="now">Item 48 de alto, padding 4</td><td class="dim">Área de toque mínima.</td></tr>
+  <tr><td class="m">Fuente mono</td><td class="was">Consolas</td><td class="now">JetBrains Mono</td><td class="dim">Consolas no existe en iOS ni Android.</td></tr>`;
+  const bi = crC(parseC(tok('border/input').l), SURF.l.input);
+  return sec('resumen', 'Resumen', 'Qué cambió y por qué',
+    'Los valores marcados antes como «reemplazar» ya están resueltos. Esta tabla compara lo que había en el archivo con lo que queda en el sistema. Los contrastes se calculan aquí mismo con los tokens reales.',
+    `<div class="tbl"><table class="t-resumen"><thead><tr><th>Token</th><th>Antes</th><th>Ahora</th><th>Motivo</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="group"><h3>Decisiones que puedes revertir</h3>
+    <div class="callout"><ol style="margin:0;padding-left:20px;display:grid;gap:6px">
+      <li><b>Borde de campo suave.</b> border/input se queda en ${fmt(bi)} contra el campo. No llega a 3:1 a propósito: la etiqueta, el relleno blanco y el anillo de foco de 2 px identifican el campo. Si prefieres 3:1, usa border/control.</li>
+      <li><b>Radio de tarjeta 22 → 24.</b> Une tarjetas y estado vacío en una sola escala.</li>
+      <li><b>stat/number 26 → 28.</b> Entra en la escala de 4 px de interlineado.</li>
+      <li><b>Sombra de tarjeta visible.</b> Antes casi no se veía; ahora 6 % de opacidad.</li>
+      <li><b>JetBrains Mono en vez de Consolas.</b> Se instala con expo-font.</li>
+      <li><b>Segmentado con items de 48 y padding 4.</b> El alto total es 56.</li>
+    </ol></div></div>`);
+}
+
+/* ---- Color ---- */
+function color() {
+  const sw = (it) => {
+    let ct = '';
+    if (it.check) ct = `<span class="ct">claro ${fmt(minContrast(it.l, it.check, 'l'))} · oscuro ${fmt(minContrast(it.d, it.check, 'd'))}</span>`;
+    else if (NONTEXT.includes(it.n)) ct = `<span class="ct">vs tarjeta: ${fmt(vsCard(it.l, 'l'))} · ${fmt(vsCard(it.d, 'd'))}</span>`;
+    return `<div class="sw"><div class="chipbox"><span class="l"><i style="--c:${it.l}"></i></span><span class="d"><i style="--c:${it.d}"></i></span></div>
+      <div><b class="mono">${it.n}</b><div class="hex"><span><small>claro</small>${it.l}</span><span><small>oscuro</small>${it.d}</span></div><div class="use">${esc(it.u)}</div>${ct}
+      ${it.abs ? `<div class="absorbs"><small>Reemplaza a:</small>${it.abs.map((h) => `<span class="dot"><i style="--c:${h}"></i>${h}</span>`).join('')}</div>` : ''}</div></div>`;
+  };
+  const body = DS.colorGroups.map((g) => `<div class="group"><h3>${g.title}</h3><p class="note">${g.note}</p><div class="swatches">${g.items.map(sw).join('')}</div></div>`).join('');
+  return sec('color', 'Color', 'Paleta con modo claro y oscuro', 'Cada token tiene un valor por modo. En Figma serán variables de color con dos modos; en React Native, dos objetos del mismo tipo.', body);
+}
+
+/* ---- Tipografía ---- */
+function tipografia() {
+  const rn = (s) => (s.mono ? `JetBrainsMono_${s.weight}${s.weight === 500 ? 'Medium' : 'Regular'}` : `Inter_${s.weight}${{ 400: 'Regular', 500: 'Medium', 600: 'SemiBold' }[s.weight]}`);
+  const rows = DS.type.styles.map((s) => `<tr><td class="m">${s.id}</td><td><span class="type-sample ${T(s.id)}">${esc(s.sample)}</span></td><td class="m">${s.size}/${s.line} · ${s.weight}${s.ls ? ' · ' + s.ls : ''}${s.upper ? ' · MAYÚS' : ''}</td><td class="m">${rn(s)}</td><td class="dim">${esc(s.use)}</td></tr>`).join('');
+  return sec('tipografia', 'Tipografía', 'Diecisiete estilos, ninguno bajo 11 px',
+    'Inter para la interfaz y JetBrains Mono para folios y placas. En React Native cada peso es una familia distinta: no combines fontFamily con fontWeight.',
+    `<div class="tbl"><table style="min-width:860px"><thead><tr><th>Estilo</th><th>Muestra</th><th>Tamaño/Interlínea · Peso</th><th>fontFamily (RN)</th><th>Uso</th></tr></thead><tbody>${rows}</tbody></table></div>`);
+}
+
+/* ---- Forma y espacio ---- */
+function forma() {
+  const radii = Object.entries(DS.radius).map(([k, v]) => `<div class="radius"><div class="box" style="border-radius:${k === 'full' ? 32 : v}px"></div><b>${k} · ${v === 999 ? '999' : v}</b><span>${esc(DS.radiusUse[k])}</span></div>`).join('');
+  const space = Object.entries(DS.space).map(([k, v]) => `<div class="sp"><span>space/${k}</span><span style="display:flex;gap:8px;align-items:center"><i style="width:${v * 3}px"></i>${v}</span></div>`).join('');
+  const kv = (o, p) => Object.entries(o).map(([k, v]) => typeof v === 'object' ? Object.entries(v).map(([kk, vv]) => `<span class="kv">${p}/${k}/${kk}<b>${vv}</b></span>`).join('') : `<span class="kv">${p}/${k}<b>${v}</b></span>`).join('');
+  const sh = (mode) => `<div class="shadows ${mode}">${Object.entries(DS.shadow).map(([n, s]) => `<div><div class="card" style="box-shadow:${shadowCss(s[mode])}"></div><b>shadow/${n}</b><span>${shadowCss(s[mode])}</span></div>`).join('')}</div>`;
+  return sec('forma', 'Forma y espacio', 'Radios, espaciado, tamaños y sombras', 'Todo sale de una escala corta: si un valor no está aquí, no debería estar en la pantalla.',
+    `<div class="two"><div class="panel"><h3>Radios</h3><div class="radii">${radii}</div></div><div class="panel"><h3>Espaciado (base 4)</h3>${space}</div></div>
+    <div class="group"><h3>Tamaños</h3><div class="chips">${kv(DS.size, 'size')}</div></div>
+    <div class="group"><h3>Ancho de borde</h3><div class="chips">${kv(DS.border, 'border')}</div></div>
+    <div class="group"><h3>Sombras · claro</h3>${sh('l')}<h3 style="margin-top:12px">Sombras · oscuro</h3>${sh('d')}<p class="note">En oscuro las sombras casi no se ven, por eso la tarjeta lleva además un borde blanco muy tenue.</p></div>`);
+}
+
+/* ---- Layout grid ---- */
+const colW = (w) => { const c = Math.min(w, DS.layout.maxContentWidth) - DS.layout.margin * 2; return (c - DS.layout.gutter * (DS.layout.columns - 1)) / DS.layout.columns; };
+const spanW = (n, w) => colW(w) * n + DS.layout.gutter * (n - 1);
+const r2 = (n) => (Math.round(n * 100) / 100).toString();
+function layout() {
+  const L = DS.layout;
+  const widths = [[360, 'Android compacto'], [393, 'Frame de Figma · iPhone 15 y 16'], [430, 'iPhone Pro Max'], [768, 'Tableta: el contenido se queda en 460 y se centra']];
+  const wrows = widths.map(([w, n]) => { const c = Math.min(w, L.maxContentWidth) - L.margin * 2; return `<tr><td class="m">${w}</td><td>${n}</td><td class="m">${r2(c)}</td><td class="m">${r2(colW(w))}</td><td class="m">${r2(spanW(2, w))}</td><td class="m">${r2(spanW(4, w))}</td></tr>`; }).join('');
+  const rh = [['Entre secciones', L.rhythm.section, 'space/8'], ['Entre grupos', L.rhythm.group, 'space/6'], ['Entre campos', L.rhythm.field, 'space/4'], ['Etiqueta a campo', L.rhythm.labelToField, 'space/2'], ['Padding de tarjeta', L.rhythm.cardPadding, 'space/4'], ['Padding de tarjeta grande', L.rhythm.cardPaddingLg, 'space/5']].map(([a, b, c]) => `<tr><td>${a}</td><td class="m">${b}</td><td class="m">${c}</td></tr>`).join('');
+  const safe = [['Barra de estado', `${L.statusBar} (solo en Figma)`, 'useSafeAreaInsets().top'], ['Fila del encabezado', L.headerRow, 'Misma altura. Padding inferior ' + L.headerPaddingBottom], ['Barra inferior', L.bottomNavContent, '72 + insets.bottom'], ['Home indicator', `${L.homeIndicator} (solo en Figma)`, 'useSafeAreaInsets().bottom'], ['FAB sobre la barra', L.fabGapAboveNav, 'bottom: 72 + insets.bottom + 16']].map(([a, b, c]) => `<tr><td>${a}</td><td class="m">${b}</td><td class="m">${c}</td></tr>`).join('');
+  return sec('layout', 'Layout guide', 'Cuadrícula de 4 columnas, margen 24 y gutter 12',
+    'Con 393 px de ancho cada columna mide 77.25. Una fila de dos campos ocupa 2 columnas cada uno (166.5), como en tus pantallas.',
+    `<div class="grid-wrap"><div><label class="check"><input type="checkbox" id="gridtoggle" checked> Mostrar cuadrícula</label>
+      <div class="legend" style="margin-top:10px"><span><i style="background:rgba(0,120,255,.35)"></i>Margen 24</span><span><i style="background:rgba(255,45,85,.3)"></i>Columna</span><span>Gutter 12 (el espacio entre columnas)</span></div>
+      <div class="phone-holder" id="phoneholder">${homeScreen(true)}</div></div>
+      <div style="display:grid;gap:28px;min-width:0">
+        <div class="group" style="margin-top:0"><h3>Medidas por ancho de pantalla</h3><div class="tbl"><table style="min-width:520px"><thead><tr><th>Ancho</th><th>Dispositivo</th><th>Contenido</th><th>Columna</th><th>2 col.</th><th>4 col.</th></tr></thead><tbody>${wrows}</tbody></table></div>
+          <p class="note">Contenido = ancho − 2 × 24. Columna = (contenido − 3 × 12) ÷ 4. En Figma usa Stretch para que las columnas se adapten.</p></div>
+        <div class="group" style="margin-top:0"><h3>Ritmo vertical</h3><div class="tbl"><table><thead><tr><th>Separación</th><th>px</th><th>Token</th></tr></thead><tbody>${rh}</tbody></table></div></div>
+        <div class="group" style="margin-top:0"><h3>Zonas seguras y barras</h3><div class="tbl"><table><thead><tr><th>Elemento</th><th>Figma</th><th>React Native</th></tr></thead><tbody>${safe}</tbody></table></div></div>
+      </div></div>
+    <div class="group"><h3>Crear la cuadrícula en Figma</h3>
+    <ol class="steps">
+      <li><h3>Selecciona el frame de la pantalla</h3><p>El de 393 × 852. Si tienes varios, selecciónalos todos a la vez.</p></li>
+      <li><h3>Agrega un layout grid</h3><p>En el panel derecho busca <b>Layout grid</b> y pulsa <b>+</b>. Aparece una cuadrícula de 10 px por defecto.</p></li>
+      <li><h3>Cámbiala a columnas</h3><p>Abre los ajustes de la cuadrícula (icono de controles) y en el menú de tipo cambia <b>Grid</b> por <b>Columns</b>.</p></li>
+      <li><h3>Captura los valores</h3><p><b>Count 4 · Type Stretch · Margin 24 · Gutter 12</b>. Deja Width en automático: Figma lo calcula. Si el frame mide 393 verás 77.25.</p></li>
+      <li><h3>Guárdala como estilo</h3><p>Pulsa el icono de estilos (cuatro puntos) junto a Layout grid, luego <b>+</b>, y llámalo <b>Grid/Mobile 4 columnas</b>. Aplícalo a todas las pantallas.</p></li>
+      <li><h3>Muestra u oculta</h3><p><kbd>Ctrl</kbd> + <kbd>G</kbd> (la tecla Control, también en Mac) alterna todas las cuadrículas del canvas.</p></li>
+      <li><h3>Opcional: rejilla de 4 px</h3><p>Agrega una segunda cuadrícula de tipo <b>Grid</b> con tamaño 4 y color muy suave para revisar que el espaciado cae en múltiplos de 4.</p></li>
+      <li><h3>Alinea el contenido a la cuadrícula</h3><p>Dentro del frame, el contenido va en un contenedor con auto layout, padding horizontal 24 y gap vertical 32 entre secciones. Los hijos en <b>Fill container</b> se ajustan solos al margen.</p></li>
+    </ol>
+    <div class="snippet"><pre>${esc(`import { View, ScrollView, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { layout, span } from './pitstop-theme';
+
+export function Screen({ children }: { children: React.ReactNode }) {
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={{ flex: 1, paddingTop: insets.top }}>
+      <ScrollView
+        contentContainerStyle={{
+          alignSelf: 'center',
+          width: '100%',
+          maxWidth: layout.maxContentWidth,
+          paddingHorizontal: layout.margin,
+          paddingBottom: layout.bottomNavContent + insets.bottom + layout.rhythm.section,
+          gap: layout.rhythm.section,
+        }}>
+        {children}
+      </ScrollView>
+    </View>
+  );
+}
+
+// Dos campos por fila: cada uno ocupa 2 columnas
+export function TwoCols({ a, b }: { a: React.ReactNode; b: React.ReactNode }) {
+  return (
+    <View style={{ flexDirection: 'row', gap: layout.gutter }}>
+      <View style={{ flex: 1 }}>{a}</View>
+      <View style={{ flex: 1 }}>{b}</View>
+    </View>
+  );
+}
+// Si necesitas el ancho exacto: span(2, useWindowDimensions().width)`)}</pre></div></div>`);
+}
+/* ---- Estados ---- */
+const chipS = (fam, mode, label) => { const v = DS.status.families[fam][mode]; return fam === 'late' ? `<span class="chip solid" style="--bg:${v[0]};--fg:${v[1]}"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clock"/></svg>${label.toUpperCase()}</span>` : `<span class="chip" style="--bg:${v[0]};--fg:${v[1]};--bd:${v[2]}"><i></i>${label}</span>`; };
+function estados() {
+  const fams = DS.status.order.map((f) => { const x = DS.status.families[f]; return `<div class="fam"><h4>${f} · ${x.n}</h4><div class="use">${esc(x.u)}</div><div class="pair">${['l', 'd'].map((m) => `<div class="cell ${m}">${chipS(f, m, x.n)}<div class="vals">${x[m].join('<br>')}</div></div>`).join('')}</div></div>`; }).join('');
+  const enums = Object.entries(DS.status.enums).map(([k, e]) => `<div class="group"><h3>${e.title} <span class="mono dim">${k}</span></h3>${e.note ? `<p class="note">${esc(e.note)}</p>` : ''}
+    <div class="tbl"><table class="t-fsm"><thead><tr><th>Valor</th><th>Familia</th><th>Claro</th><th>Oscuro</th><th>Significado</th></tr></thead><tbody>${e.items.map((r) => `<tr><td class="m">${r[0]}</td><td class="m">${r[2]}</td><td class="cl">${chipS(r[2], 'l', r[1])}</td><td class="cd">${chipS(r[2], 'd', r[1])}</td><td class="dim">${esc(r[3])}</td></tr>`).join('')}</tbody></table></div></div>`).join('');
+  return sec('estados', 'Estados', 'Doce familias para tus cinco enums',
+    'Los colores son propios del sistema, no los de tus sugerencias. Cada familia tiene fondo, texto y borde, en claro y oscuro. Retraso es la única sólida. Los banners usan info, warning, danger y success.',
+    `<div class="fam-grid">${fams}</div>${enums}`);
+}
+
+/* ---- Componentes ---- */
+const stage = (inner, wide) => `<div class="stage pit ${wide ? 'wide' : ''}"><div class="in">${inner}</div></div>`;
+const SPEC = {
+  button: () => stage(`<div class="p-row">${btn()}${btn({ label: 'Siguiente', trail: 'arrow' })}${btn({ label: 'Cámara', lead: 'camera', type: 'secondary' })}</div>
+    <div class="p-row">${btn({ label: 'Presionado', pressed: 1 })}${btn({ label: 'Deshabilitado', dis: 1 })}${iconBtn('bell')}<span class="p-btn secondary sq">${ic('camera')}</span></div>
+    <div>${btn({ full: 1, label: 'Registrar recepción', trail: 'arrow' })}${cap('Ancho completo = Fill container, no una propiedad')}</div>
+    <div class="p-row">${fabBtn()}</div>`),
+  field: () => stage(`${field({ label: 'Cliente', value: 'Nombre y apellido' })}
+    ${field({ label: 'Kilometraje', value: '60,000 km', state: 'filled', trail: 'down' })}
+    ${field({ label: 'Placas', value: 'PXM-482-B', state: 'focus' })}
+    ${field({ label: 'Teléfono', value: '55 1234', state: 'err', help: 'Faltan dígitos.' })}
+    ${field({ label: 'Falla reportada <em>· opcional</em>', value: 'Describe lo que notó el cliente', area: 1 })}
+    <div class="p-two">${field({ label: 'Marca', value: 'Nissan', state: 'filled' })}${field({ label: 'Modelo', value: 'Versa', state: 'filled' })}</div>
+    <div style="display:flex;gap:8px;align-items:flex-end">${field({ label: 'Placas', value: 'ABC-123', state: 'filled' })}<span class="p-btn secondary sq">${ic('camera')}</span></div>
+    <div class="p-two"><div>${chk('Llanta de refacción', 1)}${chk('Gato', 0)}</div><div>${chk('Herramientas', 1)}${chk('Tapetes', 1)}</div></div>
+    ${sliderCard()}`),
+  stats: () => stage(`${statSummary()}${searchBar()}${segmented()}${sectionTitle()}`),
+  ordercard: () => stage(`${orderCard({ late: true })}${orderCard({ done: 5, fam: 'success', label: 'Lista p/ Entrega', car: 'Mazda 3', plate: 'RTL-190-C', client: 'Lucía Prado', folio: 'OT-1047' })}<div class="p-row" style="gap:8px">${DS.status.order.filter((f) => f !== 'late').map((f) => badge(f, DS.status.families[f].n)).join('')}${lateBadge()}</div>`),
+  empty: () => stage(emptyState()),
+  banner: () => stage(`${banner({ type: 'info', msg: 'OT-1049 registrada. ¡Listo para el diagnóstico!' })}
+    ${banner({ type: 'warning', title: 'Faltan datos', msg: 'Captura el RFC para poder facturar.', action: 'Completar' })}
+    ${banner({ type: 'danger', title: 'No se pudo guardar', msg: 'Revisa tu conexión.', action: 'Reintentar', dismiss: 1 })}
+    ${banner({ type: 'success', msg: 'Factura FAC-0231 emitida.', dismiss: 1 })}
+    <div style="padding-top:8px">${cap('Layout = Floating (toast)')}${banner({ type: 'success', msg: 'Orden guardada.', float: 1, dismiss: 1 })}</div>`),
+  headernav: () => stage(`<div class="p-card" style="overflow:hidden;border-radius:16px">${headerHome()}</div><div class="p-card" style="overflow:hidden;border-radius:16px">${headerDetail()}</div><div class="p-card" style="overflow:hidden;border-radius:16px">${bottomNav()}</div>`),
+  sheet: () => stage(`${sheetOnboarding()}${sheetSearch()}`)
+};
+function componentes() {
+  const eq = [['Dirección Horizontal / Vertical', "flexDirection: 'row' / 'column'"], ['Gap between items', 'gap: n (React Native 0.71 o superior)'], ['Padding horizontal / vertical', 'paddingHorizontal / paddingVertical'], ['Alineación principal: Inicio, Centro, Fin, Espacio entre', "justifyContent: 'flex-start' | 'center' | 'flex-end' | 'space-between'"], ['Alineación cruzada: Inicio, Centro, Fin, Estirar', "alignItems: 'flex-start' | 'center' | 'flex-end' | 'stretch'"], ['Hug contents', 'No pongas tamaño. Para que no se estire: alignSelf: \'flex-start\''], ['Fill container (eje principal)', 'flex: 1'], ['Fill container (eje cruzado)', "alignSelf: 'stretch'"], ['Fixed', 'width / height con número'], ['Mín. / máx. ancho', 'minWidth / maxWidth'], ['Ignore auto layout (absoluto)', "position: 'absolute' + top / right / bottom / left"], ['Clip content', "overflow: 'hidden'"], ['Stroke inside', 'borderWidth y borderColor (el borde de RN ya es interior)'], ['Strokes individuales', 'borderTopWidth, borderLeftWidth…'], ['Wrap', "flexWrap: 'wrap'"], ['Una línea sin truncar', 'numberOfLines={1}'], ['Sombra', 'boxShadow (RN 0.76 o superior) o shadow.legacy']];
+  const comps = COMPONENTS.map((c) => {
+    const vr = c.variants.length ? `<div class="box"><div class="hd">Variantes</div>${c.variants.map(([a, b]) => `<div class="r"><dt>${esc(a)}</dt><dd>${esc(b)}</dd></div>`).join('')}</div>` : '';
+    const pr = `<div class="box"><div class="hd">Propiedades</div>${c.props.map(([a, t, d]) => `<div class="r txt"><dt>${esc(a)}</dt><dd><b>${esc(t)}</b> · ${esc(d)}</dd></div>`).join('')}</div>`;
+    const nt = c.notes.length ? `<div class="box"><div class="hd">Notas</div>${c.notes.map((n) => `<div class="p">${esc(n)}</div>`).join('')}</div>` : '';
+    const parts = c.parts.map((p) => `<div class="part-name">Auto layout · ${esc(p.name)}</div><div class="tbl"><table class="t-al"><thead><tr><th>Capa</th><th>Dirección</th><th>Gap</th><th>Padding</th><th>Alineación</th><th>Tamaño</th><th>Notas</th></tr></thead><tbody>${p.rows.map((r) => `<tr>${r.map((x, i) => `<td class="${i >= 1 && i <= 4 ? 'm' : ''}">${esc(x)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`).join('');
+    return `<div class="comp" id="c-${c.id}"><div class="comp-head"><h3>${esc(c.title)}</h3><span class="mono">${esc(c.figma)}</span></div>${SPEC[c.id]()}<div class="spec">${vr}${pr}${nt}</div>${parts}</div>`;
+  }).join('');
+  return sec('componentes', 'Componentes', 'Qué construir y con qué auto layout',
+    'Cada tabla lista capa por capa: dirección, gap, padding, alineación y tamaño (Hug, Fill o Fixed). Los padding se leen como V vertical y H horizontal.',
+    `<div class="group" style="margin-top:0"><h3>De auto layout de Figma a React Native</h3><div class="tbl"><table><thead><tr><th>Figma</th><th>React Native</th></tr></thead><tbody>${eq.map(([a, b]) => `<tr><td>${esc(a)}</td><td class="m">${esc(b)}</td></tr>`).join('')}</tbody></table></div></div>${comps}`);
+}
+
+/* ---- Botón con icono final ---- */
+const demo = { lead: false, trail: true, type: 'primary', dis: false, fill: false };
+function btnSection() {
+  const code = `import { Pressable, Text, View } from 'react-native';
+import type { ReactNode } from 'react';
+import { useTheme } from './useTheme';
+
+type Props = {
+  label: string;
+  onPress: () => void;
+  variant?: 'primary' | 'secondary';
+  leadingIcon?: ReactNode;   // Boolean + Instance swap en Figma
+  trailingIcon?: ReactNode;
+  disabled?: boolean;
+  fullWidth?: boolean;       // Fill container: no es propiedad en Figma
+};
+
+export function Button({ label, onPress, variant = 'primary', leadingIcon, trailingIcon, disabled, fullWidth }: Props) {
+  const { colors, shadows, typography, radius } = useTheme();
+  const primary = variant === 'primary';
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      onPress={onPress}
+      style={({ pressed }) => [
+        {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+          height: 52,
+          minWidth: 96,
+          paddingHorizontal: 20,
+          borderRadius: radius.lg,
+          backgroundColor: primary ? colors.brand.primary : colors.surface.input,
+          borderWidth: primary ? 0 : 1,
+          borderColor: colors.border.button,
+          opacity: disabled ? 0.4 : pressed ? 0.9 : 1,
+        },
+        primary && !disabled && shadows.button,
+        fullWidth && { alignSelf: 'stretch' },
+      ]}>
+      {leadingIcon}
+      <Text style={[typography.buttonMd, { color: primary ? colors.text.onBrand : colors.brand.primaryText }]}>{label}</Text>
+      {trailingIcon}
+    </Pressable>
+  );
+}
+
+// Uso:
+// <Button label="Siguiente" onPress={next} trailingIcon={<ArrowRight size={20} color={colors.text.onBrand} />} />`;
+  return sec('boton', 'Paso a paso', 'Botón con icono final, como booleano',
+    'En Figma, un booleano de componente muestra u oculta una capa. Aquí lo armas con iconos al inicio y al final, y los eliges con Instance swap.',
+    `<div class="demo"><div class="box"><div class="hd">Properties · Button</div><div class="props" id="props"></div></div><div class="stage pit" style="min-height:200px;align-content:center"><div class="in" id="demobtn"></div></div></div>
+    <div class="group"><ol class="steps">
+      <li><h3>Dibuja el botón con auto layout</h3><p>Crea un frame (<kbd>F</kbd>) de 52 de alto y pulsa <kbd>Shift</kbd> + <kbd>A</kbd>. En el panel Auto layout: <b>Horizontal · Gap 8 · Padding H 20, V 0 · Alineación centro</b>. Tamaño: <b>Width Hug contents</b> y <b>Height Fixed 52</b>. Radio 16 y relleno brand/primary. Para el mínimo de 96, abre el menú de Width y elige Add min width.</p></li>
+      <li><h3>Agrega las tres capas</h3><p>Dentro del frame pon un icono (instancia de tu componente Icon de 20 × 20), el texto del botón y otro icono. Nómbralas <b>Icon leading</b>, <b>Label</b> e <b>Icon trailing</b> con doble clic en el panel de capas. Arrástralas hasta que el canvas muestre icono, texto, icono.</p></li>
+      <li><h3>Conviértelo en componente</h3><p>Con el frame seleccionado pulsa <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>K</kbd> (en Mac <kbd>⌘</kbd> + <kbd>⌥</kbd> + <kbd>K</kbd>). Llámalo <b>Button</b>.</p></li>
+      <li><h3>Crea el booleano antes que las variantes</h3><p>Selecciona la capa <b>Icon trailing</b> en el panel de capas. En el panel derecho, sección <b>Layer</b>, junto al ojo hay un rombo con un <b>+</b> (Apply boolean property). Púlsalo, llama a la propiedad <b>Trailing icon</b> y deja el valor en true. Ahora aparece en <b>Properties</b> con un interruptor.</p><p class="sub">Hazlo ahora y no después: al duplicar una variante, las propiedades se copian ya enlazadas. Si creas el booleano al final, tendrás que enlazarlo a mano en cada variante.</p></li>
+      <li><h3>Crea el Instance swap del icono</h3><p>Selecciona la instancia del icono. En la sección de la instancia, junto al nombre del componente, hay otro rombo (Apply instance swap property). Púlsalo y llámalo <b>Trailing icon type</b>. Luego abre el lápiz de la propiedad y en <b>Preferred values</b> elige tus iconos, para que el menú solo ofrezca esos.</p></li>
+      <li><h3>Repite para el icono inicial</h3><p><b>Leading icon</b> (booleano) y <b>Leading icon type</b> (Instance swap). Los dos booleanos quedan en false por defecto, y en cada instancia enciendes el que necesites.</p></li>
+      <li><h3>Ahora sí, crea las variantes</h3><p>Con el componente seleccionado, en <b>Properties</b> pulsa <b>+</b> y elige <b>Variant</b>. Crea <b>Type</b> (Primary, Secondary, FAB, Icon) y <b>State</b> (Default, Pressed, Disabled). Duplica la variante base y cambia solo el relleno, el borde y la sombra. Los booleanos ya vienen enlazados.</p></li>
+      <li><h3>Prueba el booleano</h3><p>Arrastra una instancia a una pantalla y apaga <b>Trailing icon</b>. El icono desaparece y el botón se encoge, porque una capa oculta sale del auto layout y su gap también. Si el hueco se queda, revisa que la capa no tenga activado <b>Ignore auto layout</b>.</p></li>
+      <li><h3>Ancho completo no es una propiedad</h3><p>Pon la instancia dentro de un frame con auto layout y, en Resizing, cambia el ancho a <b>Fill container</b>. El contenido se mantiene centrado. No uses un booleano para esto: un booleano no cambia el tamaño.</p></li>
+      <li><h3>Variante Icon</h3><p>En <b>Type = Icon</b> deja solo un icono centrado de 48 × 48 y sin Label. Esas propiedades no aplican en esa variante.</p></li>
+    </ol>
+    <h3 style="margin-top:20px">Cómo queda en React Native</h3>
+    <p class="note">El booleano se vuelve un prop opcional que recibe el icono. Si no lo pasas, no se dibuja ni deja hueco, igual que en Figma. Para el icono puedes usar @expo/vector-icons o lucide-react-native.</p>
+    <div class="snippet"><pre>${esc(code)}</pre></div></div>`);
+}
+function renderDemo() {
+  const row = (k, label, sub) => `<div class="row"><div>${label}<small>${sub}</small></div><button class="sw-t" role="switch" aria-checked="${demo[k]}" data-k="${k}" aria-label="${label}"></button></div>`;
+  document.getElementById('props').innerHTML = `<div class="row"><div>Type<small>Variant</small></div><span class="val">${demo.type === 'primary' ? 'Primary' : 'Secondary'}</span></div>
+  <div class="row"><div>State<small>Variant</small></div><span class="val">${demo.dis ? 'Disabled' : 'Default'}</span></div>
+  ${row('lead', 'Leading icon', 'Boolean')}${row('trail', 'Trailing icon', 'Boolean')}${row('type', 'Type = Secondary', 'Variant')}${row('dis', 'State = Disabled', 'Variant')}${row('fill', 'Resizing → Fill container', 'No es propiedad')}`;
+  document.getElementById('demobtn').innerHTML = btn({ type: demo.type, lead: demo.lead && 'camera', trail: demo.trail && 'arrow', dis: demo.dis, full: demo.fill, label: 'Registrar recepción' }) + cap(demo.fill ? 'Ancho: Fill container' : 'Ancho: Hug contents');
+  document.getElementById('props').querySelectorAll('.sw-t').forEach((b) => {
+    if (b.dataset.k === 'type') b.setAttribute('aria-checked', demo.type === 'secondary');
+  });
+}
+
+/* ---- Plan ---- */
+function plan() {
+  const items = [
+    ['Variables de color', 'Crea una colección <b>Color</b> con dos modos, <b>Light</b> y <b>Dark</b>. Un grupo por prefijo: brand/, text/, surface/, border/, status/. Los modos de variables dependen de tu plan de Figma; si solo permite uno, haz una colección <b>Color Dark</b> aparte.'],
+    ['Variables de número', 'Una colección <b>Layout</b> sin modos: space/1 a space/12, radius/xs a full, size/control, size/icon.'],
+    ['Estilos de texto', 'Crea los 17 estilos con el mismo nombre que en la tabla: <b>heading/xl</b>, <b>body/md</b>, <b>mono/id</b>… Son los que ves en la sección de tipografía.'],
+    ['Estilos de efecto', 'Las sombras: shadow/card, button, fab, floating, sheet. Si puedes, enlaza el color de la sombra a una variable para que cambie con el modo.'],
+    ['Estilo de layout grid', 'Grid/Mobile 4 columnas, como en la sección de layout.'],
+    ['Reemplaza colores en lote', 'Selecciona todas las pantallas y abre <b>Selection colors</b> al final del panel derecho. Cada color tiene un icono de variable: asigna el token y se actualizan todas las capas que lo usan.'],
+    ['Componentes, en este orden', 'Icon → Button → Badge y PlateChip → Field y Checkbox → Banner → OrderCard → barras superior e inferior → hoja inferior. Cada uno se apoya en el anterior.'],
+    ['Sustituye las copias por instancias', 'Borra cada rectángulo copiado y pega una instancia. Pruébalo cambiando el modo del frame en <b>Appearance</b> para ver el oscuro.']
+  ];
+  return sec('plan', 'Plan', 'Cómo ordenar el archivo de Figma', 'Del más barato al más caro. Después del paso 6 ya tienes tokens aplicados sin haber tocado un solo componente.',
+    `<ol class="steps">${items.map(([h, p]) => `<li><h3>${h}</h3><p>${p}</p></li>`).join('')}</ol>`);
+}
+
+/* ---- Código ---- */
+function codigo() {
+  const use = `// app/_layout.tsx
+import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
+import { JetBrainsMono_400Regular, JetBrainsMono_500Medium } from '@expo-google-fonts/jetbrains-mono';
+import { useColorScheme } from 'react-native';
+import { getTheme } from '../theme/pitstop-theme';
+
+export default function Root() {
+  const [loaded] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, JetBrainsMono_400Regular, JetBrainsMono_500Medium });
+  const theme = getTheme(useColorScheme() === 'dark' ? 'dark' : 'light');
+  if (!loaded) return null;
+  // Pásalo por un Context y léelo con useTheme()
+}
+
+// Badge de estado
+import { operationalStatus, statusColors } from '../theme/pitstop-theme';
+
+export function StatusBadge({ value }: { value: keyof typeof operationalStatus }) {
+  const { scheme, radius } = useTheme();
+  const { label, family } = operationalStatus[value];
+  const c = statusColors(scheme, family);
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 4, paddingHorizontal: 12, borderRadius: radius.sm, borderWidth: 1, backgroundColor: c.bg, borderColor: c.border }}>
+      <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: c.fg }} />
+      <Text style={[typography.captionMedium, { color: c.fg }]}>{label}</Text>
+    </View>
+  );
+}`;
+  return sec('codigo', 'Código', 'Tokens para Expo y para la web',
+    'Para React Native con StyleSheet usa el archivo .ts: es el que importas. El .css sirve para la web, NativeWind o como referencia.',
+    `<div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-tab="ts">pitstop-theme.ts</button><button role="tab" aria-selected="false" data-tab="css">pitstop-tokens.css</button></div>
+    <div class="codebox"><button class="copy" id="copybtn" type="button">Copiar</button><pre id="codepre"></pre></div>
+    <div class="group"><h3>Uso en Expo</h3><div class="snippet" style="margin-top:0"><pre>${esc(use)}</pre></div></div>
+    <footer>Pitstop design system · generado desde tokens.json</footer>`);
+}
+/* ===== montaje ===== */
+const NAV = [['resumen', 'Resumen'], ['color', 'Color'], ['tipografia', 'Tipografía'], ['forma', 'Forma'], ['layout', 'Layout'], ['estados', 'Estados'], ['componentes', 'Componentes'], ['boton', 'Botón'], ['plan', 'Plan'], ['codigo', 'Código']];
+const head = `<div class="wrap top"><span class="eyebrow">Design system · pitstop</span><h1>Pitstop<span>.</span> tokens y componentes</h1>
+<p class="lede">Sistema extraído de tu archivo de Figma, con los valores duplicados unificados y los problemas de contraste y tamaño ya resueltos. Incluye layout grid, auto layout por componente y el código para React Native con Expo.</p></div>
+<nav class="sections" aria-label="Secciones"><div class="row"><div class="links">${NAV.map(([i, l]) => `<a href="#${i}">${l}</a>`).join('')}</div>
+<div class="mode" role="group" aria-label="Modo"><button type="button" data-mode="light" aria-pressed="true">Claro</button><button type="button" data-mode="dark" aria-pressed="false">Oscuro</button></div></div></nav>`;
+document.getElementById('app').innerHTML = head + '<main>' + resumen() + color() + tipografia() + forma() + layout() + estados() + componentes() + btnSection() + plan() + codigo() + '</main>';
+
+function setMode(m) {
+  document.documentElement.dataset.theme = m;
+  document.querySelectorAll('.mode button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === m)));
+}
+setMode(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+document.querySelectorAll('.mode button').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
+
+/* demo del botón */
+renderDemo();
+document.getElementById('props').addEventListener('click', (e) => {
+  const b = e.target.closest('.sw-t');
+  if (!b) return;
+  const k = b.dataset.k;
+  if (k === 'type') demo.type = demo.type === 'primary' ? 'secondary' : 'primary';
+  else demo[k] = !demo[k];
+  renderDemo();
+});
+
+/* teléfono: escala y cuadrícula */
+function fitPhone() {
+  const h = document.getElementById('phoneholder'), p = document.getElementById('phone');
+  if (!h || !p) return;
+  const s = Math.min(1, h.clientWidth / 393);
+  p.style.transform = `scale(${s})`;
+  h.style.height = p.offsetHeight * s + 'px';
+}
+addEventListener('resize', fitPhone);
+fitPhone();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitPhone);
+document.getElementById('gridtoggle').addEventListener('change', (e) => document.getElementById('gridov').classList.toggle('on', e.target.checked));
+document.getElementById('gridov').classList.add('on');
+
+/* código */
+let tab = 'ts';
+const pre = document.getElementById('codepre');
+const showTab = () => { pre.textContent = tab === 'ts' ? FILES.ts : FILES.css; document.querySelectorAll('.tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab))); };
+document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => { tab = b.dataset.tab; showTab(); }));
+showTab();
+document.getElementById('copybtn').addEventListener('click', async (e) => {
+  const txt = tab === 'ts' ? FILES.ts : FILES.css;
+  try { await navigator.clipboard.writeText(txt); } catch (_) {
+    const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (__) {}
+    ta.remove();
+  }
+  e.target.textContent = 'Copiado';
+  setTimeout(() => { e.target.textContent = 'Copiar'; }, 1500);
+});
+
+</script>
+</body>
+</html>
+
+</body></html>

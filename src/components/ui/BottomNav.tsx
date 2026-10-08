@@ -23,6 +23,7 @@ const TAB_CONFIG: Record<
   string,
   { label: string; icon: React.ComponentType<{ size: number; color: string }> }
 > = {
+  orders: { label: "Órdenes", icon: ClipboardList },
   index: { label: "Órdenes", icon: ClipboardList },
   cash: { label: "Caja", icon: Wallet },
   finance: { label: "Finanzas", icon: TrendingUp },

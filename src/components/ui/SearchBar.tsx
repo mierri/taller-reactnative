@@ -1,13 +1,13 @@
-import React from 'react';
+import { useTheme } from "@/theme";
+import { Search, X } from "lucide-react-native";
+import React from "react";
 import {
-  View,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  ViewStyle,
-} from 'react-native';
-import { Search, X } from 'lucide-react-native';
-import { useTheme } from '@/theme';
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    View,
+    ViewStyle,
+} from "react-native";
 
 export interface SearchBarProps {
   value: string;
@@ -20,22 +20,20 @@ export interface SearchBarProps {
 export const SearchBar: React.FC<SearchBarProps> = ({
   value,
   onChangeText,
-  placeholder = 'Buscar orden, cliente o placas…',
+  placeholder = "Buscar orden, cliente o placas…",
   onClear,
   style,
 }) => {
   const { colors, isDark } = useTheme();
 
-  const bg = isDark
-    ? 'rgba(255, 255, 255, 0.08)'
-    : 'rgba(255, 255, 255, 0.6)';
+  const bg = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.6)";
 
   const borderColor = isDark
-    ? 'rgba(255, 255, 255, 0.14)'
-    : 'rgba(255, 255, 255, 0.7)';
+    ? "rgba(255, 255, 255, 0.14)"
+    : "rgba(255, 255, 255, 0.7)";
 
   const handleClear = () => {
-    onChangeText('');
+    onChangeText("");
     onClear?.();
   };
 
@@ -50,11 +48,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         style,
       ]}
     >
-      <Search
-        size={17}
-        color={colors.textMuted}
-        style={styles.searchIcon}
-      />
+      <Search size={17} color={colors.textMuted} style={styles.searchIcon} />
 
       <TextInput
         value={value}
@@ -85,24 +79,25 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 16,
     borderWidth: 1.2,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 14,
-    width: '100%',
+    width: "100%",
+    marginVertical: 16,
   },
   searchIcon: {
     marginRight: 10,
   },
   input: {
     flex: 1,
-    height: '100%',
+    height: "100%",
     fontSize: 12,
     lineHeight: 18,
     paddingVertical: 0,
   },
   clearBtn: {
     padding: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

@@ -21,7 +21,7 @@ export default function TabLayout() {
           selected: { color: colors.brandPrimary },
         }}
       >
-        <NativeTabs.Trigger name="index">
+        <NativeTabs.Trigger name="orders">
           <NativeTabs.Trigger.Label>Órdenes</NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon sf="doc.text.fill" md="receipt_long" />
         </NativeTabs.Trigger>
@@ -49,6 +49,7 @@ export default function TabLayout() {
           <NativeTabs.Trigger.Icon sf="ellipsis" md="more_horiz" />
         </NativeTabs.Trigger>
 
+        <NativeTabs.Trigger name="index" hidden />
         <NativeTabs.Trigger name="reception" hidden />
         <NativeTabs.Trigger name="invoices" hidden />
         <NativeTabs.Trigger name="bay" hidden />
@@ -58,17 +59,19 @@ export default function TabLayout() {
 
   return (
     <Tabs
+      initialRouteName="orders"
       tabBar={(props) => <CustomBottomNav {...props} />}
       screenOptions={{
         headerShown: false,
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Órdenes' }} />
+      <Tabs.Screen name="orders" options={{ title: 'Órdenes' }} />
       <Tabs.Screen name="cash" options={{ title: 'Caja' }} />
       <Tabs.Screen name="finance" options={{ title: 'Finanzas' }} />
       <Tabs.Screen name="inventory" options={{ title: 'Inventario' }} />
       <Tabs.Screen name="more" options={{ title: 'Más' }} />
 
+      <Tabs.Screen name="index" options={{ href: null }} />
       <Tabs.Screen name="reception" options={{ href: null }} />
       <Tabs.Screen name="invoices" options={{ href: null }} />
       <Tabs.Screen name="bay" options={{ href: null }} />
