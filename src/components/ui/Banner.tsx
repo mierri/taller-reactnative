@@ -14,6 +14,7 @@ import {
   AlertTriangle,
   AlertOctagon,
   CheckCircle2,
+  Check,
   X,
 } from "lucide-react-native";
 import { useTheme } from "@/theme";
@@ -25,6 +26,7 @@ export type BannerLayout = "Inline" | "Floating";
 export interface BannerProps {
   type?: BannerType;
   layout?: BannerLayout;
+  variant?: "default" | "dark";
   title?: string;
   message: string;
   actionText?: string;
@@ -39,6 +41,7 @@ export interface BannerProps {
 export const Banner: React.FC<BannerProps> = ({
   type = "Info",
   layout = "Inline",
+  variant = "default",
   title,
   message,
   actionText,
@@ -117,15 +120,21 @@ export const Banner: React.FC<BannerProps> = ({
           : "info";
 
   const tone = statusColors(family);
+  const isDark = variant === "dark";
+  const bg = isDark ? "#173d2d" : tone.bg;
+  const fg = isDark ? "#ffffff" : tone.fg;
+  const border = isDark ? "#24533e" : tone.border;
 
   const IconComponent =
-    type === "Warning"
-      ? AlertTriangle
-      : type === "Danger"
-        ? AlertOctagon
-        : type === "Success"
-          ? CheckCircle2
-          : Info;
+    isDark && type === "Success"
+      ? Check
+      : type === "Warning"
+        ? AlertTriangle
+        : type === "Danger"
+          ? AlertOctagon
+          : type === "Success"
+            ? CheckCircle2
+            : Info;
 
   const topOffset = insets.top + 8;
 
@@ -134,8 +143,8 @@ export const Banner: React.FC<BannerProps> = ({
       style={[
         styles.container,
         {
-          backgroundColor: tone.bg,
-          borderColor: tone.border,
+          backgroundColor: bg,
+          borderColor: border,
           borderRadius: radius.lg,
           paddingRight: shouldDismiss ? 8 : 16,
         },
@@ -150,20 +159,20 @@ export const Banner: React.FC<BannerProps> = ({
       ]}
       accessibilityRole={type === "Danger" ? "alert" : "summary"}
     >
-      <IconComponent size={20} color={tone.fg} strokeWidth={2} />
+      <IconComponent size={20} color={fg} strokeWidth={2.2} />
 
       <View style={styles.textWrapper}>
         {title && (
-          <Text style={[typography.buttonMd, { color: tone.fg }]}>{title}</Text>
+          <Text style={[typography.buttonMd, { color: fg }]}>{title}</Text>
         )}
-        <Text style={[typography.bodyLg, { color: tone.fg }]}>{message}</Text>
+        <Text style={[typography.bodyLg, { color: fg }]}>{message}</Text>
         {actionText && onActionPress && (
           <TouchableOpacity
             onPress={onActionPress}
             style={styles.actionBtn}
             activeOpacity={0.7}
           >
-            <Text style={[typography.buttonMd, { color: tone.fg }]}>
+            <Text style={[typography.buttonMd, { color: fg }]}>
               {actionText}
             </Text>
           </TouchableOpacity>
@@ -177,7 +186,7 @@ export const Banner: React.FC<BannerProps> = ({
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           activeOpacity={0.7}
         >
-          <X size={20} color={tone.fg} />
+          <X size={20} color={fg} />
         </TouchableOpacity>
       )}
     </Animated.View>

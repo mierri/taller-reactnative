@@ -39,9 +39,11 @@ export async function fetchWorkOrders(
 
 export async function fetchWorkOrderById(id: string): Promise<WorkOrderDto> {
   if (CONFIG.useMocks) {
-    const mock = getMockWorkOrders().data.find((item) => item.id === id);
-    if (!mock) throw new Error(`Orden ${id} no encontrada`);
-    return Promise.resolve(mock);
+    const orders = getMockWorkOrders().data;
+    const mock = orders.find((item) => item.id === id || item.code === id);
+    if (mock) return Promise.resolve(mock);
+    if (orders.length > 0) return Promise.resolve(orders[0]);
+    throw new Error(`Orden ${id} no encontrada`);
   }
 
   return apiRequest<WorkOrderDto>(`/work-orders/${id}`, {

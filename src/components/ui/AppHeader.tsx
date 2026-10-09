@@ -1,6 +1,6 @@
 import { useTheme } from "@/theme";
 import { useRouter } from "expo-router";
-import { ArrowLeft, Bell, ChevronLeft, Search } from "lucide-react-native";
+import { ArrowLeft, Bell, ChevronLeft } from "lucide-react-native";
 import React from "react";
 import {
     Platform,
@@ -99,20 +99,6 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             <>
               {!hideActions && (
                 <>
-                  <TouchableOpacity
-                    onPress={onSearchPress}
-                    style={styles.actionIconBtn}
-                    activeOpacity={0.7}
-                    accessibilityRole="button"
-                    accessibilityLabel="Buscar"
-                  >
-                    <Search
-                      size={22}
-                      color={colors.textLabel}
-                      strokeWidth={2}
-                    />
-                  </TouchableOpacity>
-
                   <TouchableOpacity
                     onPress={onNotificationPress}
                     style={styles.actionIconBtn}

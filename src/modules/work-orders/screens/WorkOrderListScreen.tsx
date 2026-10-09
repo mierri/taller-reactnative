@@ -69,7 +69,7 @@ export const WorkOrderListScreen: React.FC = () => {
     selectedCategory: selectedSegment,
     searchQuery,
     filters: filters.appliedFilters,
-    autoLoad: false,
+    autoLoad: true,
   });
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { MOCK_WORK_ORDERS } from '../mocks/work-orders.mock';
+import { CONFIG } from '@/config/env';
+import { getMockWorkOrders, MOCK_WORK_ORDERS } from '../mocks/work-orders.mock';
 import { fetchWorkOrders } from '../services/work-orders.service';
 import {
   OperationalStatus,
@@ -28,10 +29,12 @@ export function useWorkOrders(options: UseWorkOrdersOptions = {}) {
     selectedCategory = 'taller',
     searchQuery = '',
     filters = {},
-    autoLoad = false,
+    autoLoad = true,
   } = options;
 
-  const [rawOrders, setRawOrders] = useState<WorkOrderDto[]>([]);
+  const [rawOrders, setRawOrders] = useState<WorkOrderDto[]>(() =>
+    CONFIG.useMocks ? getMockWorkOrders().data : []
+  );
   const [loading, setLoading] = useState(autoLoad);
   const [error, setError] = useState<string | null>(null);
 
