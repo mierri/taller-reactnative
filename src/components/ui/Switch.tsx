@@ -1,5 +1,5 @@
-import { useTheme } from '@/theme';
-import React, { useEffect, useState } from 'react';
+import { useTheme } from "@/theme";
+import React, { useEffect, useState } from "react";
 import {
   Animated,
   Platform,
@@ -9,7 +9,7 @@ import {
   Switch as RNSwitch,
   View,
   ViewStyle,
-} from 'react-native';
+} from "react-native";
 
 export interface SwitchProps {
   value: boolean;
@@ -35,13 +35,14 @@ const IosSwitch: React.FC<SwitchProps> = ({
   onValueChange,
   disabled = false,
   trackColor,
-  thumbColor = '#ffffff',
+  thumbColor,
   style,
   accessibilityLabel,
 }) => {
   const { colors } = useTheme();
   const offColor = trackColor?.false ?? colors.borderGrabber;
   const onColor = trackColor?.true ?? colors.brandPrimary;
+  const resolvedThumbColor = thumbColor ?? colors.textOnBrand;
 
   return (
     <RNSwitch
@@ -52,7 +53,7 @@ const IosSwitch: React.FC<SwitchProps> = ({
         false: offColor,
         true: onColor,
       }}
-      thumbColor={thumbColor}
+      thumbColor={resolvedThumbColor}
       ios_backgroundColor={offColor}
       style={style}
       accessibilityLabel={accessibilityLabel}
@@ -65,11 +66,11 @@ const AndroidSwitch: React.FC<SwitchProps> = ({
   onValueChange,
   disabled = false,
   trackColor,
-  thumbColor = '#ffffff',
+  thumbColor,
   style,
   accessibilityLabel,
 }) => {
-  const { colors } = useTheme();
+  const { colors, shadows } = useTheme();
   const [animatedValue] = useState(
     () => new Animated.Value(value ? TRANSLATE_X : 0),
   );
@@ -84,6 +85,7 @@ const AndroidSwitch: React.FC<SwitchProps> = ({
 
   const offColor = trackColor?.false ?? colors.borderGrabber;
   const onColor = trackColor?.true ?? colors.brandPrimary;
+  const resolvedThumbColor = thumbColor ?? colors.textOnBrand;
 
   const activeOpacity = animatedValue.interpolate({
     inputRange: [0, TRANSLATE_X],
@@ -114,8 +116,9 @@ const AndroidSwitch: React.FC<SwitchProps> = ({
         <Animated.View
           style={[
             styles.thumb,
+            shadows.segmented,
             {
-              backgroundColor: thumbColor,
+              backgroundColor: resolvedThumbColor,
               transform: [{ translateX: animatedValue }],
             },
           ]}
@@ -126,7 +129,7 @@ const AndroidSwitch: React.FC<SwitchProps> = ({
 };
 
 export const Switch: React.FC<SwitchProps> = (props) => {
-  if (Platform.OS === 'ios') {
+  if (Platform.OS === "ios") {
     return <IosSwitch {...props} />;
   }
   return <AndroidSwitch {...props} />;
@@ -134,16 +137,16 @@ export const Switch: React.FC<SwitchProps> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   track: {
     width: TRACK_WIDTH,
     height: TRACK_HEIGHT,
     borderRadius: TRACK_HEIGHT / 2,
     padding: TRACK_PADDING,
-    justifyContent: 'center',
-    overflow: 'hidden',
+    justifyContent: "center",
+    overflow: "hidden",
   },
   activeTrack: {
     borderRadius: TRACK_HEIGHT / 2,
@@ -152,11 +155,6 @@ const styles = StyleSheet.create({
     width: THUMB_SIZE,
     height: THUMB_SIZE,
     borderRadius: THUMB_SIZE / 2,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 1.5 },
-    shadowOpacity: 0.15,
-    shadowRadius: 2,
-    elevation: 2,
   },
   disabled: {
     opacity: 0.5,

@@ -24,9 +24,8 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { AddClientSheet } from "../components/AddClientSheet";
-import { OrderCommandPaletteSheet } from "../components/OrderCommandPaletteSheet";
-import { OrderFilterSheet } from "../components/OrderFilterSheet";
+import { AddClientSheet } from "../components/reception";
+import { OrderCommandPaletteSheet, OrderFilterSheet } from "../components/list";
 import { useWorkOrderFilters } from "../hooks/useWorkOrderFilters";
 import { useWorkOrders } from "../hooks/useWorkOrders";
 import { WorkOrderCategory } from "../types/work-order.types";
@@ -46,11 +45,14 @@ export const WorkOrderListScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSegment, setSelectedSegment] =
     useState<WorkOrderCategory>("taller");
-  const [toastMessage, setToastMessage] = useState<string | null>(() =>
+  const [toast, setToast] = useState<{ message: string; type: "Info" | "Success" } | null>(() =>
     params.orderCreated === "true"
-      ? params.folio
-        ? `Orden ${params.folio} registrada exitosamente.`
-        : "Orden de trabajo registrada exitosamente."
+      ? {
+          message: params.folio
+            ? `Orden ${params.folio} registrada exitosamente.`
+            : "Orden de trabajo registrada exitosamente.",
+          type: "Success",
+        }
       : null
   );
   const [showCommandPalette, setShowCommandPalette] = useState(false);
@@ -112,19 +114,19 @@ export const WorkOrderListScreen: React.FC = () => {
       <AppHeader
         type="Home"
         onNotificationPress={() =>
-          setToastMessage("Notificaciones actualizadas al momento.")
+          setToast({ message: "Notificaciones actualizadas al momento.", type: "Info" })
         }
       />
 
-      {toastMessage && (
+      {toast && (
         <Banner
-          type="Success"
+          type={toast.type}
           layout="Floating"
-          title="Listo"
-          message={toastMessage}
+          title={toast.type === "Success" ? "Listo" : undefined}
+          message={toast.message}
           dismissible
           autoDismiss
-          onDismiss={() => setToastMessage(null)}
+          onDismiss={() => setToast(null)}
         />
       )}
 
@@ -241,7 +243,7 @@ export const WorkOrderListScreen: React.FC = () => {
           type="FAB"
           floating={false}
           label="Nueva Orden"
-          iconLeading={<Plus size={18} color="#ffffff" strokeWidth={2.4} />}
+          iconLeading={<Plus size={18} color={colors.textOnBrand} strokeWidth={2.4} />}
           onPress={() => router.push("/orders/new" as any)}
         />
       </View>
@@ -281,10 +283,10 @@ export const WorkOrderListScreen: React.FC = () => {
         onReceiveVehicle={() => router.push("/orders/new" as any)}
         onNewClient={() => setShowAddClientSheet(true)}
         onRegisterPayment={() =>
-          setToastMessage("Módulo de caja disponible próximamente.")
+          setToast({ message: "Módulo de caja disponible próximamente.", type: "Info" })
         }
         onConsultParts={() =>
-          setToastMessage("Catálogo de refacciones disponible próximamente.")
+          setToast({ message: "Catálogo de refacciones disponible próximamente.", type: "Info" })
         }
       />
 
@@ -292,7 +294,7 @@ export const WorkOrderListScreen: React.FC = () => {
         visible={showAddClientSheet}
         onClose={() => setShowAddClientSheet(false)}
         onClientCreated={(client) =>
-          setToastMessage(`Cliente ${client.name} registrado con éxito.`)
+          setToast({ message: `Cliente ${client.name} registrado con éxito.`, type: "Success" })
         }
       />
     </View>

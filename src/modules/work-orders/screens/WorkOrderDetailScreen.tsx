@@ -9,10 +9,12 @@ import {
 } from "../types/work-order-detail.types";
 import { OperationalStatus, WorkOrderDto } from "../types/work-order.types";
 import { calculateQuotationTotals, getNextInspectionStatus, parseVehicleInfo } from "../utils/detail-formatters";
-import { DetailHeaderInfo } from "../components/detail/DetailHeaderInfo";
-import { DetailModalsContainer } from "../components/detail/DetailModalsContainer";
-import { DetailTabContent } from "../components/detail/DetailTabContent";
-import { DetailTabNavigation } from "../components/detail/DetailTabNavigation";
+import {
+  DetailHeaderInfo,
+  DetailModalsContainer,
+  DetailTabContent,
+  DetailTabNavigation,
+} from "../components/detail/layout";
 import { useQuotationWorkflow } from "../hooks/useQuotationWorkflow";
 import { useCommercialDeliveryWorkflow } from "../hooks/useCommercialDeliveryWorkflow";
 
@@ -79,7 +81,7 @@ export const WorkOrderDetailScreen: React.FC<WorkOrderDetailScreenProps> = ({ id
 
   const vehicleInfo = parseVehicleInfo(order?.vehicleDescription);
 
-  const handleToggleLate = (val: boolean) => { setIsLate(val); showToast(val ? "Orden marcada con retraso." : "Retraso desactivado."); };
+  const handleToggleLate = (val: boolean) => { setIsLate(val); showToast(val ? "Orden marcada con retraso." : "Retraso desactivado.", val ? "Warning" : "Info"); };
   const handleToggleInspection = (key: keyof QuickInspectionState) => setQuickInspection((p) => ({ ...p, [key]: getNextInspectionStatus(p[key]) }));
   const handleToggleAllInspection = () => setQuickInspection((p) => { const n = getNextInspectionStatus(p.brakes); return { brakes: n, levels: n, tires: n }; });
   const handleSaveNote = (content: string, isClientVisible: boolean) => {
@@ -141,6 +143,7 @@ export const WorkOrderDetailScreen: React.FC<WorkOrderDetailScreenProps> = ({ id
           <DetailHeaderInfo
             folio={order.code}
             status={order.operationalStatus}
+            isLate={isLate}
             vehicleName={vehicleInfo.vehicleName}
             plate={vehicleInfo.plate}
             clientName={order.clientName || "Cliente"}

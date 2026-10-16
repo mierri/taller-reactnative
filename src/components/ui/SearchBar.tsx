@@ -29,21 +29,19 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   editable = true,
   style,
 }) => {
-  const { colors, typography, radius, isDark } = useTheme();
+  const { colors, typography, radius } = useTheme();
 
   const handleClear = () => {
     onChangeText?.("");
     onClear?.();
   };
 
-  const bg = isDark ? "rgba(27, 42, 33, 0.6)" : "rgba(255, 255, 255, 0.6)";
-
   const content = (
     <View
       style={[
         styles.container,
         {
-          backgroundColor: bg,
+          backgroundColor: colors.surfaceGlass,
           borderColor: colors.borderCard,
           borderRadius: radius.lg,
         },

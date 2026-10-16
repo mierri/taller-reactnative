@@ -12,14 +12,14 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { AdvisorPickerSheet } from "../components/AdvisorPickerSheet";
 import {
+  AdvisorPickerSheet,
   BelongingItem,
   BelongingsCard,
-} from "../components/BelongingsCard";
-import { DateTimePickerSheet } from "../components/DateTimePickerSheet";
-import { FuelGaugeCard } from "../components/FuelGaugeCard";
-import { StepNavButtons } from "../components/StepNavButtons";
+  DateTimePickerSheet,
+  FuelGaugeCard,
+  StepNavButtons,
+} from "../components/reception";
 import { MockAdvisor } from "../mocks/advisors.mock";
 import { addMockWorkOrder } from "../mocks/work-orders.mock";
 
@@ -228,18 +228,18 @@ export const NewWorkOrderStepThreeScreen: React.FC<
               style={[
                 styles.noticeBanner,
                 {
-                  backgroundColor: colors.surfaceTile,
-                  borderColor: colors.borderButton,
+                  backgroundColor: colors.statusInfoBg,
+                  borderColor: colors.statusInfoBorder,
                   borderRadius: radius.lg,
                 },
               ]}
             >
-              <ShieldCheck size={20} color={colors.brandPrimaryText} />
+              <ShieldCheck size={20} color={colors.statusInfoFg} />
               <Text
                 style={[
                   typography.bodyMd,
                   styles.noticeText,
-                  { color: colors.textStrong },
+                  { color: colors.statusInfoFg },
                 ]}
               >
                 Verifica la información antes de avanzar.

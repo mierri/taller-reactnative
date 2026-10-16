@@ -61,16 +61,21 @@ export function getInspectionStatusLabel(status: InspectionItemStatus): string {
 
 export function getInspectionStatusColor(
   status: InspectionItemStatus,
+  colors: {
+    statusSuccessFg: string;
+    statusWarningFg: string;
+    statusDangerFg: string;
+  },
 ): string {
   switch (status) {
     case "sin_problema":
-      return "#12805c";
+      return colors.statusSuccessFg;
     case "revisar":
-      return "#b68d4f";
+      return colors.statusWarningFg;
     case "requiere_atencion":
-      return "#dc2626";
+      return colors.statusDangerFg;
     default:
-      return "#b68d4f";
+      return colors.statusWarningFg;
   }
 }
 

@@ -5,7 +5,7 @@ import {
   OrderDetailTabKey,
 } from "../types/work-order-detail.types";
 import { OperationalStatus, WorkOrderDto } from "../types/work-order.types";
-import { AdvancePaymentMethod } from "../components/detail/RegisterAdvanceSheet";
+import { AdvancePaymentMethod } from "../components/detail/closure/RegisterAdvanceSheet";
 import { formatCurrency } from "../utils/detail-formatters";
 
 export interface UseCommercialDeliveryWorkflowProps {

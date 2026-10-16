@@ -77,7 +77,7 @@ export const Segmented: React.FC<SegmentedProps> = ({
                   {
                     borderRadius: radius.xs,
                     backgroundColor: isActive
-                      ? "rgba(255, 255, 255, 0.25)"
+                      ? colors.surfaceGlass
                       : colors.surfaceChipCount,
                   },
                 ]}

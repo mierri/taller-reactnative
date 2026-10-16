@@ -14,7 +14,6 @@ import {
   AlertTriangle,
   AlertOctagon,
   CheckCircle2,
-  Check,
   X,
 } from "lucide-react-native";
 import { useTheme } from "@/theme";
@@ -120,23 +119,20 @@ export const Banner: React.FC<BannerProps> = ({
           : "info";
 
   const tone = statusColors(family);
-  const isDark = variant === "dark";
-  const bg = isDark ? "#173d2d" : tone.bg;
-  const fg = isDark ? "#ffffff" : tone.fg;
-  const border = isDark ? "#24533e" : tone.border;
+  const bg = tone.bg;
+  const fg = tone.fg;
+  const border = tone.border;
 
   const IconComponent =
-    isDark && type === "Success"
-      ? Check
-      : type === "Warning"
-        ? AlertTriangle
-        : type === "Danger"
-          ? AlertOctagon
-          : type === "Success"
-            ? CheckCircle2
-            : Info;
+    type === "Warning"
+      ? AlertTriangle
+      : type === "Danger"
+        ? AlertOctagon
+        : type === "Success"
+          ? CheckCircle2
+          : Info;
 
-  const topOffset = insets.top + 8;
+  const topOffset = insets.top + 72;
 
   return (
     <Animated.View
@@ -146,7 +142,7 @@ export const Banner: React.FC<BannerProps> = ({
           backgroundColor: bg,
           borderColor: border,
           borderRadius: radius.lg,
-          paddingRight: shouldDismiss ? 8 : 16,
+          paddingRight: shouldDismiss ? 12 : 16,
         },
         isFloating
           ? [
@@ -163,9 +159,9 @@ export const Banner: React.FC<BannerProps> = ({
 
       <View style={styles.textWrapper}>
         {title && (
-          <Text style={[typography.buttonMd, { color: fg }]}>{title}</Text>
+          <Text style={[typography.labelLg, { color: fg }]}>{title}</Text>
         )}
-        <Text style={[typography.bodyLg, { color: fg }]}>{message}</Text>
+        <Text style={[typography.bodyMd, { color: fg }]}>{message}</Text>
         {actionText && onActionPress && (
           <TouchableOpacity
             onPress={onActionPress}
@@ -183,10 +179,10 @@ export const Banner: React.FC<BannerProps> = ({
         <TouchableOpacity
           onPress={handleDismiss}
           style={styles.closeButton}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           activeOpacity={0.7}
         >
-          <X size={20} color={fg} />
+          <X size={18} color={fg} />
         </TouchableOpacity>
       )}
     </Animated.View>
@@ -195,11 +191,11 @@ export const Banner: React.FC<BannerProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16,
+    paddingVertical: 14,
     paddingLeft: 16,
     borderWidth: 1,
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     gap: 12,
   },
   inline: {
@@ -213,18 +209,18 @@ const styles = StyleSheet.create({
   },
   textWrapper: {
     flex: 1,
-    gap: 4,
+    justifyContent: "center",
+    gap: 2,
   },
   actionBtn: {
-    height: 40,
+    paddingTop: 4,
     justifyContent: "center",
     alignSelf: "flex-start",
   },
   closeButton: {
-    width: 40,
-    height: 40,
+    width: 28,
+    height: 28,
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: -8,
   },
 });

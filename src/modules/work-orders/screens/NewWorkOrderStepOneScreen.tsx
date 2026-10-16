@@ -12,9 +12,11 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { AddClientSheet } from "../components/AddClientSheet";
-import { ClientSearchDropdown } from "../components/ClientSearchDropdown";
-import { SelectedClientCard } from "../components/SelectedClientCard";
+import {
+  AddClientSheet,
+  ClientSearchDropdown,
+  SelectedClientCard,
+} from "../components/reception";
 import {
   getMockClients,
   MockClient,

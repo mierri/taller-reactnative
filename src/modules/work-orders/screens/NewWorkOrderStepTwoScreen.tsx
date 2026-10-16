@@ -12,12 +12,14 @@ import {
     View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { AddVehicleSheet } from "../components/AddVehicleSheet";
-import { ClientVehiclesSelector } from "../components/ClientVehiclesSelector";
-import { OptionPickerSheet } from "../components/OptionPickerSheet";
-import { PlateInputWithScanner } from "../components/PlateInputWithScanner";
-import { StepNavButtons } from "../components/StepNavButtons";
-import { VehicleBasicFields } from "../components/VehicleBasicFields";
+import {
+  AddVehicleSheet,
+  ClientVehiclesSelector,
+  OptionPickerSheet,
+  PlateInputWithScanner,
+  StepNavButtons,
+  VehicleBasicFields,
+} from "../components/reception";
 import {
     getMockVehicles,
     MockVehicle,
