@@ -227,7 +227,10 @@ export const FinanceScreen: React.FC = () => {
             includePaid={includePaid}
             onToggleIncludePaid={handleToggleIncludePaid}
             onSelectReceivable={(item) =>
-              router.push(`/orders/${item.workOrderId}` as any)
+              router.push({
+                pathname: "/(tabs)/orders/[id]",
+                params: { id: item.workOrderId },
+              } as any)
             }
           />
         )}
