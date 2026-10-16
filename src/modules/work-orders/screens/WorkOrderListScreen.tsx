@@ -282,9 +282,7 @@ export const WorkOrderListScreen: React.FC = () => {
         }
         onReceiveVehicle={() => router.push("/orders/new" as any)}
         onNewClient={() => setShowAddClientSheet(true)}
-        onRegisterPayment={() =>
-          setToast({ message: "Módulo de caja disponible próximamente.", type: "Info" })
-        }
+        onRegisterPayment={() => router.push("/cash" as any)}
         onConsultParts={() =>
           setToast({ message: "Catálogo de refacciones disponible próximamente.", type: "Info" })
         }

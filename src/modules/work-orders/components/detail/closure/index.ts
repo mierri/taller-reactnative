@@ -5,6 +5,6 @@ export * from "./CommercialCloseFrozenView";
 export * from "./CommercialCloseHistorySection";
 export * from "./CommercialCloseTab";
 export * from "./ConfirmCommercialCloseSheet";
+export * from "./PaymentFormSheet";
 export * from "./RegisterAdvanceSheet";
 export * from "./RegisterPaymentSheet";
-

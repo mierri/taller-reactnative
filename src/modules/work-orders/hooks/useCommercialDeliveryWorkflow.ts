@@ -5,8 +5,9 @@ import {
   OrderDetailTabKey,
 } from "../types/work-order-detail.types";
 import { OperationalStatus, WorkOrderDto } from "../types/work-order.types";
-import { AdvancePaymentMethod } from "../components/detail/closure/RegisterAdvanceSheet";
+import { AdvancePaymentMethod } from "../components/detail/closure";
 import { formatCurrency } from "../utils/detail-formatters";
+import { addMockCashMovement } from "@/modules/cash/mocks/cash.mock";
 
 export interface UseCommercialDeliveryWorkflowProps {
   order: WorkOrderDto | null;
@@ -87,9 +88,20 @@ export function useCommercialDeliveryWorkflow({
       id: `pay-${Date.now()}`,
       amount,
       paymentMethod: method,
+      netAmount,
       createdAt: new Date().toLocaleDateString("es-MX"),
     };
     setPayments((prev) => [newPayment, ...prev]);
+    addMockCashMovement({
+      workOrderId: order?.id,
+      workOrderCode: order?.code || "OT-1049",
+      clientName: order?.clientName || "Cliente",
+      paymentMethod: method,
+      amount,
+      commissionAmount: Math.max(0, amount - netAmount),
+      netAmount,
+      type: "INCOME",
+    });
     appendNote(`Cobro registrado: ${formatCurrency(amount)} MXN (${method}).`);
     setShowRegisterPaymentSheet(false);
     setShowPaymentSuccessModal(true);
