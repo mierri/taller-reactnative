@@ -1,4 +1,4 @@
-import { AppHeader, Banner, BannerType } from "@/components";
+import { AppHeader, Banner, BannerType, EmptyState } from "@/components";
 import {
   AdvancePaymentMethod,
   AdvanceSuccessModal,
@@ -259,40 +259,10 @@ export const CashScreen: React.FC = () => {
           </View>
 
           {visibleMovements.length === 0 ? (
-            <View
-              style={[
-                styles.emptyCard,
-                {
-                  backgroundColor: colors.surfaceTile,
-                  borderColor: colors.borderDashed,
-                  borderRadius: radius.xl,
-                },
-              ]}
-            >
-              <ClipboardList
-                size={28}
-                color={colors.textMuted}
-                strokeWidth={1.8}
-              />
-              <Text
-                style={[
-                  typography.titleCard,
-                  styles.emptyTitle,
-                  { color: colors.textStrong },
-                ]}
-              >
-                Tu caja está al día
-              </Text>
-              <Text
-                style={[
-                  typography.bodyMd,
-                  styles.emptyDescription,
-                  { color: colors.textSecondary },
-                ]}
-              >
-                Los cobros y anticipos aparecerán aquí después de registrarlos.
-              </Text>
-            </View>
+            <EmptyState
+              title="Tu caja está al día"
+              description="Los cobros y anticipos aparecerán aquí después de registrarlos."
+            />
           ) : (
             <View style={styles.movementsList}>
               {visibleMovements.map((item) => (

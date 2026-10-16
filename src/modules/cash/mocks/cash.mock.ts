@@ -1,4 +1,6 @@
-import { getMockWorkOrders, OperationalStatus, parseVehicleInfo } from "@/modules/work-orders";
+import { getMockWorkOrders } from "@/modules/work-orders/mocks/work-orders.mock";
+import { OperationalStatus } from "@/modules/work-orders/types/work-order.types";
+import { parseVehicleInfo } from "@/modules/work-orders/utils/detail-formatters";
 import { CashMovementItem, ChargeableOrderItem } from "../types/cash.types";
 
 let dynamicMovements: CashMovementItem[] = [];

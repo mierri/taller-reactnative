@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, ViewStyle } from "react-native";
+import { View, Text, StyleSheet, ViewStyle, TouchableOpacity } from "react-native";
 import { ClipboardList } from "lucide-react-native";
 import { useTheme } from "@/theme";
 import { Button, ButtonType } from "./Button";
@@ -9,7 +9,7 @@ export interface EmptyStateProps {
   title?: string;
   description?: string;
   actionLabel?: string;
-  actionButtonType?: ButtonType;
+  actionButtonType?: ButtonType | "PillCard";
   onActionPress?: () => void;
   style?: ViewStyle;
 }
@@ -19,7 +19,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   title = "Tu primer vehículo empieza aquí",
   description = "Toca Recibir auto para registrar al cliente y comenzar el diagnóstico.",
   actionLabel,
-  actionButtonType = "Secondary",
+  actionButtonType = "PillCard",
   onActionPress,
   style,
 }) => {
@@ -30,6 +30,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       style={[
         styles.container,
         {
+          backgroundColor: colors.surfaceTile,
           borderColor: colors.borderDashed,
           borderRadius: radius.xl,
         },
@@ -37,12 +38,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       ]}
     >
       <View style={styles.iconContainer}>
-        {icon ?? <ClipboardList size={32} color={colors.textMuted} />}
+        {icon ?? <ClipboardList size={32} color={colors.textMuted} strokeWidth={1.8} />}
       </View>
 
       <Text
         style={[
-          typography.buttonMd,
+          typography.titleCard,
           styles.title,
           { color: colors.textStrong },
         ]}
@@ -62,11 +63,35 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
       {actionLabel && onActionPress && (
         <View style={styles.actionContainer}>
-          <Button
-            label={actionLabel}
-            onPress={onActionPress}
-            type={actionButtonType}
-          />
+          {actionButtonType === "PillCard" ? (
+            <TouchableOpacity
+              onPress={onActionPress}
+              activeOpacity={0.8}
+              style={[
+                styles.pillButton,
+                {
+                  backgroundColor: colors.surfaceCard,
+                  borderColor: colors.borderCard,
+                  borderRadius: radius.full,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  typography.buttonMd,
+                  { color: colors.brandPrimary },
+                ]}
+              >
+                {actionLabel}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <Button
+              label={actionLabel}
+              onPress={onActionPress}
+              type={actionButtonType}
+            />
+          )}
         </View>
       )}
     </View>
@@ -77,17 +102,16 @@ const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
     borderStyle: "dashed",
-    paddingVertical: 40,
-    paddingHorizontal: 24,
+    paddingVertical: 36,
+    paddingHorizontal: 20,
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
     gap: 8,
-    backgroundColor: "transparent",
   },
   iconContainer: {
-    width: 32,
-    height: 32,
+    width: 36,
+    height: 36,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 4,
@@ -97,9 +121,16 @@ const styles = StyleSheet.create({
   },
   description: {
     textAlign: "center",
-    maxWidth: 280,
+    maxWidth: 290,
   },
   actionContainer: {
     marginTop: 12,
+  },
+  pillButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 22,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
